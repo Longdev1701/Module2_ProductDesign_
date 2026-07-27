@@ -9,7 +9,7 @@ Kiểm tra lô hàng có đáp ứng quy định của thị trường nhập kh
 1. **Pre-production** — Tuân thủ trước khi sản xuất
 2. **Post-harvest** — Đánh giá sau thu hoạch
 
-## Chạy本地
+## Chạy
 
 ```bash
 npm install
