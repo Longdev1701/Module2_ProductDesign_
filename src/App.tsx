@@ -9,6 +9,7 @@ import ProductsPage from "@/src/pages/ProductsPage";
 import ProductDetailPage from "@/src/pages/ProductDetailPage";
 import SettingsPage from "@/src/pages/SettingsPage";
 import AuthPage from "@/src/pages/AuthPage";
+import IntegrityPage from "@/src/pages/IntegrityPage";
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
         <Route path="/login" element={<AuthPage />} />
         
         <Route path="/" element={<Layout><DashboardPage /></Layout>} />
+        <Route path="/integrity" element={<Layout><IntegrityPage /></Layout>} />
         <Route path="/history" element={<Layout><HistoryPage /></Layout>} />
         <Route path="/regulations" element={<Layout><RegulationsPage /></Layout>} />
         <Route path="/new" element={<Layout><NewCheckPage /></Layout>} />

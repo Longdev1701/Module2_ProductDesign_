@@ -1,217 +1,195 @@
-import { Badge } from "@/src/components/ui/badge";
-import { Button } from "@/src/components/ui/button";
-import { Card, CardContent } from "@/src/components/ui/card";
-import { ArrowRight, Globe, Plus, AlertCircle, Info, FileText } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
+import LegalTrackingWidget from '@/src/components/LegalTrackingWidget';
 
 export default function DashboardPage() {
-  const activities = [
-    { id: "LOT-2024-001", product: "Cà phê hạt Arabica", market: "EU / Đức", date: "24 Th10, 2024", status: "TUÂN THỦ", statusVariant: "default" },
-    { id: "LOT-2024-002", product: "Đậu nành hữu cơ", market: "USA / California", date: "23 Th10, 2024", status: "CHỜ XỬ LÝ", statusVariant: "secondary" },
-    { id: "LOT-2024-984", product: "Chuối Cavendish tươi", market: "Nhật Bản / Osaka", date: "22 Th10, 2024", status: "CẢNH BÁO", statusVariant: "warning" },
-    { id: "LOT-2024-005", product: "Thức ăn ủ chua bắp", market: "Toàn cầu", date: "20 Th10, 2024", status: "TUÂN THỦ", statusVariant: "default" },
-  ];
-
   return (
-    <div className="flex flex-col lg:flex-row gap-8">
-      {/* Main Content */}
-      <div className="flex-1 space-y-6">
-        <div className="flex justify-between items-center mb-6">
-            <div>
-              <h1 className="text-4xl font-serif font-bold text-on-surface mb-2">Tổng quan tuân thủ</h1>
-              <p className="text-on-surface-variant">Chào mừng trở lại. Danh mục của bạn hiện đang tuân thủ <strong className="text-primary">92%</strong>.</p>
-            </div>
-            <div className="flex gap-4">
-               <Button variant="outline" className="h-10 text-primary border-primary">Lọc theo thị trường</Button>
-               <Button className="h-10 gap-2"><Plus className="w-4 h-4" /> Kiểm tra tuân thủ mới</Button>
-            </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-           <Card className="flex flex-col items-center justify-center p-8 relative overflow-hidden">
-              <h3 className="text-lg font-serif font-bold absolute top-6 left-6 text-on-surface flex items-center gap-2">Sức khỏe toàn cầu <FileText className="w-4 h-4 text-outline" /></h3>
-              
-              <div className="relative w-48 h-48 mt-8 mb-6">
-                 <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="40" fill="transparent" stroke="#eaedff" strokeWidth="12" />
-                    <circle cx="50" cy="50" r="40" fill="transparent" stroke="#00236f" strokeWidth="12" strokeDasharray="251.2" strokeDashoffset="20.096" className="transition-all duration-1000 ease-out" />
-                 </svg>
-                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-5xl font-bold text-primary">92%</span>
-                    <span className="text-xs font-mono font-bold text-outline mt-1">TỐI ƯU</span>
-                 </div>
-              </div>
-
-              <div className="w-full space-y-3">
-                 <div className="flex justify-between items-center text-sm font-semibold">
-                    <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-primary"></span> Tuân thủ</div>
-                    <span>142</span>
-                 </div>
-                 <div className="flex justify-between items-center text-sm font-semibold">
-                    <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-secondary-container"></span> Đang xem xét</div>
-                    <span>12</span>
-                 </div>
-                 <div className="flex justify-between items-center text-sm font-semibold">
-                    <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-error"></span> Rủi ro cao</div>
-                    <span className="text-error">2</span>
-                 </div>
-              </div>
-           </Card>
-
-           <Card className="md:col-span-2 p-6 flex flex-col">
-              <h3 className="text-xl font-serif font-bold mb-4">Bản đồ tuân thủ thị trường</h3>
-              <p className="text-sm text-on-surface-variant mb-4">Hồ sơ rủi ro các kênh xuất khẩu hoạt động</p>
-              
-              <div className="flex-1 bg-surface-container rounded-lg relative overflow-hidden flex items-center justify-center border border-outline-variant">
-                 {/* Map Placeholder */}
-                 <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#00236f 1px, transparent 1px)', backgroundSize: '16px 16px' }}></div>
-                 <Globe className="w-32 h-32 text-primary opacity-50 absolute" />
-                 
-                 <div className="absolute bottom-4 left-4 flex gap-4">
-                    <div className="bg-white p-3 rounded shadow-lg border-l-4 border-primary flex flex-col">
-                       <span className="text-xs font-mono text-outline uppercase font-bold mb-1">KHU VỰC EU</span>
-                       <span className="font-bold text-primary">98% Tuân thủ</span>
-                    </div>
-                    <div className="bg-white p-3 rounded shadow-lg border-l-4 border-secondary-container flex flex-col">
-                       <span className="text-xs font-mono text-outline uppercase font-bold mb-1 flex items-center gap-1"><AlertCircle className="w-3 h-3 text-secondary"/> THỊ TRƯỜNG NHẬT</span>
-                       <span className="font-bold text-on-surface">Theo dõi MRL mới</span>
-                    </div>
-                 </div>
-                 
-                 <div className="absolute top-4 right-4 flex gap-2">
-                    <Badge variant="default" className="text-[10px]">EU</Badge>
-                    <Badge variant="secondary" className="text-[10px]">USA</Badge>
-                    <Badge variant="secondary" className="text-[10px]">NHẬT BẢN</Badge>
-                 </div>
-              </div>
-           </Card>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-           <Card className="bg-primary hover:bg-primary-container transition-colors cursor-pointer text-white p-6 flex justify-between items-center group">
-              <div>
-                 <div className="w-10 h-10 bg-white/20 rounded flex items-center justify-center mb-4">
-                    <FileText className="w-5 h-5 text-white" />
-                 </div>
-                 <h3 className="text-xl font-serif font-bold mb-1">Kịch bản A: Trước sản xuất</h3>
-                 <p className="text-sm text-primary-fixed-dim">Đánh giá chất lượng đất và hạt giống cho thị trường EU.</p>
-              </div>
-              <ArrowRight className="w-6 h-6 transform group-hover:translate-x-2 transition-transform" />
-           </Card>
-
-           <Card className="bg-inverse-surface hover:bg-tertiary transition-colors cursor-pointer text-white p-6 flex justify-between items-center group">
-              <div>
-                 <div className="w-10 h-10 bg-white/10 rounded flex items-center justify-center mb-4 text-xs font-mono">
-                    B
-                 </div>
-                 <h3 className="text-xl font-serif font-bold mb-1">Kịch bản B: Sau thu hoạch</h3>
-                 <p className="text-sm text-tertiary-fixed-dim">Xác minh lô hàng cuối và chuẩn bị chứng nhận kiểm dịch.</p>
-              </div>
-              <ArrowRight className="w-6 h-6 transform group-hover:translate-x-2 transition-transform" />
-           </Card>
-        </div>
-
-        <Card>
-           <div className="flex justify-between items-center p-6 border-b border-outline-variant">
-              <h3 className="text-xl font-serif font-bold">Hoạt động gần đây</h3>
-              <a href="#" className="text-sm font-semibold text-primary flex items-center gap-1 hover:underline">Xem tất cả hồ sơ <ChevronRight className="w-4 h-4"/></a>
-           </div>
-           <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm font-sans">
-                 <thead className="text-xs font-mono uppercase text-outline bg-surface-container-low border-b border-outline-variant">
-                    <tr>
-                       <th className="px-6 py-4 font-semibold">MÃ LÔ HÀNG</th>
-                       <th className="px-6 py-4 font-semibold">SẢN PHẨM</th>
-                       <th className="px-6 py-4 font-semibold">THỊ TRƯỜNG</th>
-                       <th className="px-6 py-4 font-semibold">NGÀY KIỂM TRA</th>
-                       <th className="px-6 py-4 font-semibold">TRẠNG THÁI</th>
-                    </tr>
-                 </thead>
-                  <tbody className="divide-y divide-outline-variant">
-                    {activities.map((item, i) => (
-                       <tr key={i} className="hover:bg-surface-container-lowest">
-                          <td className="px-6 py-4 font-medium text-primary">
-                            <Link to="/report/1" className="hover:underline">{item.id}</Link>
-                          </td>
-                          <td className="px-6 py-4 font-semibold">{item.product}</td>
-                          <td className="px-6 py-4 text-on-surface-variant">{item.market}</td>
-                          <td className="px-6 py-4 text-on-surface-variant">{item.date}</td>
-                          <td className="px-6 py-4">
-                             <Badge variant={item.statusVariant as any} className="px-2 py-1 flex items-center gap-1.5 w-max">
-                                <div className={`w-1.5 h-1.5 rounded-full ${item.statusVariant === 'default' ? 'bg-white' : (item.statusVariant === 'warning' ? 'bg-error' : 'bg-primary')}`}></div>
-                                {item.status}
-                             </Badge>
-                          </td>
-                       </tr>
-                    ))}
-                 </tbody>
-              </table>
-           </div>
-        </Card>
+    <div className="space-y-8">
+      {/* Title */}
+      <div className="mb-6">
+        <h2 className="font-serif text-3xl font-bold text-[#191c1e] mb-2">Tổng quan pháp lý</h2>
+        <p className="text-[#434653] text-base font-sans">Theo dõi trạng thái tuân thủ và cảnh báo rủi ro mới nhất.</p>
       </div>
 
-      {/* Right Sidebar */}
-      <div className="w-full lg:w-80 space-y-6 flex flex-col">
-         <Card className="flex-1 flex flex-col">
-            <CardContent className="p-6 flex-1 flex flex-col">
-               <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-xl font-serif font-bold">Cảnh báo quan trọng</h3>
-                  <Badge variant="destructive" className="rounded-sm px-1 py-0 text-[10px]">3 MỚI</Badge>
-               </div>
-               
-               <div className="space-y-4 flex-1">
-                  <div className="border-l-4 border-error bg-error-container p-4 rounded-r relative shadow-sm">
-                     <h4 className="font-bold text-error text-sm flex items-start gap-2 mb-1">
-                        <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                        Cập nhật MRL cho Cà phê tại EU
-                     </h4>
-                     <p className="text-xs text-on-error-container mb-2 ml-6">Quy định (EU) 2024/918 điều chỉnh mức Chlorpyrifos. Cần hành động ngay.</p>
-                     <p className="text-[10px] text-error ml-6 font-mono">2 GIỜ TRƯỚC</p>
-                  </div>
-
-                  <div className="border-l-4 border-secondary-container bg-[#fff8f2] p-4 rounded-r relative shadow-sm">
-                     <h4 className="font-bold text-secondary text-sm flex items-start gap-2 mb-1">
-                        <Info className="w-4 h-4 shrink-0 mt-0.5" />
-                        Nhật Bản: Bổ sung kiểm dịch
-                     </h4>
-                     <p className="text-xs text-on-secondary-container mb-2 ml-6">Yêu cầu tài liệu mới cho nông sản tươi vào Yokohama từ ngày 1/11.</p>
-                     <p className="text-[10px] text-outline ml-6 font-mono">5 GIỜ TRƯỚC</p>
-                  </div>
-
-                  <div className="border-l-4 border-primary bg-surface-container-low p-4 rounded-r relative shadow-sm">
-                     <h4 className="font-bold text-primary text-sm flex items-start gap-2 mb-1">
-                        <Globe className="w-4 h-4 shrink-0 mt-0.5" />
-                        Hệ thống: Cập nhật lõi chính sách
-                     </h4>
-                     <p className="text-xs text-on-surface-variant mb-2 ml-6">Mô hình AI cập nhật lên v4.2.0 (bao phủ thay đổi pháp lý Q4 2024).</p>
-                     <p className="text-[10px] text-outline ml-6 font-mono">HÔM QUA</p>
-                  </div>
-               </div>
-               
-               <Button variant="outline" className="w-full mt-6 text-primary font-bold uppercase tracking-wider text-xs h-10 border-outline-variant hover:bg-surface-container-low">Xem lịch sử cảnh báo</Button>
-            </CardContent>
-         </Card>
-
-         <div className="bg-error-container border border-red-200 rounded p-6 flex justify-between items-center shadow-sm">
-            <div className="flex gap-4 items-center">
-               <div className="w-10 h-10 bg-white rounded text-error flex items-center justify-center font-bold text-xl shadow-sm">!</div>
-               <div>
-                  <p className="text-xs font-mono text-error uppercase tracking-wider mb-1">RỦI RO CHƯA GIẢI QUYẾT</p>
-                  <p className="text-2xl font-serif font-bold text-error">02 Mục</p>
-               </div>
+      {/* Top Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        {/* Card 1 */}
+        <div className="bg-white p-6 rounded-xl border border-[#c3c6d5]/60 shadow-sm relative overflow-hidden">
+          <div className="absolute right-0 top-0 w-24 h-24 bg-[#00327d]/5 rounded-bl-full -mr-4 -mt-4"></div>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 bg-[#0047ab]/20 rounded-lg text-[#00327d]">
+              <span className="material-symbols-outlined fill">fact_check</span>
             </div>
-            <Button variant="default" size="icon" className="h-10 w-10 shrink-0 bg-primary hover:bg-primary-container text-white"><Plus className="w-5 h-5"/></Button>
-         </div>
+            <h3 className="font-semibold text-sm text-[#434653]">Tổng kiểm tra</h3>
+          </div>
+          <div className="flex items-end gap-3">
+            <span className="font-serif text-4xl font-bold text-[#191c1e]">128</span>
+            <span className="text-emerald-700 font-semibold text-sm flex items-center gap-1 mb-2">
+              <span className="material-symbols-outlined text-sm">trending_up</span> 12% tháng này
+            </span>
+          </div>
+        </div>
+
+        {/* Card 2 */}
+        <div className="bg-white p-6 rounded-xl border border-[#c3c6d5]/60 shadow-sm">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 bg-[#205833]/20 rounded-lg text-[#01401e]">
+              <span className="material-symbols-outlined fill">verified</span>
+            </div>
+            <h3 className="font-semibold text-sm text-[#434653]">Đạt yêu cầu</h3>
+          </div>
+          <div className="flex items-end gap-3">
+            <span className="font-serif text-4xl font-bold text-[#191c1e]">97</span>
+            <span className="text-[#434653] text-sm mb-2">/ 75.8% Tỷ lệ thành công</span>
+          </div>
+        </div>
+
+        {/* Card 3 */}
+        <div className="bg-white p-6 rounded-xl border-l-4 border-l-[#ba1a1a] border-y border-r border-[#c3c6d5]/60 shadow-[0_4px_20px_-10px_rgba(186,26,26,0.1)]">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 bg-[#ffdad6] text-[#93000a] rounded-lg">
+              <span className="material-symbols-outlined fill">warning</span>
+            </div>
+            <h3 className="font-semibold text-sm text-[#93000a]">Cảnh báo</h3>
+          </div>
+          <div className="flex items-end gap-3 justify-between">
+            <span className="font-serif text-4xl font-bold text-[#ba1a1a]">22</span>
+            <Link to="/integrity" className="text-[#434653] text-sm mb-2 hover:text-[#00327d] transition-colors flex items-center gap-1 font-semibold">
+              Xem hồ sơ <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* Card 4 */}
+        <div className="bg-white p-6 rounded-xl border border-[#c3c6d5]/60 shadow-sm">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 bg-[#d2e0fe]/50 text-[#55637d] rounded-lg">
+              <span className="material-symbols-outlined fill">schedule</span>
+            </div>
+            <h3 className="font-semibold text-sm text-[#434653]">Nghiêm trọng</h3>
+          </div>
+          <div className="flex items-end gap-3">
+            <span className="font-serif text-4xl font-bold text-[#191c1e]">09</span>
+            <span className="text-[#434653] text-sm mb-2">Yêu cầu xử lý</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Chart Section */}
+          <div className="bg-white p-6 rounded-xl border border-[#c3c6d5]/60 h-[380px] flex flex-col">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="font-serif text-xl font-semibold text-[#191c1e]">Phân tích rủi ro thị trường</h3>
+              <div className="flex gap-2">
+                <button className="px-3 py-1 text-sm border border-[#c3c6d5] rounded-full text-[#434653] hover:bg-[#eceef0] transition-colors">US</button>
+                <button className="px-3 py-1 text-sm bg-[#00327d] text-white rounded-full shadow-sm font-semibold">EU</button>
+              </div>
+            </div>
+            <div className="flex-1 bg-[#f2f4f6] rounded-lg border border-[#c3c6d5]/50 flex flex-col items-center justify-center relative overflow-hidden p-6">
+              {/* Data Graphic Visualization */}
+              <div className="w-full flex justify-between items-end h-40 gap-4 px-4 border-b border-[#c3c6d5]/40 pb-2">
+                <div className="flex-1 bg-[#00327d]/30 rounded-t h-[65%] relative group hover:bg-[#00327d]/50 transition-all">
+                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-semibold text-[#00327d]">65%</div>
+                </div>
+                <div className="flex-1 bg-[#00327d]/50 rounded-t h-[82%] relative group hover:bg-[#00327d]/70 transition-all">
+                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-semibold text-[#00327d]">82%</div>
+                </div>
+                <div className="flex-1 bg-[#01401e]/60 rounded-t h-[94%] relative group hover:bg-[#01401e]/80 transition-all">
+                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-semibold text-[#01401e]">94%</div>
+                </div>
+                <div className="flex-1 bg-[#ba1a1a]/40 rounded-t h-[45%] relative group hover:bg-[#ba1a1a]/60 transition-all">
+                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-semibold text-[#ba1a1a]">45%</div>
+                </div>
+                <div className="flex-1 bg-[#00327d]/80 rounded-t h-[88%] relative group hover:bg-[#00327d] transition-all">
+                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-semibold text-[#00327d]">88%</div>
+                </div>
+                <div className="flex-1 bg-[#01401e]/80 rounded-t h-[96%] relative group hover:bg-[#01401e] transition-all">
+                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-semibold text-[#01401e]">96%</div>
+                </div>
+              </div>
+              <div className="w-full flex justify-between text-[11px] text-[#434653] mt-2 px-2">
+                <span>T5/2024</span>
+                <span>T6/2024</span>
+                <span>T7/2024</span>
+                <span>T8/2024</span>
+                <span>T9/2024</span>
+                <span>T10/2024</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Recent Checks */}
+          <div className="bg-white p-6 rounded-xl border border-[#c3c6d5]/60">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="font-serif text-xl font-semibold text-[#191c1e]">Kiểm tra tuân thủ gần đây</h3>
+              <Link to="/history" className="text-[#00327d] font-semibold text-sm hover:underline">Xem tất cả</Link>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-4 bg-[#f7f9fb] rounded-lg border border-[#c3c6d5]/60 hover:border-[#00327d]/50 transition-colors group">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-[#e6e8ea] rounded flex items-center justify-center text-[#434653]">
+                    <span className="material-symbols-outlined">description</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-sm text-[#191c1e]">CP Robusta Export - Q3</h4>
+                    <p className="text-xs text-[#434653]">Thị trường: Đức</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-6">
+                  <span className="text-xs text-[#434653]">25/10/2024</span>
+                  <span className="px-3 py-1 bg-[#205833]/20 text-[#01401e] rounded-full text-xs font-bold border border-[#01401e]/20">PASS</span>
+                  <button className="text-[#434653] hover:text-[#00327d] transition-colors opacity-0 group-hover:opacity-100">
+                    <span className="material-symbols-outlined">more_vert</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between p-4 bg-[#f7f9fb] rounded-lg border border-l-4 border-l-[#ba1a1a] border-[#c3c6d5]/60 hover:border-[#ba1a1a]/50 transition-colors group">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-[#e6e8ea] rounded flex items-center justify-center text-[#434653]">
+                    <span className="material-symbols-outlined">description</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-sm text-[#191c1e]">Arabica Premium Import</h4>
+                    <p className="text-xs text-[#434653]">Thị trường: Pháp</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-6">
+                  <span className="text-xs text-[#434653]">24/10/2024</span>
+                  <span className="px-3 py-1 bg-[#ffdad6] text-[#93000a] rounded-full text-xs font-bold border border-[#ba1a1a]/20">FAIL</span>
+                  <button className="text-[#434653] hover:text-[#00327d] transition-colors opacity-0 group-hover:opacity-100">
+                    <span className="material-symbols-outlined">more_vert</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column */}
+        <div className="space-y-6">
+          <LegalTrackingWidget />
+
+          <div className="bg-[#dae2ff] p-6 rounded-xl border border-[#b1c5ff]">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="material-symbols-outlined text-[#00327d]">policy</span>
+              <h3 className="font-serif text-lg font-semibold text-[#191c1e]">Báo cáo &amp; Tài liệu mới</h3>
+            </div>
+            <div className="space-y-3">
+              <div className="p-3 bg-white rounded-lg flex items-center justify-between shadow-xs">
+                <span className="text-xs font-semibold text-[#191c1e]">Luật MRL sửa đổi 2024.pdf</span>
+                <span className="material-symbols-outlined text-sm text-[#00327d]">download</span>
+              </div>
+              <div className="p-3 bg-white rounded-lg flex items-center justify-between shadow-xs">
+                <span className="text-xs font-semibold text-[#191c1e]">Hướng dẫn khai báo hải quan US.pdf</span>
+                <span className="material-symbols-outlined text-sm text-[#00327d]">download</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
-}
-
-// Re-usable icon component for ChevronRight used here
-function ChevronRight(props: any) {
-    return (
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" {...props}>
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-        </svg>
-    )
 }

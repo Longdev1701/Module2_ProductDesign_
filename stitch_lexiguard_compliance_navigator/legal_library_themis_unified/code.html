@@ -1,0 +1,367 @@
+<!DOCTYPE html><html lang="vi" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Themis - Thư viện</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-primary": "#b1c5ff",
+                        "on-secondary-fixed-variant": "#39475f",
+                        "primary-fixed-dim": "#b1c5ff",
+                        "surface-container-high": "#e6e8ea",
+                        "on-tertiary-fixed-variant": "#18512c",
+                        "inverse-on-surface": "#eff1f3",
+                        "tertiary": "#01401e",
+                        "surface": "#f7f9fb",
+                        "secondary-fixed": "#d6e3ff",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "surface-tint": "#2559bd",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-secondary-container": "#55637d",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed": "#00210c",
+                        "on-surface-variant": "#434653",
+                        "on-surface": "#191c1e",
+                        "background": "#f7f9fb",
+                        "surface-dim": "#d8dadc",
+                        "error": "#ba1a1a",
+                        "surface-container-low": "#f2f4f6",
+                        "primary-container": "#0047ab",
+                        "outline-variant": "#c3c6d5",
+                        "on-tertiary-container": "#92cd9d",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#001946",
+                        "on-secondary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed": "#0d1c32",
+                        "secondary": "#515f78",
+                        "on-background": "#191c1e",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#205833",
+                        "secondary-container": "#d2e0fe",
+                        "primary": "#00327d",
+                        "secondary-fixed-dim": "#b9c7e4",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#2d3133",
+                        "on-primary-fixed-variant": "#00419e",
+                        "outline": "#737784",
+                        "surface-bright": "#f7f9fb",
+                        "tertiary-fixed-dim": "#99d4a4",
+                        "on-primary-container": "#a5bdff",
+                        "surface-variant": "#e0e3e5",
+                        "primary-fixed": "#dae2ff",
+                        "tertiary-fixed": "#b5f1bf"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack_sm": "8px",
+                        "gutter": "24px",
+                        "stack_md": "16px",
+                        "sidebar_width": "280px",
+                        "margin_mobile": "16px",
+                        "stack_lg": "32px",
+                        "container_max_width": "1440px",
+                        "margin_desktop": "40px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-bold": ["Inter"],
+                        "headline-md": ["Playfair Display"],
+                        "headline-lg": ["Playfair Display"],
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"],
+                        "code-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-bold": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "code-sm": ["13px", { "lineHeight": "18px", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Ambient shadow for Risk Alerts */
+        .shadow-ambient-alert {
+            box-shadow: 0 4px 20px -2px rgba(0, 50, 125, 0.05);
+        }
+        
+        .shadow-ambient-critical {
+            box-shadow: 0 4px 20px -2px rgba(186, 26, 26, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased overflow-x-hidden min-h-screen flex">
+<!-- Persistent Sidebar (SideNavBar component) -->
+<aside class="w-[280px] h-screen fixed left-0 top-0 border-r border-white/10 bg-[#001a41] flex flex-col z-50">
+<!-- Brand / Header -->
+<div class="px-6 py-8 flex flex-col items-center">
+<img alt="Themis Logo" class="h-24 w-auto object-contain mb-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAD-mGiKyK5ll32VlpaIkBOEfozZ8Lqbj8tIZH7nPo32NqP7x_U9ndnSZ7faKNM4D4lJUuOH8Ec9-5uMS9AG6DIIel8cvI_CQwxIkkGUN90j4i8UbOquBvr6O_VzMTkTkn472qLI4HKCLsMrMV29Ate1OUfvtB1pU_dzE0_s1r6dQe087YfPatSnLB3mZZIfnvygXL20Th2OPCapAZ-aXLiFj40HcY_bTWvxXPoDBPHmCrnwibHApAlWTOZevzQ3T_eD6c7YWd1Rg1u">
+</div>
+<!-- Navigation Links -->
+<nav class="flex-1 px-3 space-y-1 overflow-y-auto"><div class="px-3 mb-4"><button class="w-full py-3 bg-primary-fixed text-on-primary-fixed font-label-bold text-label-bold rounded hover:bg-white transition-colors flex items-center justify-center gap-2"><span class="material-symbols-outlined text-sm">add</span>New Analysis</button></div><!-- Dashboard (Inactive) -->
+<a class="flex items-center gap-3 px-4 py-3 text-white/70 hover:text-white hover:bg-white/10 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-bold text-label-bold">Dashboard</span>
+</a>
+<!-- Tư vấn (Inactive) -->
+<a class="flex items-center gap-3 px-4 py-3 text-white/70 hover:text-white hover:bg-white/10 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">qr_code_2</span>
+<span class="font-label-bold text-label-bold">Tư vấn</span>
+</a>
+<!-- Thư viện (Active) -->
+<a class="flex items-center gap-3 px-4 py-3 bg-primary text-white border-l-4 border-inverse-primary transition-colors rounded-r-lg shadow-sm" href="#">
+<span class="material-symbols-outlined icon-fill">book_5</span>
+<span class="font-label-bold text-label-bold">Thư viện</span>
+</a>
+<!-- Settings (Inactive) -->
+<a class="flex items-center gap-3 px-4 py-3 text-white/70 hover:text-white hover:bg-white/10 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-bold text-label-bold">Settings</span>
+</a></nav>
+<!-- CTA & Footer -->
+<div class="p-4 mt-auto border-t border-white/10">
+
+<a class="flex items-center gap-3 px-4 py-2 text-white/70 hover:text-white hover:bg-white/10 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined text-sm">help</span>
+<span class="text-sm font-medium">Help Center</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<div class="ml-[280px] w-[calc(100%-280px)] min-h-screen flex flex-col relative">
+<!-- Top Navigation (TopNavBar component) -->
+<header class="h-16 fixed top-0 right-0 w-[calc(100%-280px)] border-b border-outline-variant bg-surface/80 backdrop-blur-md flex justify-between items-center px-gutter z-40">
+<!-- AI Search Bar -->
+<div class="relative w-full max-w-2xl flex items-center">
+<div class="absolute left-4 flex items-center text-on-surface-variant">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="w-full pl-12 pr-4 py-2 bg-white border border-outline-variant rounded-md font-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-on-surface-variant/60 shadow-sm" placeholder="Tìm kiếm văn bản pháp luật, án lệ, hoặc hỏi Themis AI..." type="text">
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-high rounded-full transition-all relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
+</button>
+<div class="h-8 w-8 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-label-bold cursor-pointer hover:ring-2 hover:ring-primary transition-all">
+<span class="material-symbols-outlined">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<main class="flex-1 mt-16 p-margin_desktop pt-8 max-w-container_max_width mx-auto w-full">
+<!-- Page Header -->
+<div class="mb-8">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Thư viện Pháp luật</h2>
+<p class="text-on-surface-variant text-body-md">Tra cứu, phân tích và theo dõi các văn bản quy phạm pháp luật.</p>
+</div>
+<!-- Top Highlights: News & Alerts (Bento-ish layout) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter mb-12">
+<!-- Tin tức (News Update) -->
+<div class="lg:col-span-7 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-ambient-alert flex flex-col justify-between hover:border-primary/30 transition-colors">
+<div>
+<div class="flex items-center gap-2 text-primary mb-4">
+<span class="material-symbols-outlined text-sm">article</span>
+<span class="font-label-bold text-label-bold uppercase tracking-wider text-xs">Tin tức nổi bật</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-3 leading-tight">Mỹ ban hành sắc lệnh áp thuế mới đối với hàng hóa nhập khẩu từ Châu Á</h3>
+<p class="text-on-surface-variant font-body-md line-clamp-3">
+                            Chính quyền liên bang vừa công bố danh sách chi tiết các mặt hàng chịu mức thuế chống bán phá giá mới. Động thái này dự kiến sẽ ảnh hưởng trực tiếp đến chuỗi cung ứng ngành điện tử và dệt may trong khu vực. Themis AI đang tiến hành phân tích tác động rủi ro.
+                        </p>
+</div>
+<div class="mt-6 flex justify-between items-center border-t border-outline-variant pt-4">
+<span class="text-xs text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">schedule</span> 2 giờ trước</span>
+<button class="text-primary font-label-bold text-sm hover:underline flex items-center gap-1">Đọc phân tích <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+</div>
+</div>
+<!-- Cảnh báo (Risk Alerts) -->
+<div class="lg:col-span-5 bg-error/5 border border-error/20 rounded-xl flex flex-col overflow-hidden shadow-ambient-critical">
+<div class="px-6 py-4 border-b border-error/20 flex items-center gap-2">
+<span class="material-symbols-outlined text-error">warning</span>
+<h4 class="font-label-bold text-label-bold text-error">Cảnh báo rủi ro pháp lý (3)</h4>
+</div>
+<div class="flex-1 p-0 overflow-y-auto max-h-[220px]">
+<ul class="divide-y divide-error/10">
+<li class="px-6 py-4 hover:bg-error/10 transition-colors cursor-pointer bg-white">
+<div class="flex justify-between items-start mb-1">
+<span class="font-medium text-sm text-on-surface">Sửa đổi Luật Đất đai 2024</span>
+<span class="px-2 py-0.5 bg-error text-white text-[10px] rounded font-bold">CAO</span>
+</div>
+<p class="text-xs text-on-surface-variant truncate">Thay đổi quy định về bồi thường giải phóng mặt bằng.</p>
+</li>
+<li class="px-6 py-4 hover:bg-error/10 transition-colors cursor-pointer bg-white">
+<div class="flex justify-between items-start mb-1">
+<span class="font-medium text-sm text-on-surface">Cập nhật danh mục cấm xuất khẩu</span>
+<span class="px-2 py-0.5 bg-tertiary text-white text-[10px] rounded font-bold">TRUNG BÌNH</span>
+</div>
+<p class="text-xs text-on-surface-variant truncate">Bổ sung 15 loại khoáng sản mới vào Phụ lục II.</p>
+</li>
+<li class="px-6 py-4 hover:bg-error/10 transition-colors cursor-pointer bg-white">
+<div class="flex justify-between items-start mb-1">
+<span class="font-medium text-sm text-on-surface">Quy định mới về bảo mật dữ liệu</span>
+<span class="px-2 py-0.5 bg-tertiary text-white text-[10px] rounded font-bold">TRUNG BÌNH</span>
+</div>
+<p class="text-xs text-on-surface-variant truncate">Nghị định 13/2023/NĐ-CP chuẩn bị có hiệu lực thi hành.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Library Section -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm">
+<!-- Filter Tabs -->
+<div class="flex items-center justify-between border-b border-outline-variant px-2 bg-surface-container-low/50 rounded-t-xl">
+<div class="flex overflow-x-auto hide-scrollbar">
+<button class="px-6 py-4 border-b-2 border-primary text-primary font-label-bold text-label-bold whitespace-nowrap bg-surface-container-lowest">
+                            Tất cả
+                        </button>
+<button class="px-6 py-4 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low/50 font-label-bold text-label-bold whitespace-nowrap transition-colors">
+                            Luật MRL
+                        </button>
+<button class="px-6 py-4 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low/50 font-label-bold text-label-bold whitespace-nowrap transition-colors">
+                            Luật EU
+                        </button>
+<button class="px-6 py-4 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low/50 font-label-bold text-label-bold whitespace-nowrap transition-colors">
+                            Án lệ
+                        </button>
+</div>
+<!-- Right Actions -->
+<div class="px-4 flex items-center gap-3 border-l border-outline-variant py-2">
+<button class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-on-surface border border-outline-variant rounded bg-white hover:bg-surface-container-high transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                            Lọc
+                        </button>
+<button class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-on-surface border border-outline-variant rounded bg-white hover:bg-surface-container-high transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">sort</span>
+                            Sắp xếp
+                        </button>
+</div>
+</div>
+<!-- Document List -->
+<div class="divide-y divide-outline-variant">
+<!-- Document Item 1 -->
+<div class="p-6 hover:bg-surface-container-low/50 transition-colors group">
+<div class="flex items-start justify-between gap-4">
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-2">
+<span class="px-2.5 py-1 bg-primary/10 text-primary text-[11px] font-bold tracking-wide rounded border border-primary/20">HIỆU LỰC</span>
+<span class="text-xs text-on-surface-variant font-medium">Ban hành: 15/10/2023</span>
+<span class="text-xs text-on-surface-variant font-medium flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">public</span> Quốc tế (EU)</span>
+</div>
+<h4 class="text-lg font-semibold text-on-surface group-hover:text-primary transition-colors cursor-pointer mb-2">Quy định (EU) 2023/1115 về chống phá rừng (EUDR)</h4>
+<p class="text-sm text-on-surface-variant mb-4">Quy định về việc cung cấp trên thị trường Liên minh và xuất khẩu từ Liên minh một số mặt hàng và sản phẩm liên quan đến nạn phá rừng và suy thoái rừng...</p>
+<div class="flex items-center gap-4 text-sm">
+<span class="flex items-center gap-1 text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">file_present</span> PDF, 45 trang</span>
+<button class="text-primary font-medium hover:underline flex items-center gap-1 text-sm"><span class="material-symbols-outlined text-[16px] text-primary">psychology</span> Tóm tắt AI</button>
+</div>
+</div>
+<!-- Action / Risk indicator -->
+<div class="flex flex-col items-end gap-3 min-w-[120px]">
+<div class="h-10 w-10 rounded-full border-2 border-error flex items-center justify-center text-error bg-error/5 relative" title="Rủi ro tuân thủ cao">
+<span class="material-symbols-outlined">gavel</span>
+</div>
+<button class="px-4 py-2 border border-outline-variant rounded text-sm font-medium hover:bg-surface-container-high transition-colors bg-white shadow-sm">Chi tiết</button>
+</div>
+</div>
+</div>
+<!-- Document Item 2 -->
+<div class="p-6 hover:bg-surface-container-low/50 transition-colors group">
+<div class="flex items-start justify-between gap-4">
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-2">
+<span class="px-2.5 py-1 bg-surface-container-highest text-on-surface-variant text-[11px] font-bold tracking-wide rounded border border-outline-variant">DỰ THẢO</span>
+<span class="text-xs text-on-surface-variant font-medium">Cập nhật: 02/11/2023</span>
+<span class="text-xs text-on-surface-variant font-medium flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">flag</span> Việt Nam</span>
+</div>
+<h4 class="text-lg font-semibold text-on-surface group-hover:text-primary transition-colors cursor-pointer mb-2">Dự thảo Luật Thuế giá trị gia tăng (sửa đổi)</h4>
+<p class="text-sm text-on-surface-variant mb-4">Dự thảo quy định mới về các đối tượng không chịu thuế GTGT, điều chỉnh mức thuế suất đối với một số nhóm ngành hàng hóa, dịch vụ xuất khẩu...</p>
+<div class="flex items-center gap-4 text-sm">
+<span class="flex items-center gap-1 text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">description</span> DOCX, 120 trang</span>
+<button class="text-primary font-medium hover:underline flex items-center gap-1 text-sm"><span class="material-symbols-outlined text-[16px] text-primary">compare_arrows</span> So sánh với luật cũ</button>
+</div>
+</div>
+<div class="flex flex-col items-end gap-3 min-w-[120px]">
+<div class="h-10 w-10 rounded-full border-2 border-tertiary flex items-center justify-center text-tertiary bg-tertiary/5 relative" title="Đang theo dõi">
+<span class="material-symbols-outlined">visibility</span>
+</div>
+<button class="px-4 py-2 border border-outline-variant rounded text-sm font-medium hover:bg-surface-container-high transition-colors bg-white shadow-sm">Chi tiết</button>
+</div>
+</div>
+</div>
+<!-- Document Item 3 -->
+<div class="p-6 hover:bg-surface-container-low/50 transition-colors group">
+<div class="flex items-start justify-between gap-4">
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-2">
+<span class="px-2.5 py-1 bg-primary/10 text-primary text-[11px] font-bold tracking-wide rounded border border-primary/20">HIỆU LỰC</span>
+<span class="text-xs text-on-surface-variant font-medium">Ban hành: 18/01/2024</span>
+<span class="text-xs text-on-surface-variant font-medium flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">flag</span> Việt Nam</span>
+</div>
+<h4 class="text-lg font-semibold text-on-surface group-hover:text-primary transition-colors cursor-pointer mb-2">Luật Đất đai số 31/2024/QH15</h4>
+<p class="text-sm text-on-surface-variant mb-4">Quy định về chế độ sở hữu đất đai, quyền hạn và trách nhiệm của Nhà nước đại diện chủ sở hữu toàn dân về đất đai và thống nhất quản lý về đất đai...</p>
+<div class="flex items-center gap-4 text-sm">
+<span class="flex items-center gap-1 text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">file_present</span> PDF, 250 trang</span>
+<button class="text-primary font-medium hover:underline flex items-center gap-1 text-sm"><span class="material-symbols-outlined text-[16px] text-primary">psychology</span> Tóm tắt AI</button>
+</div>
+</div>
+<div class="flex flex-col items-end gap-3 min-w-[120px]">
+<div class="h-10 w-10 rounded-full border-2 border-tertiary flex items-center justify-center text-tertiary bg-tertiary/5 relative" title="An toàn">
+<span class="material-symbols-outlined">check_circle</span>
+</div>
+<button class="px-4 py-2 border border-outline-variant rounded text-sm font-medium hover:bg-surface-container-high transition-colors bg-white shadow-sm">Chi tiết</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="border-t border-outline-variant p-4 flex items-center justify-between bg-surface-container-low/30 rounded-b-xl">
+<span class="text-sm text-on-surface-variant">Hiển thị 1-3 của 128 văn bản</span>
+<div class="flex items-center gap-1">
+<button class="p-1.5 rounded hover:bg-surface-container-high text-on-surface-variant disabled:opacity-50" disabled=""><span class="material-symbols-outlined text-sm">chevron_left</span></button>
+<button class="w-8 h-8 rounded bg-primary text-on-primary text-sm font-medium shadow-sm">1</button>
+<button class="w-8 h-8 rounded hover:bg-surface-container-high text-on-surface text-sm font-medium">2</button>
+<button class="w-8 h-8 rounded hover:bg-surface-container-high text-on-surface text-sm font-medium">3</button>
+<span class="text-on-surface-variant px-1">...</span>
+<button class="w-8 h-8 rounded hover:bg-surface-container-high text-on-surface text-sm font-medium">12</button>
+<button class="p-1.5 rounded hover:bg-surface-container-high text-on-surface-variant"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+
+
+
+
+
+</body></html>

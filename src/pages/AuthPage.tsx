@@ -1,122 +1,298 @@
-import { Button } from "@/src/components/ui/button";
-import { Input } from "@/src/components/ui/input";
-import { ShieldCheck } from "lucide-react";
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function AuthPage() {
+  const [mode, setMode] = useState<'login' | 'register' | 'forgot' | 'otp'>('login');
+  const [showPassword, setShowPassword] = useState(false);
+  const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']);
+  const navigate = useNavigate();
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    navigate('/');
+  };
+
+  const handleOtpChange = (index: number, value: string) => {
+    if (value.length > 1) return;
+    const newValues = [...otpValues];
+    newValues[index] = value;
+    setOtpValues(newValues);
+    if (value && index < 5) {
+      const nextInput = document.getElementById(`otp-${index + 1}`);
+      nextInput?.focus();
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-surface flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="flex justify-center">
-           <div className="w-16 h-16 bg-primary-container rounded-2xl flex items-center justify-center shadow-sm border border-outline-variant">
-              <ShieldCheck className="w-8 h-8 text-primary" />
-           </div>
+    <div className="flex w-full min-h-screen bg-[#f7f9fb] text-[#191c1e] font-sans antialiased">
+      {/* Left Side - Brand Context */}
+      <div className="hidden lg:flex lg:w-1/2 bg-[#001946] flex-col items-center justify-center p-10 text-center relative overflow-hidden">
+        {/* Pattern Background */}
+        <div 
+          className="absolute inset-0 opacity-10 pointer-events-none" 
+          style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }}
+        ></div>
+        
+        <div className="z-10 flex flex-col items-center max-w-md">
+          <div className="p-2 rounded-2xl bg-amber-400/10 border border-amber-400/30 mb-8 shadow-xl">
+            <img 
+              src="/themis_logo.png" 
+              alt="Themis LexiGuard Logo" 
+              className="w-48 h-auto object-contain rounded-xl drop-shadow-md"
+            />
+          </div>
+          <h1 className="font-serif text-4xl font-bold text-white mb-4">Precision in Law.</h1>
+          <p className="font-sans text-[#a5bdff] text-base leading-relaxed">
+            Nền tảng Phân tích AI Pháp lý & Giám sát Tuân thủ Tiêu chuẩn Cao cấp dành cho Doanh nghiệp & Chuyên gia Pháp chế.
+          </p>
+
+          <div className="mt-12 flex gap-6 text-xs text-[#a5bdff]/80 font-medium">
+            <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-amber-400 text-sm">verified</span> Tiêu chuẩn EUDR</span>
+            <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-amber-400 text-sm">security</span> Bảo mật Dữ liệu</span>
+            <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-amber-400 text-sm">auto_awesome</span> Phân tích AI</span>
+          </div>
         </div>
-        <h2 className="mt-6 text-center text-3xl font-serif font-bold tracking-tight text-on-surface">
-          Coffee EU-Check AI
-        </h2>
-        <p className="mt-2 text-center text-sm text-on-surface-variant">
-          Nền tảng kiểm soát tuân thủ pháp lý nông sản
-        </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-surface-container-lowest py-8 px-4 shadow-sm sm:rounded-lg sm:px-10 border border-outline-variant">
-          <form className="space-y-6" action="#" method="POST">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-on-surface">
-                Địa chỉ Email
-              </label>
-              <div className="mt-2">
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  placeholder="nhanvien@congty.com"
-                  className="h-11"
-                />
-              </div>
-            </div>
+      {/* Right Side - Form Container */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 bg-white">
+        <div className="w-full max-w-md space-y-6">
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-on-surface">
-                Mật khẩu
-              </label>
-              <div className="mt-2">
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  placeholder="••••••••"
-                  className="h-11"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-outline-variant text-primary focus:ring-primary"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-on-surface-variant">
-                  Ghi nhớ đăng nhập
-                </label>
-              </div>
-
-              <div className="text-sm">
-                <a href="#" className="font-semibold text-primary hover:text-primary-container">
-                  Quên mật khẩu?
-                </a>
-              </div>
-            </div>
-
-            <div>
-              <Link to="/">
-                <Button type="button" className="w-full h-11 text-base">
-                  Đăng nhập hệ thống
-                </Button>
-              </Link>
-            </div>
-          </form>
-
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-outline-variant" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="bg-surface-container-lowest px-2 text-on-surface-variant">
-                  Hoặc đăng nhập với
-                </span>
-              </div>
-            </div>
-
-            <div className="mt-6 grid grid-cols-2 gap-3">
-              <div>
-                <Button variant="outline" className="w-full">
-                  <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
-                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                  </svg>
-                  Google
-                </Button>
-              </div>
-              <div>
-                <Button variant="outline" className="w-full">
-                  Microsoft
-                </Button>
-              </div>
-            </div>
+          {/* Mobile Branding */}
+          <div className="lg:hidden flex flex-col items-center justify-center mb-6">
+            <img src="/themis_logo.png" alt="Themis Logo" className="h-20 w-auto object-contain mb-2" />
+            <h1 className="font-serif text-2xl font-bold text-[#00327d]">Themis LexiGuard</h1>
+            <p className="text-xs text-[#434653]">Hệ thống Giám sát Liêm chính & Pháp lý</p>
           </div>
+
+          {/* Mode Switcher Tabs */}
+          <div className="flex border-b border-[#c3c6d5]/60 mb-6">
+            <button 
+              onClick={() => setMode('login')}
+              className={`flex-1 py-3 text-sm font-semibold border-b-2 transition-all cursor-pointer ${mode === 'login' ? 'border-[#00327d] text-[#00327d]' : 'border-transparent text-[#434653] hover:text-[#191c1e]'}`}
+            >
+              Đăng nhập
+            </button>
+            <button 
+              onClick={() => setMode('register')}
+              className={`flex-1 py-3 text-sm font-semibold border-b-2 transition-all cursor-pointer ${mode === 'register' ? 'border-[#00327d] text-[#00327d]' : 'border-transparent text-[#434653] hover:text-[#191c1e]'}`}
+            >
+              Đăng ký
+            </button>
+          </div>
+
+          {/* LOGIN FORM */}
+          {mode === 'login' && (
+            <form onSubmit={handleLogin} className="space-y-4 animate-fadeIn">
+              <div>
+                <h2 className="font-serif text-2xl font-bold text-[#191c1e] mb-1">Chào mừng trở lại</h2>
+                <p className="text-xs text-[#434653]">Nhập thông tin tài khoản của bạn để truy cập hệ thống.</p>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-[#191c1e]" htmlFor="login-email">Email đăng nhập</label>
+                <div className="relative flex items-center">
+                  <span className="material-symbols-outlined absolute left-3.5 text-[#434653] text-sm">mail</span>
+                  <input 
+                    id="login-email" 
+                    type="email" 
+                    required 
+                    placeholder="name@company.com" 
+                    className="w-full h-11 pl-10 pr-4 bg-[#f7f9fb] border border-[#c3c6d5] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#00327d] focus:border-transparent text-[#191c1e]"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <div className="flex justify-between items-center">
+                  <label className="text-xs font-semibold text-[#191c1e]" htmlFor="login-pass">Mật khẩu</label>
+                  <button 
+                    type="button" 
+                    onClick={() => setMode('forgot')}
+                    className="text-xs font-semibold text-[#00327d] hover:underline"
+                  >
+                    Quên mật khẩu?
+                  </button>
+                </div>
+                <div className="relative flex items-center">
+                  <span className="material-symbols-outlined absolute left-3.5 text-[#434653] text-sm">lock</span>
+                  <input 
+                    id="login-pass" 
+                    type={showPassword ? 'text' : 'password'} 
+                    required 
+                    placeholder="••••••••" 
+                    className="w-full h-11 pl-10 pr-10 bg-[#f7f9fb] border border-[#c3c6d5] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#00327d] focus:border-transparent text-[#191c1e]"
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3.5 text-[#434653] hover:text-[#00327d]"
+                  >
+                    <span className="material-symbols-outlined text-sm">{showPassword ? 'visibility_off' : 'visibility'}</span>
+                  </button>
+                </div>
+              </div>
+
+              <button 
+                type="submit" 
+                className="w-full h-11 mt-4 bg-[#00327d] hover:bg-[#0047ab] text-white font-semibold text-sm rounded-lg transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-sm">login</span> Đăng nhập
+              </button>
+
+              <div className="relative flex items-center py-2">
+                <div className="flex-grow border-t border-[#c3c6d5]/50"></div>
+                <span className="flex-shrink-0 mx-4 text-[11px] font-semibold text-[#434653] uppercase">Hoặc đăng nhập với</span>
+                <div className="flex-grow border-t border-[#c3c6d5]/50"></div>
+              </div>
+
+              <div className="flex gap-3">
+                <button type="button" className="flex-1 h-10 bg-white border border-[#c3c6d5] rounded-lg text-xs font-semibold text-[#191c1e] hover:bg-[#f2f4f6] transition-colors flex items-center justify-center gap-2">
+                  <span className="font-bold text-[#00327d]">G</span> Google
+                </button>
+                <button type="button" className="flex-1 h-10 bg-white border border-[#c3c6d5] rounded-lg text-xs font-semibold text-[#191c1e] hover:bg-[#f2f4f6] transition-colors flex items-center justify-center gap-2">
+                  <span className="font-bold text-[#1877F2]">f</span> Facebook
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* REGISTER FORM */}
+          {mode === 'register' && (
+            <form onSubmit={() => setMode('otp')} className="space-y-4 animate-fadeIn">
+              <div>
+                <h2 className="font-serif text-2xl font-bold text-[#191c1e] mb-1">Tạo tài khoản mới</h2>
+                <p className="text-xs text-[#434653]">Đăng ký để trải nghiệm công cụ phân tích pháp lý AI.</p>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-[#191c1e]" htmlFor="reg-name">Họ và tên</label>
+                <div className="relative flex items-center">
+                  <span className="material-symbols-outlined absolute left-3.5 text-[#434653] text-sm">person</span>
+                  <input 
+                    id="reg-name" 
+                    type="text" 
+                    required 
+                    placeholder="Nguyễn Văn A" 
+                    className="w-full h-11 pl-10 pr-4 bg-[#f7f9fb] border border-[#c3c6d5] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#00327d] text-[#191c1e]"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-[#191c1e]" htmlFor="reg-email">Email doanh nghiệp</label>
+                <div className="relative flex items-center">
+                  <span className="material-symbols-outlined absolute left-3.5 text-[#434653] text-sm">mail</span>
+                  <input 
+                    id="reg-email" 
+                    type="email" 
+                    required 
+                    placeholder="name@company.com" 
+                    className="w-full h-11 pl-10 pr-4 bg-[#f7f9fb] border border-[#c3c6d5] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#00327d] text-[#191c1e]"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-[#191c1e]" htmlFor="reg-pass">Mật khẩu</label>
+                <div className="relative flex items-center">
+                  <span className="material-symbols-outlined absolute left-3.5 text-[#434653] text-sm">lock</span>
+                  <input 
+                    id="reg-pass" 
+                    type="password" 
+                    required 
+                    placeholder="Tối thiểu 8 ký tự" 
+                    className="w-full h-11 pl-10 pr-4 bg-[#f7f9fb] border border-[#c3c6d5] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#00327d] text-[#191c1e]"
+                  />
+                </div>
+              </div>
+
+              <button 
+                type="submit" 
+                className="w-full h-11 mt-4 bg-[#00327d] hover:bg-[#0047ab] text-white font-semibold text-sm rounded-lg transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+              >
+                Tiếp tục xác thực OTP <span className="material-symbols-outlined text-sm">arrow_forward</span>
+              </button>
+            </form>
+          )}
+
+          {/* FORGOT PASSWORD FORM */}
+          {mode === 'forgot' && (
+            <form onSubmit={(e) => { e.preventDefault(); setMode('otp'); }} className="space-y-4 animate-fadeIn">
+              <div>
+                <h2 className="font-serif text-2xl font-bold text-[#191c1e] mb-1">Khôi phục mật khẩu</h2>
+                <p className="text-xs text-[#434653]">Nhập email đã đăng ký để nhận mã xác thực OTP.</p>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-[#191c1e]" htmlFor="forgot-email">Email khôi phục</label>
+                <div className="relative flex items-center">
+                  <span className="material-symbols-outlined absolute left-3.5 text-[#434653] text-sm">mail</span>
+                  <input 
+                    id="forgot-email" 
+                    type="email" 
+                    required 
+                    placeholder="name@company.com" 
+                    className="w-full h-11 pl-10 pr-4 bg-[#f7f9fb] border border-[#c3c6d5] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#00327d] text-[#191c1e]"
+                  />
+                </div>
+              </div>
+
+              <button 
+                type="submit" 
+                className="w-full h-11 mt-4 bg-[#00327d] hover:bg-[#0047ab] text-white font-semibold text-sm rounded-lg transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+              >
+                Gửi mã OTP <span className="material-symbols-outlined text-sm">send</span>
+              </button>
+
+              <button 
+                type="button" 
+                onClick={() => setMode('login')}
+                className="w-full text-xs font-semibold text-[#434653] hover:text-[#00327d] text-center pt-2 block"
+              >
+                ← Quay lại đăng nhập
+              </button>
+            </form>
+          )}
+
+          {/* OTP VERIFICATION FORM */}
+          {mode === 'otp' && (
+            <form onSubmit={handleLogin} className="space-y-6 animate-fadeIn text-center">
+              <div>
+                <div className="w-12 h-12 bg-[#0047ab]/20 text-[#00327d] rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="material-symbols-outlined text-xl">mark_email_read</span>
+                </div>
+                <h2 className="font-serif text-2xl font-bold text-[#191c1e] mb-1">Xác thực mã OTP</h2>
+                <p className="text-xs text-[#434653]">Chúng tôi đã gửi mã xác thực 6 chữ số tới email của bạn.</p>
+              </div>
+
+              <div className="flex justify-center gap-2">
+                {otpValues.map((val, idx) => (
+                  <input
+                    key={idx}
+                    id={`otp-${idx}`}
+                    type="text"
+                    maxLength={1}
+                    value={val}
+                    onChange={(e) => handleOtpChange(idx, e.target.value)}
+                    className="w-11 h-12 text-center text-lg font-bold bg-[#f7f9fb] border border-[#c3c6d5] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00327d] text-[#191c1e]"
+                  />
+                ))}
+              </div>
+
+              <button 
+                type="submit" 
+                className="w-full h-11 bg-[#00327d] hover:bg-[#0047ab] text-white font-semibold text-sm rounded-lg transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+              >
+                Xác nhận &amp; Đăng nhập <span className="material-symbols-outlined text-sm">check_circle</span>
+              </button>
+
+              <p className="text-xs text-[#434653]">
+                Không nhận được mã? <button type="button" className="text-[#00327d] font-semibold hover:underline">Gửi lại mã</button>
+              </p>
+            </form>
+          )}
+
         </div>
       </div>
     </div>

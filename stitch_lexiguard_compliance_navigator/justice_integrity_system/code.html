@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Themis - Justice & Integrity System</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "surface": "#f7f9fb",
+          "surface-dim": "#d8dadc",
+          "surface-bright": "#f7f9fb",
+          "surface-container-lowest": "#ffffff",
+          "surface-container-low": "#f2f4f6",
+          "surface-container": "#eceef0",
+          "surface-container-high": "#e6e8ea",
+          "surface-container-highest": "#e0e3e5",
+          "on-surface": "#191c1e",
+          "on-surface-variant": "#434653",
+          "inverse-surface": "#2d3133",
+          "inverse-on-surface": "#eff1f3",
+          "outline": "#737784",
+          "outline-variant": "#c3c6d5",
+          "surface-tint": "#2559bd",
+          "primary": "#00327d",
+          "on-primary": "#ffffff",
+          "primary-container": "#0047ab",
+          "on-primary-container": "#a5bdff",
+          "inverse-primary": "#b1c5ff",
+          "secondary": "#515f78",
+          "on-secondary": "#ffffff",
+          "secondary-container": "#d2e0fe",
+          "on-secondary-container": "#55637d",
+          "tertiary": "#01401e",
+          "on-tertiary": "#ffffff",
+          "tertiary-container": "#205833",
+          "on-tertiary-container": "#92cd9d",
+          "error": "#ba1a1a",
+          "on-error": "#ffffff",
+          "error-container": "#ffdad6",
+          "on-error-container": "#93000a",
+          "primary-fixed": "#dae2ff",
+          "primary-fixed-dim": "#b1c5ff",
+          "on-primary-fixed": "#001946",
+          "on-primary-fixed-variant": "#00419e",
+          "secondary-fixed": "#d6e3ff",
+          "secondary-fixed-dim": "#b9c7e4",
+          "on-secondary-fixed": "#0d1c32",
+          "on-secondary-fixed-variant": "#39475f",
+          "tertiary-fixed": "#b5f1bf",
+          "tertiary-fixed-dim": "#99d4a4",
+          "on-tertiary-fixed": "#00210c",
+          "on-tertiary-fixed-variant": "#18512c",
+          "background": "#f7f9fb",
+          "on-background": "#191c1e",
+          "surface-variant": "#e0e3e5"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.125rem",
+          "sm": "0.125rem",
+          "md": "0.375rem",
+          "lg": "0.25rem",
+          "xl": "0.5rem",
+          "full": "9999px"
+        },
+        "spacing": {
+          "sidebar_width": "280px",
+          "container_max_width": "1440px",
+          "gutter": "24px",
+          "margin_mobile": "16px",
+          "margin_desktop": "40px",
+          "stack_sm": "8px",
+          "stack_md": "16px",
+          "stack_lg": "32px"
+        },
+        "fontFamily": {
+          "headline-lg": ["Playfair Display", "serif"],
+          "headline-md": ["Playfair Display", "serif"],
+          "display-lg": ["Playfair Display", "serif"],
+          "body-lg": ["Inter", "sans-serif"],
+          "body-md": ["Inter", "sans-serif"],
+          "label-bold": ["Inter", "sans-serif"],
+          "code-sm": ["Inter", "sans-serif"]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  .material-symbols-outlined.fill {
+    font-variation-settings: 'FILL' 1;
+  }
+</style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased min-h-screen flex">
+
+<!-- Persistent Sidebar (SideNavBar) -->
+<aside class="w-[280px] h-screen fixed left-0 top-0 bg-[#001946] border-r border-outline-variant flex flex-col py-6 z-50">
+  <div class="px-6 mb-8 flex flex-col items-center gap-4">
+    <img alt="Themis Logo" class="h-16 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAD-mGiKyK5ll32VlpaIkBOEfozZ8Lqbj8tIZH7nPo32NqP7x_U9ndnSZ7faKNM4D4lJUuOH8Ec9-5uMS9AG6DIIel8cvI_CQwxIkkGUN90j4i8UbOquBvr6O_VzMTkTkn472qLI4HKCLsMrMV29Ate1OUfvtB1pU_dzE0_s1r6dQe087YfPatSnLB3mZZIfnvygXL20Th2OPCapAZ-aXLiFj40HcY_bTWvxXPoDBPHmCrnwibHApAlWTOZevzQ3T_eD6c7YWd1Rg1u">
+  </div>
+  <div class="px-4 mb-6">
+    <button class="w-full bg-on-primary text-primary font-label-bold text-sm py-3 px-4 rounded shadow-sm hover:bg-surface-container transition-colors flex justify-center items-center gap-2">
+      <span class="material-symbols-outlined text-sm">add</span> New Analysis
+    </button>
+  </div>
+  <nav class="flex-1 px-2 space-y-1">
+    <a href="#" class="flex items-center gap-3 px-4 py-3 text-on-primary/70 hover:text-on-primary hover:bg-on-primary-fixed-variant/10 transition-colors rounded">
+      <span class="material-symbols-outlined">dashboard</span>
+      <span class="font-label-bold text-sm">Dashboard</span>
+    </a>
+    <a href="#" class="flex items-center gap-3 px-4 py-3 text-on-primary/70 hover:text-on-primary hover:bg-on-primary-fixed-variant/10 transition-colors rounded">
+      <span class="material-symbols-outlined">qr_code_2</span>
+      <span class="font-label-bold text-sm">Tư vấn</span>
+    </a>
+    <a href="#" class="flex items-center gap-3 px-4 py-3 text-on-primary/70 hover:text-on-primary hover:bg-on-primary-fixed-variant/10 transition-colors rounded">
+      <span class="material-symbols-outlined">book_5</span>
+      <span class="font-label-bold text-sm">Thư viện</span>
+    </a>
+    <a href="#" class="flex items-center gap-3 px-4 py-3 bg-primary-container text-on-primary-container border-l-4 border-inverse-primary rounded-r">
+      <span class="material-symbols-outlined">gavel</span>
+      <span class="font-label-bold text-sm">Giám sát liêm chính</span>
+    </a>
+    <a href="#" class="flex items-center gap-3 px-4 py-3 text-on-primary/70 hover:text-on-primary hover:bg-on-primary-fixed-variant/10 transition-colors rounded">
+      <span class="material-symbols-outlined">settings</span>
+      <span class="font-label-bold text-sm">Settings</span>
+    </a>
+  </nav>
+  <div class="px-2 mt-auto">
+    <a href="#" class="flex items-center gap-3 px-4 py-3 text-on-primary/70 hover:text-on-primary hover:bg-on-primary-fixed-variant/10 transition-colors rounded">
+      <span class="material-symbols-outlined">help</span>
+      <span class="font-label-bold text-sm">Help Center</span>
+    </a>
+  </div>
+</aside>
+
+<!-- Main Content Area -->
+<main class="ml-sidebar_width flex-1 flex flex-col min-h-screen">
+
+  <!-- Top Navigation Bar (TopNavBar) -->
+  <header class="h-16 fixed top-0 right-0 w-[calc(100%-280px)] bg-surface/80 backdrop-blur-md border-b border-outline-variant flex justify-between items-center px-gutter z-40">
+    <div class="flex-1 max-w-2xl flex items-center">
+      <div class="relative w-full focus-within:ring-2 focus-within:ring-primary rounded-lg transition-all">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+        <input type="text" placeholder="Tìm kiếm pháp lý, quy định liêm chính..." class="w-full pl-10 pr-10 py-2 bg-surface-container-lowest border border-outline rounded-lg text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-on-surface placeholder:text-on-surface-variant">
+        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-primary">auto_awesome</span>
+      </div>
+    </div>
+    <div class="flex items-center gap-4 ml-4">
+      <button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all relative">
+        <span class="material-symbols-outlined">notifications</span>
+        <span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
+      </button>
+      <button class="flex items-center gap-2 p-1 hover:bg-surface-container-high rounded-full transition-all">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcRsI47L64XKqkZPYgVHCgsoPQCxLnyp7LGytq6byi01HEQthYrmb6j37qfgs1EIzbKLswYPw9s7A3EpEiAZTNkwKi-_J0XgEIIDyZLX78THSixQ5Atmfzdo7hhcALoL35gWvQusyVUfk9IYwGn-zFFO5EM1d10CVvxlKa59EnCpkmAMSpqu99iSpOz1bxh1UEyrvUvzP5LeIeel272ztO5b87mbcCXtUIdM3qfg5g_MJJCAU4oRhLS3iNrc9EnAPn4DnbYdMi_fAK" alt="User Avatar" class="w-8 h-8 rounded-full object-cover border border-outline-variant">
+      </button>
+    </div>
+  </header>
+
+  <!-- Content Canvas -->
+  <div class="pt-[104px] px-gutter pb-margin_desktop max-w-container_max_width w-full mx-auto">
+    <div class="mb-stack_lg flex justify-between items-end">
+      <div>
+        <h2 class="font-headline-lg text-3xl font-bold text-on-surface mb-2">Hệ thống Giám sát Liêm chính</h2>
+        <p class="text-on-surface-variant font-body-md">Theo dõi trạng thái liêm chính doanh nghiệp và đánh giá rủi ro pháp lý theo thời gian thực.</p>
+      </div>
+      <div class="flex gap-3">
+        <button class="px-4 py-2 bg-surface-container-lowest border border-outline text-on-surface font-label-bold text-sm rounded hover:bg-surface-container transition-colors flex items-center gap-2">
+          <span class="material-symbols-outlined text-sm">download</span> Xuất báo cáo
+        </button>
+        <button class="px-4 py-2 bg-primary text-on-primary font-label-bold text-sm rounded hover:bg-primary-container transition-colors flex items-center gap-2">
+          <span class="material-symbols-outlined text-sm">verified_user</span> Đánh giá liêm chính
+        </button>
+      </div>
+    </div>
+
+    <!-- Top KPI Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <!-- Card 1 -->
+      <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm relative overflow-hidden">
+        <div class="absolute right-0 top-0 w-24 h-24 bg-primary/5 rounded-bl-full -mr-4 -mt-4"></div>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="p-2 bg-primary-container/20 rounded-lg text-primary">
+            <span class="material-symbols-outlined fill">gavel</span>
+          </div>
+          <h3 class="font-label-bold text-sm font-semibold text-on-surface-variant">Tổng kiểm tra liêm chính</h3>
+        </div>
+        <div class="flex items-end gap-3">
+          <span class="font-display-lg text-4xl font-bold text-on-surface">156</span>
+          <span class="text-tertiary-container font-label-bold text-xs font-semibold flex items-center gap-1 mb-2">
+            <span class="material-symbols-outlined text-xs">trending_up</span> +14% tháng này
+          </span>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm relative overflow-hidden">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="p-2 bg-tertiary-fixed text-tertiary rounded-lg">
+            <span class="material-symbols-outlined fill">verified</span>
+          </div>
+          <h3 class="font-label-bold text-sm font-semibold text-on-surface-variant">Đạt chuẩn tuân thủ</h3>
+        </div>
+        <div class="flex items-end gap-3">
+          <span class="font-display-lg text-4xl font-bold text-on-surface">144</span>
+          <span class="text-on-surface-variant font-body-md text-xs mb-2">/ 92.3% Tỷ lệ thành công</span>
+        </div>
+      </div>
+
+      <!-- Card 3: Risk Alert Card with Thick Left Border -->
+      <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant border-l-4 border-l-error shadow-sm relative overflow-hidden">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="p-2 bg-error-container text-error rounded-lg">
+            <span class="material-symbols-outlined fill">warning</span>
+          </div>
+          <h3 class="font-label-bold text-sm font-semibold text-error">Cảnh báo rủi ro</h3>
+        </div>
+        <div class="flex items-end justify-between">
+          <span class="font-display-lg text-4xl font-bold text-error">08</span>
+          <a href="#" class="text-error font-label-bold text-xs hover:underline flex items-center gap-1 mb-2">
+            Xem hồ sơ <span class="material-symbols-outlined text-xs">arrow_forward</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm relative overflow-hidden">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="p-2 bg-secondary-container text-secondary rounded-lg">
+            <span class="material-symbols-outlined fill">pending_actions</span>
+          </div>
+          <h3 class="font-label-bold text-sm font-semibold text-on-surface-variant">Nghiêm trọng / Cần duyệt</h3>
+        </div>
+        <div class="flex items-end gap-3">
+          <span class="font-display-lg text-4xl font-bold text-on-surface">04</span>
+          <span class="text-on-surface-variant font-body-md text-xs mb-2">Yêu cầu thẩm định</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Section Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- Left 2 Columns -->
+      <div class="lg:col-span-2 space-y-8">
+        
+        <!-- Risk Analytics & Integrity Chart -->
+        <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm">
+          <div class="flex justify-between items-center mb-6">
+            <div>
+              <h3 class="font-headline-md text-xl font-semibold text-on-surface">Phân tích Rủi ro Liêm chính Chuỗi cung ứng</h3>
+              <p class="text-on-surface-variant text-xs mt-1">Đánh giá theo vùng thị trường và mức độ tuân thủ tiêu chuẩn ESG / EUDR</p>
+            </div>
+            <div class="flex bg-surface-container rounded-lg p-1 text-xs font-label-bold">
+              <button class="px-3 py-1 bg-surface-container-lowest text-on-surface rounded shadow-sm">EUDR</button>
+              <button class="px-3 py-1 text-on-surface-variant hover:text-on-surface">US MRL</button>
+              <button class="px-3 py-1 text-on-surface-variant hover:text-on-surface">Nội địa</button>
+            </div>
+          </div>
+
+          <!-- Interactive Visualization Container -->
+          <div class="h-64 bg-surface-container-low rounded-lg border border-outline-variant/60 flex flex-col justify-center items-center relative overflow-hidden p-6">
+            <!-- Simulated Visual Graph Lines -->
+            <div class="w-full flex justify-between items-end h-40 gap-4 px-4 border-b border-outline-variant/40 pb-2">
+              <div class="flex-1 bg-primary/20 rounded-t h-[65%] relative group hover:bg-primary/40 transition-all">
+                <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-semibold text-primary">65%</div>
+              </div>
+              <div class="flex-1 bg-primary/40 rounded-t h-[82%] relative group hover:bg-primary/60 transition-all">
+                <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-semibold text-primary">82%</div>
+              </div>
+              <div class="flex-1 bg-tertiary/40 rounded-t h-[94%] relative group hover:bg-tertiary/60 transition-all">
+                <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-semibold text-tertiary">94%</div>
+              </div>
+              <div class="flex-1 bg-error/30 rounded-t h-[45%] relative group hover:bg-error/50 transition-all">
+                <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-semibold text-error">45%</div>
+              </div>
+              <div class="flex-1 bg-primary/70 rounded-t h-[88%] relative group hover:bg-primary/90 transition-all">
+                <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-semibold text-primary">88%</div>
+              </div>
+              <div class="flex-1 bg-tertiary/60 rounded-t h-[96%] relative group hover:bg-tertiary/80 transition-all">
+                <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-semibold text-tertiary">96%</div>
+              </div>
+            </div>
+            <div class="w-full flex justify-between text-[11px] text-on-surface-variant mt-2 px-2">
+              <span>T5/2024</span>
+              <span>T6/2024</span>
+              <span>T7/2024</span>
+              <span>T8/2024</span>
+              <span>T9/2024</span>
+              <span>T10/2024</span>
+            </div>
+            <div class="absolute top-3 right-4 flex items-center gap-4 text-xs font-label-bold">
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-primary inline-block"></span> Liêm chính nguồn gốc</span>
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-tertiary inline-block"></span> Tuân thủ ESG</span>
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-error inline-block"></span> Cảnh báo rủi ro</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Integrity Audit Table -->
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+          <div class="p-6 border-b border-outline-variant/60 flex justify-between items-center">
+            <div>
+              <h3 class="font-headline-md text-xl font-semibold text-on-surface">Nhật ký Thẩm định & Giám sát Liêm chính gần đây</h3>
+              <p class="text-on-surface-variant text-xs mt-1">Hồ sơ thẩm định nguồn gốc và tuân thủ pháp lý mới nhất</p>
+            </div>
+            <a href="#" class="text-primary font-label-bold text-xs hover:underline flex items-center gap-1">
+              Xem tất cả <span class="material-symbols-outlined text-xs">arrow_forward</span>
+            </a>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-surface-container-low text-on-surface-variant font-label-bold text-xs border-b border-outline-variant/60">
+                <tr>
+                  <th class="py-3 px-6">Dự án / Doanh nghiệp</th>
+                  <th class="py-3 px-4">Loại thẩm định</th>
+                  <th class="py-3 px-4">Ngày kiểm tra</th>
+                  <th class="py-3 px-4">Trạng thái liêm chính</th>
+                  <th class="py-3 px-6 text-right">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-outline-variant/40 font-body-md text-on-surface">
+                <tr class="hover:bg-surface-container-low/50 transition-colors">
+                  <td class="py-4 px-6 font-semibold flex items-center gap-3">
+                    <span class="material-symbols-outlined text-primary text-base">domain</span>
+                    CP Robusta Export - Q3 (Đắk Lắk)
+                  </td>
+                  <td class="py-4 px-4 text-on-surface-variant text-xs">Thẩm định Nguồn gốc EUDR</td>
+                  <td class="py-4 px-4 text-on-surface-variant text-xs">28/10/2024</td>
+                  <td class="py-4 px-4">
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-tertiary-fixed text-on-tertiary-fixed-variant text-xs font-semibold rounded-full">
+                      <span class="material-symbols-outlined text-xs">check_circle</span> ĐẠT CHUẨN
+                    </span>
+                  </td>
+                  <td class="py-4 px-6 text-right">
+                    <button class="text-primary hover:bg-primary/10 p-1.5 rounded-lg transition-colors">
+                      <span class="material-symbols-outlined text-sm">visibility</span>
+                    </button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-surface-container-low/50 transition-colors bg-error-container/10">
+                  <td class="py-4 px-6 font-semibold flex items-center gap-3">
+                    <span class="material-symbols-outlined text-error text-base">warning</span>
+                    Arabica Premium Supply Chain (Lâm Đồng)
+                  </td>
+                  <td class="py-4 px-4 text-on-surface-variant text-xs">Rủi ro Lao động & Minh bạch</td>
+                  <td class="py-4 px-4 text-on-surface-variant text-xs">26/10/2024</td>
+                  <td class="py-4 px-4">
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-error-container text-on-error-container text-xs font-semibold rounded-full border border-error/20">
+                      <span class="material-symbols-outlined text-xs">error</span> CẢNH BÁO
+                    </span>
+                  </td>
+                  <td class="py-4 px-6 text-right">
+                    <button class="text-error hover:bg-error/10 p-1.5 rounded-lg transition-colors">
+                      <span class="material-symbols-outlined text-sm">assignment_late</span>
+                    </button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-surface-container-low/50 transition-colors">
+                  <td class="py-4 px-6 font-semibold flex items-center gap-3">
+                    <span class="material-symbols-outlined text-primary text-base">inventory_2</span>
+                    Hồ sơ Vật tư Nông nghiệp Xanh
+                  </td>
+                  <td class="py-4 px-4 text-on-surface-variant text-xs">Kiểm tra Chứng nhận MRL</td>
+                  <td class="py-4 px-4 text-on-surface-variant text-xs">25/10/2024</td>
+                  <td class="py-4 px-4">
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-tertiary-fixed text-on-tertiary-fixed-variant text-xs font-semibold rounded-full">
+                      <span class="material-symbols-outlined text-xs">check_circle</span> ĐẠT CHUẨN
+                    </span>
+                  </td>
+                  <td class="py-4 px-6 text-right">
+                    <button class="text-primary hover:bg-primary/10 p-1.5 rounded-lg transition-colors">
+                      <span class="material-symbols-outlined text-sm">visibility</span>
+                    </button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-surface-container-low/50 transition-colors">
+                  <td class="py-4 px-6 font-semibold flex items-center gap-3">
+                    <span class="material-symbols-outlined text-secondary text-base">eco</span>
+                    Dự án Nông nghiệp ESG Chư Sê
+                  </td>
+                  <td class="py-4 px-4 text-on-surface-variant text-xs">Đánh giá Liêm chính Môi trường</td>
+                  <td class="py-4 px-4 text-on-surface-variant text-xs">24/10/2024</td>
+                  <td class="py-4 px-4">
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-secondary-container text-on-secondary-container text-xs font-semibold rounded-full">
+                      <span class="material-symbols-outlined text-xs">hourglass_top</span> ĐANG THẨM ĐỊNH
+                    </span>
+                  </td>
+                  <td class="py-4 px-6 text-right">
+                    <button class="text-primary hover:bg-primary/10 p-1.5 rounded-lg transition-colors">
+                      <span class="material-symbols-outlined text-sm">edit_note</span>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column (1/3 Width) -->
+      <div class="space-y-8">
+        
+        <!-- Risk Alert Section -->
+        <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm">
+          <div class="flex items-center gap-2 mb-6 text-error">
+            <span class="material-symbols-outlined fill">report</span>
+            <h3 class="font-headline-md text-lg font-semibold text-on-surface">Cảnh báo Rủi ro Pháp lý (3)</h3>
+          </div>
+          
+          <div class="space-y-4">
+            <!-- Alert 1 -->
+            <div class="p-4 rounded-lg bg-surface-container-low border-l-4 border-error space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="font-semibold text-sm text-on-surface">Sửa đổi Luật Đất đai & EUDR 2024</span>
+                <span class="px-2 py-0.5 bg-error text-on-error font-label-bold text-[10px] rounded">CAO</span>
+              </div>
+              <p class="text-xs text-on-surface-variant">Thay đổi định nghĩa quyền sử dụng đất nông nghiệp liên quan đến vùng trồng cà phê xuất khẩu.</p>
+            </div>
+
+            <!-- Alert 2 -->
+            <div class="p-4 rounded-lg bg-surface-container-low border-l-4 border-amber-600 space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="font-semibold text-sm text-on-surface">Cập nhật Danh mục Hóa chất Cấm</span>
+                <span class="px-2 py-0.5 bg-amber-600 text-white font-label-bold text-[10px] rounded">TRUNG BÌNH</span>
+              </div>
+              <p class="text-xs text-on-surface-variant">Bổ sung 15 loại thuốc bảo vệ thực vật mới vào Phụ lục II kiểm soát dư lượng EU MRL.</p>
+            </div>
+
+            <!-- Alert 3 -->
+            <div class="p-4 rounded-lg bg-surface-container-low border-l-4 border-primary space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="font-semibold text-sm text-on-surface">Quy định Kê khai Minh bạch ESG</span>
+                <span class="px-2 py-0.5 bg-primary text-on-primary font-label-bold text-[10px] rounded">KHUYẾN NGHỊ</span>
+              </div>
+              <p class="text-xs text-on-surface-variant">Hướng dẫn mới về lập báo cáo minh bạch chuỗi cung ứng nông sản xuất khẩu.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Downloadable Audit & Integrity Reports Widget -->
+        <div class="bg-secondary-container/30 p-6 rounded-xl border border-secondary-container shadow-sm">
+          <div class="flex items-center gap-3 mb-4 text-primary">
+            <span class="material-symbols-outlined fill">verified_user</span>
+            <h3 class="font-headline-md text-base font-semibold text-on-surface">Báo cáo Liêm chính & Tài liệu mới</h3>
+          </div>
+          
+          <div class="space-y-3 mb-4">
+            <div class="p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/60 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="px-2 py-1 bg-error-container text-error text-[10px] font-bold rounded">PDF</span>
+                <span class="text-xs font-semibold text-on-surface">Báo cáo Liêm chính EUDR Q3_2024.pdf</span>
+              </div>
+              <button class="text-primary hover:text-primary-container p-1">
+                <span class="material-symbols-outlined text-sm">download</span>
+              </button>
+            </div>
+
+            <div class="p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/60 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="px-2 py-1 bg-error-container text-error text-[10px] font-bold rounded">PDF</span>
+                <span class="text-xs font-semibold text-on-surface">Bộ tiêu chuẩn Giám sát Tuân thủ US.pdf</span>
+              </div>
+              <button class="text-primary hover:text-primary-container p-1">
+                <span class="material-symbols-outlined text-sm">download</span>
+              </button>
+            </div>
+          </div>
+
+          <a href="#" class="text-primary font-label-bold text-xs hover:underline flex justify-center items-center gap-1 pt-1">
+            Xem tất cả tài liệu liêm chính <span class="material-symbols-outlined text-xs">arrow_forward</span>
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+</body>
+</html>
