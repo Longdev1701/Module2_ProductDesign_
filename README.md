@@ -21,20 +21,10 @@ Việt Nam tự hào là một trong những quốc gia xuất khẩu nông sả
 - 🧪 **Giới hạn dư lượng tối đa (EU MRL):** Kiểm soát gắt gao hàng trăm hoạt chất bảo vệ thực vật (pesticides), độc tố vi nấm (Ochratoxin A), kim loại nặng với ngưỡng Cho phép (Threshold Limits) siêu nhỏ.
 - 📄 **Hồ sơ & Chứng từ truy xuất:** Chứng nhận kiểm dịch thực vật (Phyto), Chứng nhận xuất xứ (CO/CQ), tiêu chuẩn vật liệu tiếp xúc thực phẩm và quy định ghi nhãn sản phẩm của EU.
 
-<<<<<<< HEAD
 Một sai sót nhỏ trong hồ sơ chứng từ hoặc một chỉ tiêu MRL vượt ngưỡng Cho phép có thể dẫn đến hậu quả thảm khốc: **Toàn bộ lô hàng cà phê bị trả về, tịch thu hoặc tiêu hủy tại cảng EU, chịu phạt hợp đồng nặng nề và làm tổn hại nghiêm trọng đến uy tín thương hiệu nông sản Việt Nam.**
-=======
-- **Frontend**: Next.js 15 (App Router) + TypeScript
-- **Backend**: Node.js + Express.js
-- **Database & ORM**: PostgreSQL (Supabase) + Prisma
-- **Authentication**: Supabase Auth
-- **UI**: Tailwind CSS 4, Lucide Icons, Framer Motion
-- **AI Core**: Google Gemini 1.5
->>>>>>> d987a5a80197156b245e71ec108f583fddfe5f28
 
 ---
 
-<<<<<<< HEAD
 ## ❓ Vấn Đề Cần Giải Quyết (The Problem Statement)
 
 Qua khảo sát thực tế, quy trình kiểm tra và quản lý tuân thủ thủ công tại các doanh nghiệp xuất khẩu nông sản hiện nay đang gặp phải **7 điểm nghẽn nghiêm trọng**:
@@ -109,25 +99,10 @@ graph TD
     Ctrl --> Prisma --> DB
     Ctrl --> Audit
     Background Workers --> DB
-=======
-```text
-Themis-LexiGuard/
-├── fe/                # Frontend (Next.js 15 App Router)
-│   ├── app/           # Pages & Layouts (App Router)
-│   ├── components/    # UI Components & Widgets
-│   ├── features/      # Feature modules
-│   └── lib/           # Utilities & API Client
-├── be/                # Backend (Express.js)
-│   ├── src/           # Controllers, Services, Middlewares
-│   ├── prisma/        # Database Schema & Migrations
-│   └── jobs/          # Background tasks (Sync, AI processing)
-└── docs/              # Tài liệu hệ thống & HDSD Agents
->>>>>>> d987a5a80197156b245e71ec108f583fddfe5f28
 ```
 
 ---
 
-<<<<<<< HEAD
 ### 2. Sơ Đồ Luồng Nghiệp Vụ Cốt Lõi (Core Business Workflow)
 
 ```mermaid
@@ -280,31 +255,34 @@ npm run dev
 cd fe
 
 # Cài đặt các thư viện phụ thuộc
-=======
-### 1) Chạy Backend (API Server)
-```bash
-cd be
->>>>>>> d987a5a80197156b245e71ec108f583fddfe5f28
 npm install
-npm run db:generate    # Khởi tạo Prisma Client
-npm run dev            # Chạy ở http://localhost:3001
 ```
 
-<<<<<<< HEAD
 ```bash
 # Khởi chạy Frontend Development Server
 npm run dev
-=======
-### 2) Chạy Frontend (Web UI)
-```bash
-cd fe
-npm install
-npm run dev            # Chạy ở http://localhost:3000
->>>>>>> d987a5a80197156b245e71ec108f583fddfe5f28
 ```
 👉 Giao diện Dashboard sẽ hoạt động tại: `http://localhost:3000`
 
-<<<<<<< HEAD
+---
+
+## 📜 Các Scripts Khởi Chạy (NPM Scripts)
+
+### Frontend (`fe/`)
+- `npm run dev`: Chạy Next.js Development Server (port 3000)
+- `npm run build`: Build bản Production ứng dụng Next.js
+- `npm run start`: Chạy server production từ bản build
+- `npm run lint`: Kiểm tra syntax & quy tắc ESLint
+
+### Backend (`be/`)
+- `npm run dev`: Chạy Express Server bằng `tsx watch` (port 5000)
+- `npm run build`: Compile TypeScript thành JavaScript trong `dist/`
+- `npm run start`: Chạy Production server từ `dist/index.js`
+- `npm run db:generate`: Sinh Prisma Client mới nhất từ `schema.prisma`
+- `npm run db:migrate`: Chạy migrations tới database Supabase
+- `npm run db:studio`: Mở giao diện Prisma Studio tra cứu dữ liệu
+- `npm run db:seed`: Khởi tạo dữ liệu mẫu cho database
+
 ---
 
 ## 📊 Hệ Thống Trạng Thái Chuẩn Hóa (Status Enums)
@@ -334,25 +312,6 @@ Mọi đối tượng trong hệ thống đều tuân theo các trạng thái đ
 
 ## 👥 Phân Công Vai Trò & Thành Viên Thực Hiện (Team 7 Người)
 
-=======
-```bash
-npm run build
-```
-## Scripts (Ví dụ)
-
-**Frontend (`fe/`)**:
-- `npm run dev`: Chạy Next.js dev server.
-- `npm run build`: Build production.
-- `npm run start`: Chạy server production.
-
-**Backend (`be/`)**:
-- `npm run dev`: Chạy Express server.
-- `npm run db:generate`: Khởi tạo Prisma Client.
-- `npm run db:migrate`: Chạy migration database.
-
-## Phân công vai trò (Team 7 người)
-
->>>>>>> d987a5a80197156b245e71ec108f583fddfe5f28
 | STT | Họ và Tên | Vai trò dự kiến | Nhiệm vụ chính |
 |:---:|---|---|---|
 | 1 | **Phạm Thành Long** | Tech Lead & AI Engineer | Setup kiến trúc (FE/BE), kết nối Supabase, Prisma, tích hợp Gemini AI và duyệt PR. |
@@ -362,8 +321,6 @@ npm run build
 | 5 | **Nguyễn Tiến Thành** | Frontend (Forms & Ops) | Code giao diện Quản lý Sản phẩm, Lô hàng, upload file chứng từ và Báo cáo. |
 | 6 | **Hà Anh Tuấn** | Backend (API & DB) | Xây dựng RESTful API (Express), viết các logic CRUD cho Products, Batches bằng Prisma. |
 | 7 | **Tạ Lê Anh Bảo** | Backend (Services & Jobs) | Viết Middleware (Auth, RBAC), logic bóc tách dữ liệu (OCR) và cron jobs (đồng bộ luật). |
-<<<<<<< HEAD
-
 
 ---
 
@@ -371,5 +328,3 @@ npm run build
 
 Dự án tuân thủ nghiêm ngặt **Master System Rules** tại [AGENTS.md](file:///d:/AI/module_2/Module2_ProductDesign_/AGENTS.md) và **System Implementation Plan** tại [docs/plan.md](file:///d:/AI/module_2/Module2_ProductDesign_/docs/plan.md).  
 Mọi thay đổi nâng cấp hệ thống được ghi chép minh bạch tại [CHANGELOG.md](file:///d:/AI/module_2/Module2_ProductDesign_/CHANGELOG.md).
-=======
->>>>>>> d987a5a80197156b245e71ec108f583fddfe5f28

@@ -17,6 +17,8 @@ Tất cả các thay đổi quan trọng của dự án **Themis LexiGuard** s�
 
 ### Changed
 - Cấu trúc lại toàn bộ tài liệu `README.md` dựa theo câu chuyện sản phẩm, bối cảnh xuất khẩu cà phê sang EU, 7 điểm nghẽn/vấn đề cần giải quyết, 5 giá trị cốt lõi, sơ đồ kiến trúc tổng quan & luồng nghiệp vụ Mermaid, bảng ma trận phân quyền RBAC, hướng dẫn biến môi trường chi tiết, quy tắc kỹ thuật và bảng phân công vai trò nhiệm vụ chi tiết của 7 thành viên nhóm.
+- Dọn dẹp triệt để các ký tự xung đột git merge (`<<<<<<< HEAD`, `=======`, `>>>>>>>`) tồn đọng trong `README.md`, chuẩn hóa định dạng Markdown đẹp và sạch nhất.
+
 
 
 
