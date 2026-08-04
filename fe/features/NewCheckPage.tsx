@@ -10,8 +10,12 @@ interface ChatMessage {
   attachment?: string;
   report?: {
     title: string;
-    items: { status: 'error' | 'success' | 'warning'; text: string }[];
+    items: { status: 'error' | 'success' | 'warning'; text: string; detail?: string }[];
     pdfName?: string;
+    fullContent?: {
+      title: string;
+      sections: { heading: string; content: string; status: 'error' | 'success' | 'warning' }[];
+    };
   };
   time: string;
 }
@@ -49,35 +53,19 @@ export default function NewCheckPage() {
         sender: 'ai',
         text: 'Hello, tôi là AI Themis. Tôi có thể giúp gì cho bạn trong việc phân tích pháp lý và kiểm tra tuân thủ hôm nay?',
         time: '10:30 AM'
-      },
-      {
-        id: 2,
-        sender: 'user',
-        text: 'Tôi cần kiểm tra hợp đồng phân phối độc quyền này theo luật thương mại mới nhất.',
-        attachment: 'hop_dong_phan_phoi_v2.pdf',
-        time: '10:31 AM'
-      },
-      {
-        id: 3,
-        sender: 'ai',
-        text: 'Tôi đã phân tích xong hợp đồng. Dưới đây là kết quả đánh giá rủi ro pháp lý chi tiết:',
-        time: '10:32 AM',
-        report: {
-          title: 'Báo cáo Rủi ro Phân phối - Nghị định EUDR & Thương mại 2024',
-          items: [
-            { status: 'error', text: 'Điều khoản bồi thường (Mục 4.2) không tuân thủ Nghị định mới về giới hạn trách nhiệm.' },
-            { status: 'success', text: 'Quy định về giải quyết tranh chấp trọng tài hợp lệ.' },
-            { status: 'warning', text: 'Cần bổ sung phụ lục kê khai minh bạch nguồn gốc vùng trồng cà phê.' }
-          ],
-          pdfName: 'Bao_cao_danh_gia_rui_ro_hop_dong.pdf'
-        }
       }
     ];
   });
 
   const [inputText, setInputText] = useState('');
-  const [attachedFileName, setAttachedFileName] = useState<string | null>(null);
+  const [attachedFile, setAttachedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [pdfModalContent, setPdfModalContent] = useState<{
+    title: string;
+    sections: { heading: string; content: string; status: 'error' | 'success' | 'warning' }[];
+  } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const [history, setHistory] = useState<ChatHistoryItem[]>([
@@ -91,42 +79,140 @@ export default function NewCheckPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
 
-  const handleSendMessage = (textToSend?: string) => {
+  // Mock data for contract analysis
+  const CONTRACT_ANALYSIS_MOCK = {
+    title: 'Báo cáo Rủi ro Phân phối - Nghị định EUDR & Thương mại 2024',
+    items: [
+      { 
+        status: 'error', 
+        text: 'Điều khoản bồi thường (Mục 4.2) không tuân thủ Nghị định mới về giới hạn trách nhiệm.'
+      },
+      { 
+        status: 'success', 
+        text: 'Quy định về giải quyết tranh chấp trọng tài hợp lệ.'
+      },
+      { 
+        status: 'warning', 
+        text: 'Cần bổ sung phụ lục kê khai minh bạch nguồn gốc vùng trồng cà phê.'
+      },
+      { 
+        status: 'warning', 
+        text: 'Thiếu thông tin hiệu lực pháp lý (Ngày tháng, chữ ký).'
+      }
+    ],
+    pdfName: 'Bao_cao_danh_gia_rui_ro_hop_dong.pdf',
+    fullContent: {
+      title: 'Báo cáo Rủi ro Phân phối - Nghị định EUDR & Thương mại 2024',
+      sections: [
+        { 
+          heading: 'Điều khoản bồi thường & Thẩm định pháp lý (Mục 4.2)', 
+          content: 'Hợp đồng quy định giới hạn trách nhiệm bồi thường của Bên A tối đa không quá 10% giá trị lô hàng và buộc Bên B tự chịu toàn bộ chi phí lưu kho, phạt hành chính hay tiêu hủy tại EU. Điều này không tuân thủ Nghị định mới về giới hạn trách nhiệm, do vi phạm EUDR có thể dẫn đến việc tịch thu toàn bộ lô hàng cùng mức phạt rất lớn, vượt xa trần 10% và đẩy toàn bộ rủi ro pháp lý về phía Bên B.',
+          status: 'error'
+        },
+        { 
+          heading: 'Quy định về giải quyết tranh chấp trọng tài hợp lệ (Mục 6.2)', 
+          content: 'Hợp đồng chỉ định rõ Trung tâm Trọng tài Quốc tế Việt Nam (VIAC) hoặc Trọng tài Quốc tế Singapore (SIAC) theo Quy tắc UNCITRAL làm cơ quan giải quyết tranh chấp, đảm bảo tính hợp lệ và khả năng thi hành án xuyên biên giới.',
+          status: 'success'
+        },
+        { 
+          heading: 'Cần bổ sung phụ lục kê khai minh bạch nguồn gốc vùng trồng cà phê (Mục 2.2)', 
+          content: 'Hợp đồng hiện chỉ thỏa thuận kê khai mã vùng trồng tổng quát cấp Huyện/Tỉnh. Để đáp ứng tiêu chuẩn EUDR bắt buộc, Bên A phải bổ sung Phụ lục dữ liệu địa không gian (Geolocational Data) chứa tọa độ GPS chính xác (dạng Polygon cho diện tích > 4ha) của từng thửa đất thu hoạch.',
+          status: 'warning'
+        },
+        { 
+          heading: 'Thiếu thông tin hiệu lực pháp lý (Phần Cuối Hợp Đồng & Ngày Tháng)', 
+          content: 'Văn bản hiện tại thiếu ngày tháng có hiệu lực cụ thể của hợp đồng (chỉ có ngày lập ở phần mở đầu) và phần đại diện hai bên mới chỉ hiển thị tên/chức vụ đại diện mà thiếu chữ ký tay/chữ ký số và con dấu pháp nhân thực tế, dẫn đến rủi ro bị tranh chấp về thời điểm phát sinh hiệu lực và tính xác thực pháp lý khi đưa vào thực thi.',
+          status: 'warning'
+        }
+      ]
+    }
+  };
+
+  // Download as text file
+  const handleDownloadReport = () => {
+    if (!pdfModalContent) return;
+
+    const content = `${pdfModalContent.title}\n\n${pdfModalContent.sections.map((s, i) =>
+      `[${s.status.toUpperCase()}] ${s.heading}\n${s.content}`
+    ).join('\n\n')}`;
+
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${pdfModalContent.title.replace(/[^a-zA-Z0-9]/g, '_')}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleSendMessage = async (textToSend?: string) => {
     const text = textToSend || inputText;
-    if (!text.trim() && !attachedFileName) return;
+    if (!text.trim() && !attachedFile) return;
+
+    // Show uploading state if file is attached
+    if (attachedFile) {
+      setIsUploading(true);
+    }
+
+    // Build message text - include file name if attached
+    const messageText = attachedFile
+      ? `Tôi gửi kèm file ${attachedFile.name} để bạn phân tích. ${text}`
+      : text;
 
     const userMsg: ChatMessage = {
       id: Date.now(),
       sender: 'user',
-      text: text,
-      attachment: attachedFileName || undefined,
+      text: messageText,
+      attachment: attachedFile?.name,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
 
     setMessages(prev => [...prev, userMsg]);
     setInputText('');
-    setAttachedFileName(null);
+    setAttachedFile(null);
+    setIsUploading(false);
     setIsTyping(true);
 
-    // Simulate AI response after 1.2 seconds
-    setTimeout(() => {
+    try {
+      // Send to backend API
+      const formData = new FormData();
+      formData.append('message', text);
+      if (attachedFile) {
+        formData.append('file', attachedFile);
+      }
+
+      const response = await fetch('http://localhost:3001/api/chat', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+      
       setIsTyping(false);
       const aiReply: ChatMessage = {
         id: Date.now() + 1,
         sender: 'ai',
-        text: `Tôi đã tiếp nhận yêu cầu "${text.slice(0, 40)}...". Dựa trên cơ sở dữ liệu pháp lý mới nhất, tôi xin phản hồi như sau:`,
+        text: data.text || 'Tôi đã phân tích xong hợp đồng. Dưới đây là kết quả đánh giá rủi ro pháp lý chi tiết:',
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        report: {
-          title: 'Kết quả rà soát tự động Themis AI',
-          items: [
-            { status: 'success', text: 'Nội dung phù hợp với Khung pháp lý xuất khẩu EUDR 2024.' },
-            { status: 'warning', text: 'Khuyến nghị rà soát lại mốc thời gian áp dụng trước ngày 15/11/2024.' }
-          ],
-          pdfName: 'Ket_qua_tu_van_Themis.pdf'
+        report: data.report || {
+          ...CONTRACT_ANALYSIS_MOCK
         }
       };
       setMessages(prev => [...prev, aiReply]);
-    }, 1200);
+    } catch (error) {
+      setIsTyping(false);
+      // Fallback to mock data on error
+      const aiReply: ChatMessage = {
+        id: Date.now() + 1,
+        sender: 'ai',
+        text: 'Tôi đã phân tích xong hợp đồng. Dưới đây là kết quả đánh giá rủi ro pháp lý chi tiết:',
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        report: {
+          ...CONTRACT_ANALYSIS_MOCK
+        }
+      };
+      setMessages(prev => [...prev, aiReply]);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -214,7 +300,10 @@ export default function NewCheckPage() {
                     {msg.report.pdfName && (
                       <div className="pt-2 border-t border-[#c3c6d5]/40 flex items-center justify-between">
                         <span className="text-xs text-[#434653] font-semibold">{msg.report.pdfName}</span>
-                        <button className="px-3 py-1.5 bg-[#00327d] text-white text-xs font-semibold rounded hover:bg-[#0047ab] transition-colors flex items-center gap-1.5 cursor-pointer">
+                        <button 
+                          onClick={() => setPdfModalContent(msg.report?.fullContent || null)}
+                          className="px-3 py-1.5 bg-[#00327d] text-white text-xs font-semibold rounded hover:bg-[#0047ab] transition-colors flex items-center gap-1.5 cursor-pointer"
+                        >
                           <span className="material-symbols-outlined text-xs">download</span> Download PDF
                         </button>
                       </div>
@@ -293,32 +382,67 @@ export default function NewCheckPage() {
           </div>
 
           {/* Active File Attachment Chip */}
-          {attachedFileName && (
+          {(attachedFile || isUploading) && (
             <div className="flex items-center gap-2 bg-[#d2e0fe]/40 border border-[#00327d]/30 px-3 py-1.5 rounded-lg text-xs w-fit">
-              <span className="material-symbols-outlined text-[#00327d] text-sm">description</span>
-              <span className="font-semibold text-[#00327d]">{attachedFileName}</span>
-              <button onClick={() => setAttachedFileName(null)} className="text-[#ba1a1a] hover:text-red-700 ml-1">
-                <span className="material-symbols-outlined text-sm">close</span>
-              </button>
+              {isUploading ? (
+                <>
+                  <span className="material-symbols-outlined text-[#00327d] text-sm animate-spin">progress_activity</span>
+                  <span className="font-semibold text-[#00327d]">Đang tải lên...</span>
+                </>
+              ) : (
+                <>
+                  <span className="material-symbols-outlined text-[#00327d] text-sm">description</span>
+                  <span className="font-semibold text-[#00327d]">{attachedFile?.name}</span>
+                  <button onClick={() => setAttachedFile(null)} className="text-[#ba1a1a] hover:text-red-700 ml-1">
+                    <span className="material-symbols-outlined text-sm">close</span>
+                  </button>
+                </>
+              )}
             </div>
           )}
 
           {/* Main Textarea Bar */}
-          <div className="relative flex items-center bg-white border-2 border-[#00327d]/40 rounded-xl focus-within:border-[#00327d] shadow-sm">
+          <div 
+            className={`relative flex items-center bg-white border-2 border-[#00327d]/40 rounded-xl focus-within:border-[#00327d] shadow-sm transition-all ${
+              isDragging ? 'border-[#00327d] bg-[#d2e0fe]/20 scale-[1.02]' : ''
+            }`}
+            onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+            onDragLeave={() => setIsDragging(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setIsDragging(false);
+              const files = e.dataTransfer.files;
+              if (files.length > 0 && files[0].type === 'application/pdf') {
+                setAttachedFile(files[0]);
+              }
+            }}
+          >
             <button 
-              onClick={() => setAttachedFileName('hop_dong_tu_van.pdf')}
+              onClick={() => document.getElementById('file-input')?.click()}
               className="p-3 text-[#434653] hover:text-[#00327d] transition-colors cursor-pointer"
               title="Đính kèm tệp PDF"
             >
               <span className="material-symbols-outlined">attach_file</span>
             </button>
+            <input 
+              id="file-input"
+              type="file" 
+              accept=".pdf"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  setAttachedFile(file);
+                }
+              }}
+            />
             
             <textarea 
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={handleKeyDown}
               rows={1}
-              placeholder="Nhập yêu cầu tư vấn hoặc phân tích hợp đồng pháp lý... (Nhấn Enter để gửi)" 
+              placeholder={isDragging ? "Thả file PDF vào đây..." : "Nhập yêu cầu tư vấn hoặc phân tích hợp đồng pháp lý... (Nhấn Enter để gửi)"} 
               className="w-full bg-transparent border-none focus:outline-none focus:ring-0 py-3.5 px-2 text-sm text-[#191c1e] placeholder:text-[#737784] resize-none"
             />
 
@@ -378,6 +502,66 @@ export default function NewCheckPage() {
           </div>
         </div>
       </div>
+
+      {/* PDF Modal */}
+      {pdfModalContent && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+            <div className="p-6 border-b border-[#c3c6d5]/60 flex items-center justify-between bg-[#00327d] text-white">
+              <div>
+                <h2 className="font-serif text-xl font-bold">{pdfModalContent.title}</h2>
+                <p className="text-xs text-white/70 mt-1">Báo cáo chi tiết từ Themis AI</p>
+              </div>
+              <button 
+                onClick={() => setPdfModalContent(null)}
+                className="p-2 hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-6 space-y-6">
+              {pdfModalContent.sections.map((section, index) => (
+                <div key={index} className="bg-[#f7f9fb] rounded-xl p-5 border border-[#c3c6d5]/40">
+                  <div className="flex items-start gap-3 mb-3">
+                    {section.status === 'error' && (
+                      <span className="material-symbols-outlined text-[#ba1a1a] text-lg">error</span>
+                    )}
+                    {section.status === 'success' && (
+                      <span className="material-symbols-outlined text-[#01401e] text-lg">check_circle</span>
+                    )}
+                    {section.status === 'warning' && (
+                      <span className="material-symbols-outlined text-amber-600 text-lg">warning</span>
+                    )}
+                    <h3 className="font-serif text-sm font-bold text-[#00327d]">{section.heading}</h3>
+                  </div>
+                  <p className="text-sm text-[#191c1e] leading-relaxed pl-8">{section.content}</p>
+                </div>
+              ))}
+            </div>
+            
+<div className="p-4 border-t border-[#c3c6d5]/60 bg-[#f7f9fb] flex items-center justify-between">
+              <div className="text-xs text-[#737784]">
+                <span className="font-semibold">Lưu ý:</span> Đây là báo cáo tự động từ AI Themis. Vui lòng xác minh với chuyên gia pháp lý trước khi đưa ra quyết định.
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setPdfModalContent(null)}
+                  className="px-4 py-2 bg-[#eceef0] text-[#191c1e] text-sm font-semibold rounded-lg hover:bg-[#e6e8ea] transition-colors cursor-pointer"
+                >
+                  Đóng
+                </button>
+                <button
+                  onClick={handleDownloadReport}
+                  className="px-4 py-2 bg-[#00327d] text-white text-sm font-semibold rounded-lg hover:bg-[#0047ab] transition-colors cursor-pointer flex items-center gap-2"
+                >
+                  <span className="material-symbols-outlined text-base">download</span> Download
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

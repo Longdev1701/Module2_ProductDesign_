@@ -3,11 +3,19 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import { existsSync, mkdirSync } from 'fs';
+import chatRoutes from './routes/chat';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+// Ensure uploads directory exists
+const uploadsDir = './uploads';
+if (!existsSync(uploadsDir)) {
+  mkdirSync(uploadsDir, { recursive: true });
+}
 
 // ─── Middleware ──────────────────────────────────────────
 app.use(helmet());
@@ -17,6 +25,7 @@ app.use(cors({
 }));
 app.use(morgan('dev'));
 app.use(express.json({ limit: '10mb' }));
+app.use('/uploads', express.static('uploads'));
 
 // ─── Health Check ───────────────────────────────────────
 app.get('/health', (_req, res) => {
@@ -35,6 +44,9 @@ app.get('/health', (_req, res) => {
 // TODO: Sprint 5 — Compliance & AI routes
 // TODO: Sprint 6 — Report routes
 // TODO: Sprint 7 — Dashboard & Integrity routes
+
+// Chat & AI Consultation routes
+app.use('/api/chat', chatRoutes);
 
 app.get('/api', (_req, res) => {
   res.json({
