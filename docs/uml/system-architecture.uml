@@ -1,0 +1,73 @@
+@startuml SystemArchitectureDiagram
+!theme plain
+
+title Themis LexiGuard - System Architecture Diagram (PlantUML)
+
+package "Client Layer" {
+    [Web App (Next.js 15 / React 19)] as WebUI
+    [Mobile Responsive / Field GPS Form] as MobileUI
+}
+
+package "Auth & Middleware Layer" {
+    [Supabase Auth (JWT)] as SupaAuth
+    [Express API Router & RBAC Middleware] as APIGateway
+}
+
+package "Core Backend Services (Express.js)" {
+    [Auth & Org Service] as AuthSvc
+    [Product & Batch Service] as ShipmentSvc
+    [Document Management Service] as DocSvc
+    [Compliance Rule Engine Service] as EngineSvc
+    [Regulation Library Service] as RegSvc
+    [HTX & Traceability Service] as HTXSvc
+    [Dashboard & Alert Service] as DashSvc
+}
+
+package "AI Engine & Vector RAG" {
+    [Gemini Vision OCR Engine] as OCREngine
+    [Hybrid RAG Retriever] as RAGRetriever
+    [Gemini Orchestration & Zod Validator] as LLMOrchestrator
+    [Conversational AI Assistant Engine] as AssistantEngine
+}
+
+package "Worker & Storage Layer" {
+    [Background Job Queue] as JobQueue
+    [Supabase Realtime Event Bus] as RealtimeBus
+    database "Supabase PostgreSQL" as PostgresDB
+    database "pgvector Index" as VectorDB
+    database "Supabase Storage (Private)" as Storage
+}
+
+cloud "External Legal Sources" {
+    [EUR-Lex SPARQL API] as EUR_Lex
+    [RASFF Alert System] as RASFF
+}
+
+WebUI --> SupaAuth : Auth Tokens
+WebUI --> APIGateway : HTTP REST API
+MobileUI --> APIGateway : HTTP REST API
+
+APIGateway --> AuthSvc
+APIGateway --> ShipmentSvc
+APIGateway --> DocSvc
+APIGateway --> EngineSvc
+APIGateway --> RegSvc
+APIGateway --> HTXSvc
+APIGateway --> DashSvc
+
+DocSvc --> OCREngine : Extract Text & Fields
+DocSvc --> Storage : Store Signed Uploads
+EngineSvc --> RAGRetriever : Search Regulations
+RAGRetriever --> VectorDB : Cosine Similarity
+EngineSvc --> LLMOrchestrator : Run AI Pipeline
+DashSvc --> AssistantEngine : Conversational Q&A
+
+JobQueue --> EUR_Lex : Crawl Legal Updates
+JobQueue --> RASFF : Fetch Alerts
+JobQueue --> EngineSvc : Async Compliance Job
+
+Core Services --> PostgresDB : Transactional Data
+Core Services --> RealtimeBus : Broadcast Events
+RealtimeBus --> WebUI : Websocket Push Notifications
+
+@enduml

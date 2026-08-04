@@ -1,0 +1,212 @@
+@startuml ClassDiagram
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Themis LexiGuard - Core Domain Class & Entity Diagram (PlantUML)
+
+package "Organization & Auth Module" {
+    class Organization {
+        +String id
+        +String name
+        +String taxCode
+        +String primaryMarket
+        +DateTime createdAt
+    }
+
+    class Profile {
+        +String id
+        +String email
+        +String fullName
+        +String avatarUrl
+    }
+
+    class OrganizationMember {
+        +String id
+        +String organizationId
+        +String userId
+        +String role
+        +String status
+    }
+}
+
+package "Product & Shipment Module" {
+    class Product {
+        +String id
+        +String organizationId
+        +String name
+        +String code
+        +String productType
+        +String hsCode
+    }
+
+    class ProductMarket {
+        +String id
+        +String productId
+        +String market
+    }
+
+    class Batch {
+        +String id
+        +String organizationId
+        +String productId
+        +String batchCode
+        +DateTime exportDate
+        +String targetMarket
+        +String status
+    }
+
+    class Document {
+        +String id
+        +String batchId
+        +String type
+        +String storageKey
+        +String checksum
+        +String status
+    }
+
+    class DocumentVersion {
+        +String id
+        +String documentId
+        +Int versionNumber
+        +String storageKey
+        +JSON extractedData
+        +Boolean isLocked
+    }
+}
+
+package "AI Compliance Engine Module" {
+    class ComplianceCheck {
+        +String id
+        +String batchId
+        +String status
+        +String result
+        +Int riskScore
+        +Float confidence
+        +DateTime createdAt
+    }
+
+    class Finding {
+        +String id
+        +String checkId
+        +String code
+        +String title
+        +String severity
+        +String requirement
+        +String observedData
+        +String recommendation
+    }
+
+    class FindingCitation {
+        +String id
+        +String findingId
+        +String regulationVersionId
+        +String chunkId
+    }
+
+    class Report {
+        +String id
+        +String checkId
+        +String status
+        +String approvedBy
+        +DateTime approvedAt
+        +String pdfStorageKey
+    }
+
+    class RemediationTask {
+        +String id
+        +String findingId
+        +String title
+        +String assigneeId
+        +String status
+        +DateTime dueDate
+    }
+}
+
+package "Legal Library & Vector Search Module" {
+    class Regulation {
+        +String id
+        +String code
+        +String title
+        +String source
+        +String[] markets
+        +String[] productTypes
+    }
+
+    class RegulationVersion {
+        +String id
+        +String regulationId
+        +Int versionNumber
+        +String status
+        +DateTime effectiveAt
+        +String content
+        +String contentChecksum
+    }
+
+    class RegulationChunk {
+        +String id
+        +String regulationVersionId
+        +Int chunkIndex
+        +String content
+        +Vector embedding
+    }
+}
+
+package "HTX & Due Diligence Module" {
+    class DueDiligenceEntity {
+        +String id
+        +String name
+        +String taxCode
+        +String province
+    }
+
+    class Farmer {
+        +String id
+        +String entityId
+        +String fullName
+        +String idCard
+    }
+
+    class FarmPolygon {
+        +String id
+        +String farmerId
+        +GeoJSON geometry
+        +Float areaHectares
+        +Boolean eudrVerified
+    }
+
+    class DueDiligenceStatement {
+        +String id
+        +String entityId
+        +String batchId
+        +DateTime harvestPeriod
+        +String status
+    }
+}
+
+' Relationships
+Organization "1" -- "*" OrganizationMember
+Profile "1" -- "*" OrganizationMember
+Organization "1" -- "*" Product
+Product "1" -- "*" ProductMarket
+Product "1" -- "*" Batch
+Organization "1" -- "*" Batch
+
+Batch "1" -- "*" Document
+Document "1" -- "*" DocumentVersion
+Batch "1" -- "*" ComplianceCheck
+
+ComplianceCheck "1" -- "*" Finding
+Finding "1" -- "*" FindingCitation
+ComplianceCheck "1" -- "1" Report
+Finding "1" -- "*" RemediationTask
+
+Regulation "1" -- "*" RegulationVersion
+RegulationVersion "1" -- "*" RegulationChunk
+RegulationVersion "1" -- "*" FindingCitation
+
+DueDiligenceEntity "1" -- "*" Farmer
+Farmer "1" -- "*" FarmPolygon
+DueDiligenceEntity "1" -- "*" DueDiligenceStatement
+Batch "1" -- "0..1" DueDiligenceStatement
+
+@enduml

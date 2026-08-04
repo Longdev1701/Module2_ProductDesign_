@@ -1,0 +1,79 @@
+@startuml BusinessSequenceDiagram
+!theme plain
+
+title Themis LexiGuard - End-to-End Business Sequence Diagram (PlantUML)
+
+actor Farmer as "Nông hộ"
+actor HTX as "Quản lý HTX"
+actor Analyst as "Compliance Analyst"
+actor Manager as "Compliance Manager"
+actor CEO as "CEO / Owner"
+participant API as "Express API Gateway"
+participant Service as "Business Services"
+participant AI as "AI & RAG Engine (Gemini)"
+database DB as "Supabase PostgreSQL"
+database Storage as "Supabase Storage"
+
+== Giai đoạn 1: Thu thập GPS & Khai báo Vùng trồng (EUDR) ==
+Farmer -> API: POST /api/farm-polygons (Ghi GPS / Draw Polygon)
+API -> Service: Save farm geometry & calculate area (turf.js)
+Service -> DB: INSERT INTO farm_polygons
+DB --> API: 201 Created (farmPolygonId)
+
+HTX -> API: POST /api/due-diligence-statements (Tạo DDS)
+API -> Service: Validate farmer GPS list & assemble DDS
+Service -> DB: INSERT INTO due_diligence_statements
+HTX -> API: POST /api/due-diligence-authorizations (Ủy quyền chia sẻ)
+API -> DB: INSERT INTO due_diligence_authorizations
+
+== Giai đoạn 2: Quản lý Lô hàng & OCR Chứng từ ==
+Analyst -> API: POST /api/products (Tạo sản phẩm Cà phê)
+API -> DB: INSERT INTO products & product_markets
+Analyst -> API: POST /api/products/:id/batches (Tạo Batch xuất khẩu)
+API -> DB: INSERT INTO batches (status: draft)
+
+Analyst -> API: GET /api/documents/upload-url
+API --> Analyst: Return Supabase Signed Upload URL (5 mins)
+Analyst -> Storage: PUT file trực tiếp (Lab Result / CO / Phytosanitary)
+Analyst -> API: POST /api/documents (Confirm upload)
+API -> Service: Dispatch Background Job (doc-processing)
+Service -> AI: Gemini Vision OCR & Field Extraction
+AI --> Service: Return Extracted JSON Schema
+Service -> DB: INSERT INTO document_extractions (status: needs_review)
+
+Analyst -> API: POST /api/documents/:id/confirm (Review & Confirm)
+API -> DB: INSERT INTO document_versions (Snapshot locked)
+API -> DB: UPDATE batches SET status = 'ready_for_check'
+
+== Giai đoạn 3: AI Compliance Check Engine Execution ==
+Analyst -> API: POST /api/compliance/checks (Bắt đầu Check)
+API -> Service: Dispatch Compliance Worker Job
+Service -> Service: Execute Deterministic Rules (MRL limits, Expiry, Batch code)
+Service -> DB: Query pgvector (Hybrid RAG Search top-K regulation chunks)
+DB --> Service: Return Regulation Chunks & Embeddings
+Service -> AI: Execute Gemini 1.5 Orchestrator Prompt
+AI --> Service: Return Zod-validated Compliance Output (Result, Findings, Citations)
+Service -> DB: INSERT INTO compliance_checks, findings, finding_citations, reports
+
+== Giai đoạn 4: Thẩm định Báo cáo & Approve ==
+Manager -> API: GET /api/reports/:id (Review findings & citations)
+API -> DB: SELECT report details
+DB --> Manager: Render Report & Risk Score
+
+alt Có lỗi / rủi ro phát hiện
+    Manager -> API: POST /api/findings/:id/tasks (Giao Remediation Task)
+    API -> DB: INSERT INTO remediation_tasks
+    Analyst -> API: POST /api/tasks/:id/evidence (Upload bằng chứng)
+    Analyst -> API: POST /api/compliance/checks/:id/recheck (Chạy lại Check)
+else Hồ sơ đạt tiêu chuẩn
+    Manager -> API: POST /api/reports/:id/approve (Phê duyệt Báo cáo)
+    API -> DB: UPDATE reports SET status = 'approved' (Immutable)
+    API -> Service: Trigger PDF Generator Worker (Puppeteer)
+    Service -> Storage: Upload Approved PDF Report
+end
+
+CEO -> API: GET /api/dashboard/summary (Xem Dashboard & KPIs)
+API -> DB: Query aggregated server-side metrics
+DB --> CEO: Render Dashboard KPIs & Action Items
+
+@enduml

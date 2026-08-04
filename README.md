@@ -189,7 +189,8 @@ Module2_ProductDesign_/
 │   └── package.json
 │
 ├── docs/                       # Tài liệu thiết kế hệ thống
-│   └── plan.md                 # Master System Design & Implementation Plan
+│   ├── usecases/               # Phân rã chi tiết Use Cases (UC-00 tới UC-10)
+│   └── uml/                    # Sơ đồ PlantUML hệ thống (.uml)
 ├── .agents/                    # Master Agent Rules & Reference Docs
 │   └── ref/                    # Reference Documents (01-product.md -> 10-done.md)
 ├── AGENTS.md                   # Bộ Quy tắc Quản trị Hệ thống (Master System Rules)
@@ -255,15 +256,31 @@ npm run dev
 cd fe
 
 # Cài đặt các thư viện phụ thuộc
+=======
+### 1) Chạy Backend (API Server)
+```bash
+cd be
+>>>>>>> c04d463 (docs: add detailed usecase breakdown, uml diagrams, and visual flows)
 npm install
+npm run db:generate    # Khởi tạo Prisma Client
+npm run dev            # Chạy ở http://localhost:3001
 ```
 
+<<<<<<< HEAD
 ```bash
 # Khởi chạy Frontend Development Server
 npm run dev
+=======
+### 2) Chạy Frontend (Web UI)
+```bash
+cd fe
+npm install
+npm run dev            # Chạy ở http://localhost:3000
+>>>>>>> c04d463 (docs: add detailed usecase breakdown, uml diagrams, and visual flows)
 ```
 👉 Giao diện Dashboard sẽ hoạt động tại: `http://localhost:3000`
 
+<<<<<<< HEAD
 ---
 
 ## 📜 Các Scripts Khởi Chạy (NPM Scripts)
@@ -312,6 +329,25 @@ Mọi đối tượng trong hệ thống đều tuân theo các trạng thái đ
 
 ## 👥 Phân Công Vai Trò & Thành Viên Thực Hiện (Team 7 Người)
 
+=======
+```bash
+npm run build
+```
+## Scripts (Ví dụ)
+
+**Frontend (`fe/`)**:
+- `npm run dev`: Chạy Next.js dev server.
+- `npm run build`: Build production.
+- `npm run start`: Chạy server production.
+
+**Backend (`be/`)**:
+- `npm run dev`: Chạy Express server.
+- `npm run db:generate`: Khởi tạo Prisma Client.
+- `npm run db:migrate`: Chạy migration database.
+
+## Phân công vai trò (Team 7 người)
+
+>>>>>>> c04d463 (docs: add detailed usecase breakdown, uml diagrams, and visual flows)
 | STT | Họ và Tên | Vai trò dự kiến | Nhiệm vụ chính |
 |:---:|---|---|---|
 | 1 | **Phạm Thành Long** | Tech Lead & AI Engineer | Setup kiến trúc (FE/BE), kết nối Supabase, Prisma, tích hợp Gemini AI và duyệt PR. |
@@ -321,6 +357,7 @@ Mọi đối tượng trong hệ thống đều tuân theo các trạng thái đ
 | 5 | **Nguyễn Tiến Thành** | Frontend (Forms & Ops) | Code giao diện Quản lý Sản phẩm, Lô hàng, upload file chứng từ và Báo cáo. |
 | 6 | **Hà Anh Tuấn** | Backend (API & DB) | Xây dựng RESTful API (Express), viết các logic CRUD cho Products, Batches bằng Prisma. |
 | 7 | **Tạ Lê Anh Bảo** | Backend (Services & Jobs) | Viết Middleware (Auth, RBAC), logic bóc tách dữ liệu (OCR) và cron jobs (đồng bộ luật). |
+<<<<<<< HEAD
 
 ---
 
@@ -328,3 +365,5 @@ Mọi đối tượng trong hệ thống đều tuân theo các trạng thái đ
 
 Dự án tuân thủ nghiêm ngặt **Master System Rules** tại [AGENTS.md](file:///d:/AI/module_2/Module2_ProductDesign_/AGENTS.md) và **System Implementation Plan** tại [docs/plan.md](file:///d:/AI/module_2/Module2_ProductDesign_/docs/plan.md).  
 Mọi thay đổi nâng cấp hệ thống được ghi chép minh bạch tại [CHANGELOG.md](file:///d:/AI/module_2/Module2_ProductDesign_/CHANGELOG.md).
+=======
+>>>>>>> c04d463 (docs: add detailed usecase breakdown, uml diagrams, and visual flows)

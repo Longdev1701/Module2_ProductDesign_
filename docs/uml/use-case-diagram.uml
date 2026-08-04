@@ -1,0 +1,80 @@
+@startuml UseCaseDiagram
+!theme plain
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+title Themis LexiGuard - System Use Case Diagram (PlantUML)
+
+left to right direction
+
+actor "CEO / Owner" as CEO
+actor "Compliance Manager" as Manager
+actor "Compliance Analyst" as Analyst
+actor "Viewer" as Viewer
+actor "Quản lý HTX" as HTX
+actor "Nông hộ" as Farmer
+actor "Continuous Monitoring Service" as SystemService
+
+rectangle "Themis LexiGuard Platform" {
+    usecase "UC-00: Auth & RBAC Management" as UC00
+    usecase "UC-01: Run AI Compliance Check" as UC01
+    usecase "UC-02: Interact with AI Assistant" as UC02
+    usecase "UC-03: Upload & Review Documents" as UC03
+    usecase "UC-04: Manage Products & Batches" as UC04
+    usecase "UC-05: Declare Due Diligence (DDS)" as UC05
+    usecase "UC-06: Capture GPS & Plot Traceability" as UC06
+    usecase "UC-07: View Dashboard & Legal Alerts" as UC07
+    usecase "UC-08: Sync Legal Data & Monitor Changes" as UC08
+    usecase "UC-10: Multi-Market Regulatory Comparison" as UC10
+
+    usecase "UC-01.6: Approve Report & Export PDF" as UC01_6
+    usecase "UC-03.4: Review & Confirm Extracted Data" as UC03_4
+}
+
+' CEO Relationships
+CEO --> UC00
+CEO --> UC01
+CEO --> UC04
+CEO --> UC07
+CEO --> UC10
+CEO --> UC01_6
+
+' Manager Relationships
+Manager --> UC01
+Manager --> UC03
+Manager --> UC04
+Manager --> UC07
+Manager --> UC10
+Manager --> UC01_6
+
+' Analyst Relationships
+Analyst --> UC01
+Analyst --> UC02
+Analyst --> UC03
+Analyst --> UC04
+Analyst --> UC03_4
+
+' Viewer Relationships
+Viewer --> UC02
+Viewer --> UC07
+
+' HTX Relationships
+HTX --> UC03
+HTX --> UC05
+HTX --> UC06
+
+' Farmer Relationships
+Farmer --> UC06
+
+' Service Relationships
+SystemService --> UC08
+
+' Use Case Dependencies
+UC01 ..> UC00 : <<include>>
+UC01 ..> UC03 : <<include>>
+UC01 <.. UC10 : <<extend>>
+UC08 ..> UC07 : <<trigger notification>>
+UC08 ..> UC04 : <<trigger status update>>
+UC05 ..> UC06 : <<include>>
+
+@enduml
