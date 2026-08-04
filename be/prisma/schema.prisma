@@ -1,0 +1,315 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── AUTH & ORGANIZATION ────────────────────────────────
+
+model User {
+  id             String   @id @default(uuid())
+  email          String   @unique
+  name           String
+  avatarUrl      String?
+  role           Role     @default(MEMBER)
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  auditLogs      AuditLog[]
+  complianceChecks ComplianceCheck[]
+
+  @@map("users")
+}
+
+model Organization {
+  id        String   @id @default(uuid())
+  name      String
+  taxCode   String?
+  address   String?
+  industry  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  users     User[]
+  products  Product[]
+  documents Document[]
+
+  @@map("organizations")
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  MEMBER
+}
+
+// ─── PRODUCTS & BATCHES ─────────────────────────────────
+
+model Product {
+  id             String   @id @default(uuid())
+  name           String
+  category       String
+  hsCode         String?
+  description    String?
+  origin         String?
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  batches        Batch[]
+  marketRequirements ProductMarketRequirement[]
+
+  @@map("products")
+}
+
+model Batch {
+  id          String      @id @default(uuid())
+  batchCode   String      @unique
+  productId   String
+  product     Product     @relation(fields: [productId], references: [id])
+  quantity    Float?
+  unit        String?
+  status      BatchStatus @default(DRAFT)
+  producedAt  DateTime?
+  expiresAt   DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  complianceChecks ComplianceCheck[]
+  documents        BatchDocument[]
+
+  @@map("batches")
+}
+
+enum BatchStatus {
+  DRAFT
+  READY_FOR_CHECK
+  CHECKING
+  PASSED
+  FAILED
+  EXPORTED
+}
+
+model ProductMarketRequirement {
+  id         String  @id @default(uuid())
+  productId  String
+  product    Product @relation(fields: [productId], references: [id])
+  marketCode String  // e.g., "EU", "US", "JP"
+  marketName String
+
+  @@unique([productId, marketCode])
+  @@map("product_market_requirements")
+}
+
+// ─── DOCUMENTS ──────────────────────────────────────────
+
+model Document {
+  id             String       @id @default(uuid())
+  title          String
+  type           DocumentType
+  fileUrl        String?
+  fileSize       Int?
+  mimeType       String?
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  // Relations
+  batches        BatchDocument[]
+
+  @@map("documents")
+}
+
+model BatchDocument {
+  id         String   @id @default(uuid())
+  batchId    String
+  batch      Batch    @relation(fields: [batchId], references: [id])
+  documentId String
+  document   Document @relation(fields: [documentId], references: [id])
+  createdAt  DateTime @default(now())
+
+  @@unique([batchId, documentId])
+  @@map("batch_documents")
+}
+
+enum DocumentType {
+  CO        // Certificate of Origin
+  CQ        // Certificate of Quality
+  PHYTO     // Phytosanitary Certificate
+  LAB_REPORT
+  CONTRACT
+  INVOICE
+  PACKING_LIST
+  OTHER
+}
+
+// ─── REGULATIONS ────────────────────────────────────────
+
+model Regulation {
+  id            String           @id @default(uuid())
+  code          String           @unique  // e.g., "EC-396-2005"
+  title         String
+  description   String?
+  category      RegulationCategory
+  market        String           // e.g., "EU", "US"
+  effectiveDate DateTime?
+  sourceUrl     String?
+  isActive      Boolean          @default(true)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  // Relations
+  complianceItems ComplianceItem[]
+  mrlLimits       MRLLimit[]
+
+  @@map("regulations")
+}
+
+enum RegulationCategory {
+  MRL          // Maximum Residue Limits
+  LABELING     // Nhãn mác
+  PACKAGING    // Bao bì
+  TRACEABILITY // Truy xuất nguồn gốc
+  EUDR         // EU Deforestation Regulation
+  ESG          // Environmental Social Governance
+  FOOD_SAFETY  // An toàn thực phẩm
+  OTHER
+}
+
+model MRLLimit {
+  id           String     @id @default(uuid())
+  regulationId String
+  regulation   Regulation @relation(fields: [regulationId], references: [id])
+  substance    String     // e.g., "Chlorpyrifos"
+  maxLimit     Float      // e.g., 0.01
+  unit         String     @default("mg/kg")
+  productGroup String?    // e.g., "Coffee", "Rice"
+  createdAt    DateTime   @default(now())
+
+  @@map("mrl_limits")
+}
+
+// ─── COMPLIANCE CHECK ───────────────────────────────────
+
+model ComplianceCheck {
+  id          String          @id @default(uuid())
+  batchId     String
+  batch       Batch           @relation(fields: [batchId], references: [id])
+  userId      String
+  user        User            @relation(fields: [userId], references: [id])
+  market      String          // Target market
+  overallStatus ComplianceStatus @default(PENDING)
+  aiConfidence  Float?        // 0-100
+  summary     String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  // Relations
+  items       ComplianceItem[]
+  report      Report?
+
+  @@map("compliance_checks")
+}
+
+model ComplianceItem {
+  id                String           @id @default(uuid())
+  complianceCheckId String
+  complianceCheck   ComplianceCheck  @relation(fields: [complianceCheckId], references: [id])
+  regulationId      String?
+  regulation        Regulation?      @relation(fields: [regulationId], references: [id])
+  requirement       String
+  status            ComplianceStatus
+  deviation         String?          // Mô tả sai lệch
+  remediation       String?          // Cách khắc phục
+  severity          Severity         @default(INFO)
+  createdAt         DateTime         @default(now())
+
+  @@map("compliance_items")
+}
+
+enum ComplianceStatus {
+  PENDING
+  PASS
+  FAIL
+  WARNING
+}
+
+enum Severity {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+  INFO
+}
+
+// ─── REPORTS ────────────────────────────────────────────
+
+model Report {
+  id                String          @id @default(uuid())
+  complianceCheckId String          @unique
+  complianceCheck   ComplianceCheck @relation(fields: [complianceCheckId], references: [id])
+  title             String
+  pdfUrl            String?
+  version           Int             @default(1)
+  isPublished       Boolean         @default(false)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@map("reports")
+}
+
+// ─── AUDIT LOG ──────────────────────────────────────────
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  action     String   // e.g., "CREATE_PRODUCT", "RUN_CHECK"
+  entity     String   // e.g., "Product", "Batch"
+  entityId   String?
+  metadata   Json?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([entity, entityId])
+  @@map("audit_logs")
+}
+
+// ─── NOTIFICATIONS ──────────────────────────────────────
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean          @default(false)
+  link      String?
+  createdAt DateTime         @default(now())
+
+  @@index([userId, isRead])
+  @@map("notifications")
+}
+
+enum NotificationType {
+  REGULATION_UPDATE
+  CHECK_COMPLETED
+  RISK_ALERT
+  SYSTEM
+}
