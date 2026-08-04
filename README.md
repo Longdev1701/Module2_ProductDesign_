@@ -67,39 +67,26 @@ npm run dev            # Chạy ở http://localhost:3000
 ```bash
 npm run build
 ```
+## Scripts (Ví dụ)
 
-### 4) Preview bản build
+**Frontend (`fe/`)**:
+- `npm run dev`: Chạy Next.js dev server.
+- `npm run build`: Build production.
+- `npm run start`: Chạy server production.
 
-```bash
-npm run preview
-```
+**Backend (`be/`)**:
+- `npm run dev`: Chạy Express server.
+- `npm run db:generate`: Khởi tạo Prisma Client.
+- `npm run db:migrate`: Chạy migration database.
 
-## Scripts
+## Phân công vai trò (Team 7 người)
 
-- `npm run dev`: chạy local server bằng Vite (port 3000)
-- `npm run build`: build production
-- `npm run preview`: chạy preview từ bản build
-- `npm run lint`: kiểm tra TypeScript (`tsc --noEmit`)
-
-## Các route chính
-
-- `/login`: xác thực người dùng
-- `/`: dashboard tổng quan
-- `/new`: tư vấn AI
-- `/integrity`: giám sát liêm chính
-- `/regulations`: thư viện pháp lý
-- `/products`: danh mục sản phẩm & lô hàng
-- `/products/:id`: chi tiết sản phẩm
-- `/history`: lịch sử thẩm định
-- `/report/:id`: báo cáo phân tích
-- `/settings`: cài đặt hệ thống
-
-## Thành viên nhóm (7 người)
-
-1. Đàm Công Tú
-2. Chăm Rốch Thi
-3. Huỳnh Hoàng Quân
-4. Nguyễn Tiến Thành
-5. Hà Anh Tuấn
-6. Tạ Lê Anh Bảo
-7. Phạm Thành Long
+| STT | Họ và Tên | Vai trò dự kiến | Nhiệm vụ chính |
+|:---:|---|---|---|
+| 1 | **Phạm Thành Long** | Tech Lead & AI Engineer | Setup kiến trúc (FE/BE), kết nối Supabase, Prisma, tích hợp Gemini AI và duyệt PR. |
+| 2 | **Đàm Công Tú** | Product Owner / QA | Viết User Stories, kịch bản test, chuẩn bị dữ liệu pháp lý (Luật EU) & test UX/UI. |
+| 3 | **Chăm Rốch Thi** | Frontend (Core & Auth) | Dựng layout (Sidebar, Topbar), Next.js Routing, tích hợp trang Đăng nhập / Đăng ký. |
+| 4 | **Huỳnh Hoàng Quân** | Frontend (Data UI) | Code giao diện Dashboard (Biểu đồ, KPI), Thư viện pháp lý và Giám sát liêm chính. |
+| 5 | **Nguyễn Tiến Thành** | Frontend (Forms & Ops) | Code giao diện Quản lý Sản phẩm, Lô hàng, upload file chứng từ và Báo cáo. |
+| 6 | **Hà Anh Tuấn** | Backend (API & DB) | Xây dựng RESTful API (Express), viết các logic CRUD cho Products, Batches bằng Prisma. |
+| 7 | **Tạ Lê Anh Bảo** | Backend (Services & Jobs) | Viết Middleware (Auth, RBAC), logic bóc tách dữ liệu (OCR) và cron jobs (đồng bộ luật). |
