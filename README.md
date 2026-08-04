@@ -24,40 +24,45 @@
 
 ## Công nghệ sử dụng
 
-- **Frontend**: React 19 + TypeScript
-- **Build tool**: Vite 6
-- **Routing**: React Router DOM 7
-- **UI**: Tailwind CSS 4, Lucide Icons, Material Symbols
+- **Frontend**: Next.js 15 (App Router) + TypeScript
+- **Backend**: Node.js + Express.js
+- **Database & ORM**: PostgreSQL (Supabase) + Prisma
+- **Authentication**: Supabase Auth
+- **UI**: Tailwind CSS 4, Lucide Icons, Framer Motion
+- **AI Core**: Google Gemini 1.5
 
 ## Cấu trúc thư mục chính
 
 ```text
-src/
-  components/        # Layout, widget dùng lại, UI primitives
-  pages/             # Các màn hình chính của hệ thống
-  lib/               # Utility dùng chung
-  App.tsx            # Khai báo routes
-  main.tsx           # Entry point
-public/              # Tài nguyên tĩnh (logo, ảnh, ...)
+Themis-LexiGuard/
+├── fe/                # Frontend (Next.js 15 App Router)
+│   ├── app/           # Pages & Layouts (App Router)
+│   ├── components/    # UI Components & Widgets
+│   ├── features/      # Feature modules
+│   └── lib/           # Utilities & API Client
+├── be/                # Backend (Express.js)
+│   ├── src/           # Controllers, Services, Middlewares
+│   ├── prisma/        # Database Schema & Migrations
+│   └── jobs/          # Background tasks (Sync, AI processing)
+└── docs/              # Tài liệu hệ thống & HDSD Agents
 ```
 
 ## Hướng dẫn chạy dự án
 
-### 1) Cài đặt dependencies
-
+### 1) Chạy Backend (API Server)
 ```bash
+cd be
 npm install
+npm run db:generate    # Khởi tạo Prisma Client
+npm run dev            # Chạy ở http://localhost:3001
 ```
 
-### 2) Chạy môi trường development
-
+### 2) Chạy Frontend (Web UI)
 ```bash
-npm run dev
+cd fe
+npm install
+npm run dev            # Chạy ở http://localhost:3000
 ```
-
-Mặc định truy cập tại: `http://localhost:3000`
-
-### 3) Build production
 
 ```bash
 npm run build
