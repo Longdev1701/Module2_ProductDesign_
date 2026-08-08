@@ -168,11 +168,16 @@ Hệ thống phân quyền nghiêm ngặt theo mô hình Organization:
 
 ```text
 Module2_ProductDesign_/
-├── fe/                         # Frontend Application (Next.js 15 App Router)
+├── fe/                         # Frontend Application (Next.js 15 App Router - Modular SRP Structure)
 │   ├── src/
-│   │   ├── app/                # (auth) & (dashboard) page routes
-│   │   ├── components/         # Shared UI Primitives, Header, Sidebar
-│   │   ├── features/           # Feature modules (products, batches, compliance, regulations)
+│   │   ├── app/                # Next.js App Router (Next 15)
+│   │   │   ├── (auth)/         # Auth routes (/login, /reset-password)
+│   │   │   └── (dashboard)/    # Protected routes (/dashboard, /admin, /pending-access)
+│   │   ├── components/         # Shared UI Primitives (Button, Input, Layout)
+│   │   ├── features/           # Modular Feature Orchestrators (auth, admin, settings, etc.)
+│   │   │   ├── auth/           # Auth Feature (AuthBrandingPanel, LoginView, RegisterView, PendingAccessView)
+│   │   │   ├── settings/       # Settings Feature (ProfileSettingsTab, MemberSettingsTab, SecuritySettingsTab)
+│   │   │   └── products/       # Products & Batches feature modules
 │   │   ├── lib/api.ts          # Central API Client with JWT Auth headers
 │   │   └── types/              # Shared TypeScript definitions & Zod schemas
 │   ├── public/                 # Static assets
@@ -249,38 +254,32 @@ npm run dev
 
 ---
 
-### 2️⃣ Thiết lập Frontend Dashboard (`fe/`)
-
-```bash
-# Di chuyển vào thư mục frontend
-cd fe
-
-# Cài đặt các thư viện phụ thuộc
-=======
-### 1) Chạy Backend (API Server)
+### 1️⃣ Chạy Backend API Server (`be/`)
 ```bash
 cd be
->>>>>>> c04d463 (docs: add detailed usecase breakdown, uml diagrams, and visual flows)
 npm install
 npm run db:generate    # Khởi tạo Prisma Client
-npm run dev            # Chạy ở http://localhost:3001
+npm run dev            # Server chạy ở http://localhost:3001
 ```
 
-<<<<<<< HEAD
-```bash
-# Khởi chạy Frontend Development Server
-npm run dev
-=======
-### 2) Chạy Frontend (Web UI)
+### 2️⃣ Chạy Frontend Web UI (`fe/`)
 ```bash
 cd fe
 npm install
-npm run dev            # Chạy ở http://localhost:3000
->>>>>>> c04d463 (docs: add detailed usecase breakdown, uml diagrams, and visual flows)
+npm run dev            # Web app chạy ở http://localhost:3000
 ```
-👉 Giao diện Dashboard sẽ hoạt động tại: `http://localhost:3000`
 
-<<<<<<< HEAD
+---
+
+## 🔑 Tài Khoản Thử Nghiệm Mẫu (Sample Account)
+
+> **Tài khoản doanh nghiệp xuất khẩu đã được khởi tạo và kích hoạt sẵn trên Supabase Database:**
+
+* **Email:** `themis_exporter_1786179990121@yopmail.com`
+* **Mật khẩu:** `ThemisLexiGuard2026!`
+* **Doanh nghiệp:** *Công ty CP Xuất Nhập Khẩu Nông Sản Tây Nguyên*
+* **Chức vụ / Phân quyền:** `OWNER` (Chủ doanh nghiệp)
+
 ---
 
 ## 📜 Các Scripts Khởi Chạy (NPM Scripts)
