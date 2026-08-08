@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Building, Users, ShieldCheck, Bell, CheckCircle2, AlertCircle } from "lucide-react";
 import { api } from "@/lib/api";
@@ -8,6 +8,8 @@ import { ProfileSettingsTab } from "./ProfileSettingsTab";
 import { MemberSettingsTab } from "./MemberSettingsTab";
 import { SecuritySettingsTab } from "./SecuritySettingsTab";
 import { NotificationSettingsTab } from "./NotificationSettingsTab";
+import type { AuthMeResponse, OrganizationRole, OrganizationSummary, UserProfile } from "@/types/api";
+import { getErrorMessage } from "@/types/api";
 
 export default function SettingsFeature() {
   const [activeTab, setActiveTab] = useState("profile");
@@ -16,12 +18,12 @@ export default function SettingsFeature() {
   const [msg, setMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Profile State
-  const [userProfile, setUserProfile] = useState<any>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [fullName, setFullName] = useState("");
   const [jobTitle, setJobTitle] = useState("");
 
   // Organization State
-  const [org, setOrg] = useState<any>(null);
+  const [org, setOrg] = useState<OrganizationSummary | null>(null);
   const [orgName, setOrgName] = useState("");
   const [taxCode, setTaxCode] = useState("");
   const [address, setAddress] = useState("");
@@ -29,32 +31,30 @@ export default function SettingsFeature() {
   const [contactEmail, setContactEmail] = useState("");
   const [contactPhone, setContactPhone] = useState("");
   const [primaryProduct, setPrimaryProduct] = useState("");
-  const [userRole, setUserRole] = useState<string>("VIEWER");
+  const [userRole, setUserRole] = useState<OrganizationRole>("VIEWER");
 
   // Invite Member State
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState("COMPLIANCE");
   const [inviting, setInviting] = useState(false);
 
-  useEffect(() => {
-    fetchInitialData();
-  }, []);
-
-  const fetchInitialData = async () => {
+  const fetchInitialData = useCallback(async () => {
     setLoading(true);
     setMsg(null);
     try {
-      const meRes = await api.get<any>('/auth/me');
+      const meRes = await api.get<AuthMeResponse>('/auth/me');
       if (meRes.data) {
-        setUserProfile(meRes.data.profile);
-        setFullName(meRes.data.profile.fullName || "");
-        setJobTitle(meRes.data.profile.jobTitle || "");
+        const profile = meRes.data.user || meRes.data.profile;
+        if (!profile) return;
+        setUserProfile(profile);
+        setFullName(profile.fullName || "");
+        setJobTitle(profile.jobTitle || "");
 
         if (meRes.data.organizations && meRes.data.organizations.length > 0) {
           const userOrg = meRes.data.organizations[0];
-          setUserRole(userOrg.role);
+          setUserRole(userOrg.role || "VIEWER");
 
-          const orgRes = await api.get<any>(`/organizations/${userOrg.id}`);
+          const orgRes = await api.get<OrganizationSummary>(`/organizations/${userOrg.id}`);
           if (orgRes.data) {
             const o = orgRes.data;
             setOrg(o);
@@ -68,12 +68,16 @@ export default function SettingsFeature() {
           }
         }
       }
-    } catch (err: any) {
-      setMsg({ type: 'error', text: err.message || 'Không thể tải thông tin hệ thống.' });
+    } catch (err: unknown) {
+      setMsg({ type: 'error', text: getErrorMessage(err, 'Không thể tải thông tin hệ thống.') });
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    void Promise.resolve().then(fetchInitialData);
+  }, [fetchInitialData]);
 
   const handleSaveOrganization = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,8 +98,8 @@ export default function SettingsFeature() {
 
       setMsg({ type: 'success', text: 'Cập nhật thông tin Doanh nghiệp xuất khẩu thành công!' });
       await fetchInitialData();
-    } catch (err: any) {
-      setMsg({ type: 'error', text: err.message || 'Cập nhật thông tin doanh nghiệp thất bại.' });
+    } catch (err: unknown) {
+      setMsg({ type: 'error', text: getErrorMessage(err, 'Cập nhật thông tin doanh nghiệp thất bại.') });
     } finally {
       setSaving(false);
     }
@@ -116,8 +120,8 @@ export default function SettingsFeature() {
       setMsg({ type: 'success', text: `Đã gửi lời mời tới ${inviteEmail} thành công!` });
       setInviteEmail("");
       await fetchInitialData();
-    } catch (err: any) {
-      setMsg({ type: 'error', text: err.message || 'Mời thành viên thất bại.' });
+    } catch (err: unknown) {
+      setMsg({ type: 'error', text: getErrorMessage(err, 'Mời thành viên thất bại.') });
     } finally {
       setInviting(false);
     }

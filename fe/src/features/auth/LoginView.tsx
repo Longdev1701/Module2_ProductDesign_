@@ -6,6 +6,8 @@ import { Mail, Lock, EyeOff, Eye, AlertCircle, HelpCircle } from 'lucide-react';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 import { api } from '../../lib/api';
+import type { LoginResponse } from "@/types/api";
+import { getErrorMessage } from "@/types/api";
 
 interface LoginViewProps {
   onSwitchView: () => void;
@@ -29,7 +31,7 @@ export function LoginView({ onSwitchView, onSwitchToForgot }: LoginViewProps) {
     setFixSuggestion(null);
 
     try {
-      const res = await api.post<any>('/auth/login', { email, password });
+      const res = await api.post<LoginResponse>('/auth/login', { email, password });
       
       if (res.data?.session?.accessToken) {
         localStorage.setItem('access_token', res.data.session.accessToken);
@@ -50,8 +52,8 @@ export function LoginView({ onSwitchView, onSwitchToForgot }: LoginViewProps) {
           router.push('/pending-access');
         }
       }
-    } catch (err: any) {
-      const msg = err.message || 'Đăng nhập thất bại.';
+    } catch (err: unknown) {
+      const msg = getErrorMessage(err, 'Đăng nhập thất bại.');
       setErrorMsg(msg);
       if (msg.toLowerCase().includes('invalid login credentials') || msg.toLowerCase().includes('sai')) {
         setFixSuggestion('Email hoặc mật khẩu không chính xác. Nếu bạn quên mật khẩu, bấm nút "Quên mật khẩu?" phía trên.');

@@ -3,13 +3,14 @@
 import React, { useState } from "react";
 import { UserPlus } from "lucide-react";
 import { Button } from "../../components/Button";
+import type { AdminUser, OrganizationRole, OrganizationSummary } from "@/types/api";
 
 interface AdminUserTabProps {
-  users: any[];
-  orgs: any[];
-  onAssignMember: (userId: string, orgId: string, role: string) => Promise<void>;
-  selectedUser: any;
-  setSelectedUser: (user: any) => void;
+  users: AdminUser[];
+  orgs: OrganizationSummary[];
+  onAssignMember: (userId: string, orgId: string, role: OrganizationRole) => Promise<void>;
+  selectedUser: AdminUser | null;
+  setSelectedUser: (user: AdminUser | null) => void;
   targetOrgId: string;
   setTargetOrgId: (orgId: string) => void;
 }
@@ -23,7 +24,7 @@ export function AdminUserTab({
   targetOrgId,
   setTargetOrgId,
 }: AdminUserTabProps) {
-  const [assignedRole, setAssignedRole] = useState<string>("OWNER");
+  const [assignedRole, setAssignedRole] = useState<OrganizationRole>("OWNER");
   const [assigning, setAssigning] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -67,7 +68,7 @@ export function AdminUserTab({
               <label className="text-xs font-mono font-semibold uppercase text-amber-900">Chọn Vai Trò (Tenant Role)</label>
               <select
                 value={assignedRole}
-                onChange={(e) => setAssignedRole(e.target.value)}
+                onChange={(e) => setAssignedRole(e.target.value as OrganizationRole)}
                 className="w-full h-10 px-3 border border-amber-300 rounded bg-white text-sm focus:ring-2 focus:ring-primary focus:outline-none font-mono font-bold text-primary"
               >
                 <option value="OWNER">OWNER (Chủ doanh nghiệp / CEO)</option>
@@ -111,7 +112,7 @@ export function AdminUserTab({
                   <td className="px-4 py-3 text-xs">
                     {u.organizations && u.organizations.length > 0 ? (
                       <div className="space-y-1">
-                        {u.organizations.map((mo: any) => (
+                        {u.organizations.map((mo) => (
                           <div key={mo.id} className="flex items-center gap-2">
                             <span className="font-semibold text-on-surface">{mo.name}</span>
                             <span className="px-2 py-0.5 rounded font-mono text-[10px] bg-emerald-50 text-emerald-800 border border-emerald-300">

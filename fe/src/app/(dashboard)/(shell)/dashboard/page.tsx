@@ -5,11 +5,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import LegalTrackingWidget from "@/components/LegalTrackingWidget";
+import type { AuthMeResponse, OrganizationSummary, UserProfile } from "@/types/api";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
-  const [org, setOrg] = useState<any>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [org, setOrg] = useState<OrganizationSummary | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -17,7 +18,7 @@ export default function DashboardPage() {
       const token = localStorage.getItem("access_token");
       if (!token) { router.replace("/login"); return; }
       try {
-        const res = await api.get<any>("/auth/me");
+        const res = await api.get<AuthMeResponse>("/auth/me");
         const userData = res.data?.user;
         const orgs = res.data?.organizations;
         if (!userData) { router.replace("/login"); return; }

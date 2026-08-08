@@ -1,14 +1,20 @@
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || 'placeholder-anon-key';
-const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-service-key';
+const supabasePublishableKey =
+  process.env.SUPABASE_PUBLISHABLE_KEY ||
+  process.env.SUPABASE_ANON_KEY ||
+  'placeholder-publishable-key';
+const supabaseSecretKey =
+  process.env.SUPABASE_SECRET_KEY ||
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  'placeholder-secret-key';
 
-// Public Supabase Client (Anon Key)
-export const supabasePublic = createClient(supabaseUrl, supabaseAnonKey);
+// Public Supabase client uses the browser-safe publishable/anon key.
+export const supabasePublic = createClient(supabaseUrl, supabasePublishableKey);
 
-// Admin Supabase Client (Service Role Key - BACKEND ONLY)
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey, {
+// Admin Supabase client uses the secret/service role key - backend only.
+export const supabaseAdmin = createClient(supabaseUrl, supabaseSecretKey, {
   auth: {
     autoRefreshToken: false,
     persistSession: false,

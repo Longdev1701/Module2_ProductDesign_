@@ -8,6 +8,8 @@ Tất cả các thay đổi quan trọng của dự án **Themis LexiGuard** s�
 
 ## [Unreleased]
 
+- Bổ sung hỗ trợ biến môi trường Supabase key naming mới (`SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, `SUPABASE_JWKS_URL`) đồng thời giữ tương thích với `SUPABASE_ANON_KEY` và `SUPABASE_SERVICE_ROLE_KEY`.
+- Sửa lỗi terminal Frontend do ESLint/TypeScript strict: thay `any` bằng type dùng chung, sửa `Input` dùng `useId`, sửa hook effect trong Admin/Settings, và xác nhận `next build` chạy thành công; Backend `tsc --noEmit` chạy thành công.
 - Tái cấu trúc lại Hệ thống Điều hướng Shell Layout `src/app/(dashboard)/(shell)/` chứa toàn bộ các trang tính năng (`/dashboard`, `/checks/new`, `/history`, `/integrity`, `/products`, `/regulations`, `/reports`, `/settings`) tích hợp sẵn **Sidebar** bên trái và **Topbar** ở trên.
 - Loại bỏ thư mục mã nguồn cũ `_legacy` để làm sạch dự án, ngăn ngừa lỗi trùng lặp module hoặc type check mâu thuẫn trong IDE/TypeScript compiler.
 - Bổ sung Google Fonts link (`Inter` + `Material Symbols Outlined`) tại `<head>` của `RootLayout` (`fe/src/app/layout.tsx`), giúp khôi phục hiển thị biểu tượng icon sắc nét trên toàn hệ thống (không còn bị hiển thị dạng chữ thuần).

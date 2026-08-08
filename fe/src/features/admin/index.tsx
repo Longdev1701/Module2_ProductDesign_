@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Building, Users, CheckCircle2, AlertCircle } from "lucide-react";
 import { api } from "../../lib/api";
 import { AdminHeader } from "./AdminHeader";
 import { AdminOrgTab } from "./AdminOrgTab";
 import { AdminUserTab } from "./AdminUserTab";
+import type { AdminOrganizationInput, AdminUser, AuthMeResponse, OrganizationRole, OrganizationSummary, UserProfile } from "@/types/api";
+import { getErrorMessage } from "@/types/api";
 
 export function AdminPortalFeature() {
   const router = useRouter();
@@ -14,24 +16,20 @@ export function AdminPortalFeature() {
   const [loading, setLoading] = useState(true);
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  const [orgs, setOrgs] = useState<any[]>([]);
-  const [users, setUsers] = useState<any[]>([]);
+  const [orgs, setOrgs] = useState<OrganizationSummary[]>([]);
+  const [users, setUsers] = useState<AdminUser[]>([]);
   const [search, setSearch] = useState("");
 
-  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
   const [targetOrgId, setTargetOrgId] = useState("");
 
-  const [adminUser, setAdminUser] = useState<any>(null);
+  const [adminUser, setAdminUser] = useState<UserProfile | null>(null);
 
-  useEffect(() => {
-    fetchAdminData();
-  }, []);
-
-  const fetchAdminData = async () => {
+  const fetchAdminData = useCallback(async () => {
     setLoading(true);
     setMsg(null);
     try {
-      const meRes = await api.get<any>('/auth/me');
+      const meRes = await api.get<AuthMeResponse>('/auth/me');
       // BE /auth/me trả về { user: { platformRole, ... }, organizations: [...] }
       const userData = meRes.data?.user;
       const platformRole = userData?.platformRole;
@@ -41,22 +39,26 @@ export function AdminPortalFeature() {
         return;
       }
 
-      setAdminUser(userData);
+      setAdminUser(userData || null);
 
-      const orgsRes = await api.get<any>('/admin/organizations');
-      const usersRes = await api.get<any>('/admin/users');
+      const orgsRes = await api.get<OrganizationSummary[]>('/admin/organizations');
+      const usersRes = await api.get<AdminUser[]>('/admin/users');
 
       setOrgs(orgsRes.data || []);
       setUsers(usersRes.data || []);
       if (orgsRes.data && orgsRes.data.length > 0) {
         setTargetOrgId(orgsRes.data[0].id);
       }
-    } catch (err: any) {
-      setMsg({ type: 'error', text: err.message || 'Từ chối truy cập Admin Portal.' });
+    } catch (err: unknown) {
+      setMsg({ type: 'error', text: getErrorMessage(err, 'Từ chối truy cập Admin Portal.') });
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    void Promise.resolve().then(fetchAdminData);
+  }, [fetchAdminData]);
 
   const handleLogout = async () => {
     try {
@@ -67,19 +69,19 @@ export function AdminPortalFeature() {
     router.push('/login');
   };
 
-  const handleCreateOrg = async (orgData: any) => {
+  const handleCreateOrg = async (orgData: AdminOrganizationInput) => {
     setMsg(null);
     try {
       await api.post('/admin/organizations', orgData);
       setMsg({ type: 'success', text: `Khởi tạo Doanh nghiệp "${orgData.name}" thành công!` });
       await fetchAdminData();
-    } catch (err: any) {
-      setMsg({ type: 'error', text: err.message || 'Khởi tạo Doanh nghiệp thất bại.' });
+    } catch (err: unknown) {
+      setMsg({ type: 'error', text: getErrorMessage(err, 'Khởi tạo Doanh nghiệp thất bại.') });
       throw err;
     }
   };
 
-  const handleAssignMember = async (userId: string, orgId: string, role: string) => {
+  const handleAssignMember = async (userId: string, orgId: string, role: OrganizationRole) => {
     setMsg(null);
     try {
       await api.post(`/admin/organizations/${orgId}/assign-member`, {
@@ -88,8 +90,8 @@ export function AdminPortalFeature() {
       });
       setMsg({ type: 'success', text: `Đã cấp quyền ${role} thành công!` });
       await fetchAdminData();
-    } catch (err: any) {
-      setMsg({ type: 'error', text: err.message || 'Cấp quyền thành viên thất bại.' });
+    } catch (err: unknown) {
+      setMsg({ type: 'error', text: getErrorMessage(err, 'Cấp quyền thành viên thất bại.') });
       throw err;
     }
   };

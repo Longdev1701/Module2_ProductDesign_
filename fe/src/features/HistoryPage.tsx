@@ -2,12 +2,14 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Calendar, ChevronLeft, ChevronRight, Eye, FileText, Filter, MoreHorizontal, ArrowRight, AlertCircle, RefreshCw } from "lucide-react";
+import { Calendar, ChevronLeft, ChevronRight, Eye, FileText, Filter, ArrowRight, AlertCircle, RefreshCw } from "lucide-react";
 import Link from "next/link";
 
 export default function HistoryPage() {
+  type BadgeVariant = "default" | "destructive" | "secondary";
+
   const tableData = [
     { id: "#LOT-VN-2023-001", product: "Gạo ST25 (Xuất khẩu)", market: "Liên minh Châu Âu", date: "12/10/2023 09:45", status: "ĐẠT", statusType: "default", iconColor: "bg-primary" },
     { id: "#LOT-VN-2023-004", product: "Cà phê Robusta", market: "Hoa Kỳ (FDA)", date: "11/10/2023 14:20", status: "KHÔNG ĐẠT", statusType: "destructive", iconColor: "bg-secondary-container" },
@@ -96,7 +98,7 @@ export default function HistoryPage() {
                   </td>
                   <td className="px-6 py-4 text-on-surface-variant">{row.date}</td>
                   <td className="px-6 py-4">
-                    <Badge variant={row.statusType as any} className="px-2 py-1 flex items-center w-max gap-1.5">
+                    <Badge variant={row.statusType as BadgeVariant} className="px-2 py-1 flex items-center w-max gap-1.5">
                        <div className={`w-1.5 h-1.5 rounded-full ${row.statusType === 'default' ? 'bg-white' : (row.statusType === 'destructive' ? 'bg-error' : 'bg-outline')}`}></div>
                        {row.status}
                     </Badge>

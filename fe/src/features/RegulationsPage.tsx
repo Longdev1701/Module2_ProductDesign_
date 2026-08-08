@@ -6,6 +6,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Settings } from "lucide-react";
 
 export default function RegulationsPage() {
+  type BadgeVariant = "default" | "destructive" | "secondary";
+
   const documents = [
     {
       type: "KHẨN CẤP",
@@ -103,7 +105,7 @@ export default function RegulationsPage() {
               <Card key={idx} className="flex flex-col h-full hover:shadow-md transition-shadow cursor-pointer">
                 <CardContent className="p-6 flex-1 flex flex-col">
                   <div className="flex items-start justify-between mb-4 gap-2">
-                    <Badge variant={doc.typeVariant as any} className="text-[10px] py-1">{doc.type}</Badge>
+                    <Badge variant={doc.typeVariant as BadgeVariant} className="text-[10px] py-1">{doc.type}</Badge>
                     <span className="text-xs text-outline text-right leading-tight">{doc.date}</span>
                   </div>
                   <h3 className="font-serif text-lg font-bold mb-3 leading-snug">{doc.title}</h3>

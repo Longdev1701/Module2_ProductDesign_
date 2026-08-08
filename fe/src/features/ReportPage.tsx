@@ -1,9 +1,9 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, CheckCircle2, ChevronRight, AlertTriangle, ExternalLink, FileText } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { CheckCircle2, ChevronRight, AlertTriangle, ExternalLink, FileText } from "lucide-react";
 import Link from "next/link";
 
 export default function ReportPage() {
@@ -91,7 +91,7 @@ export default function ReportPage() {
                   <td className="px-6 py-4 font-medium">Hiển thị khối lượng tịnh</td>
                   <td className="px-6 py-4"><span className="text-secondary flex items-center gap-1"><AlertTriangle className="w-3 h-3"/> Cảnh báo</span></td>
                   <td className="px-6 py-4">Chiều cao phông chữ (2.8mm) dưới mức tối thiểu EU (3.0mm).</td>
-                  <td className="px-6 py-4 text-primary font-medium">Tăng cỡ chữ cho trường "Khối lượng tịnh".</td>
+                  <td className="px-6 py-4 text-primary font-medium">Tăng cỡ chữ cho trường &quot;Khối lượng tịnh&quot;.</td>
                 </tr>
               </tbody>
             </table>

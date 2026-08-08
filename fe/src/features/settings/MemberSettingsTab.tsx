@@ -6,9 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Users, UserPlus } from "lucide-react";
+import type { OrganizationMember } from "@/types/api";
 
 interface MemberSettingsTabProps {
-  members: any[];
+  members: OrganizationMember[];
   inviteEmail: string;
   setInviteEmail: (val: string) => void;
   inviteRole: string;
@@ -94,7 +95,7 @@ export function MemberSettingsTab({
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline-variant/60">
-                {members?.map((m: any) => (
+                {members?.map((m) => (
                   <tr key={m.id} className="hover:bg-surface-container-lowest">
                     <td className="px-4 py-3">
                       <p className="font-semibold text-on-surface">{m.profile?.fullName || "Chưa cập nhật"}</p>

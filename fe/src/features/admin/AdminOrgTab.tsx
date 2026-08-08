@@ -4,10 +4,11 @@ import React, { useState } from "react";
 import { Building, Plus } from "lucide-react";
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
+import type { AdminOrganizationInput, OrganizationSummary } from "@/types/api";
 
 interface AdminOrgTabProps {
-  orgs: any[];
-  onCreateOrg: (orgData: any) => Promise<void>;
+  orgs: OrganizationSummary[];
+  onCreateOrg: (orgData: AdminOrganizationInput) => Promise<void>;
   onSelectOrgForUser: (orgId: string) => void;
 }
 

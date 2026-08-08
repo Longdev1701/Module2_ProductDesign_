@@ -1,21 +1,6 @@
+import type { ApiError, ApiResponse } from "@/types/api";
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
-
-export interface ApiResponse<T = any> {
-  data: T;
-  meta?: {
-    requestId?: string;
-    page?: number;
-    pageSize?: number;
-    total?: number;
-    totalPages?: number;
-  };
-}
-
-export interface ApiError {
-  code: string;
-  message: string;
-  details?: Record<string, any>;
-}
 
 class ApiClient {
   private getAuthToken(): string | null {
@@ -75,7 +60,7 @@ class ApiClient {
     return this.request<T>(endpoint, { ...options, method: 'GET' });
   }
 
-  post<T>(endpoint: string, data?: any, options?: RequestInit) {
+  post<T>(endpoint: string, data?: unknown, options?: RequestInit) {
     return this.request<T>(endpoint, {
       ...options,
       method: 'POST',
@@ -83,7 +68,7 @@ class ApiClient {
     });
   }
 
-  patch<T>(endpoint: string, data?: any, options?: RequestInit) {
+  patch<T>(endpoint: string, data?: unknown, options?: RequestInit) {
     return this.request<T>(endpoint, {
       ...options,
       method: 'PATCH',

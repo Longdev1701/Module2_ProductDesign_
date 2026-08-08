@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ShieldCheck, Search, LogOut, User } from "lucide-react";
+import { ShieldCheck, Search, LogOut } from "lucide-react";
 
 interface AdminHeaderProps {
   activeTab: "orgs" | "users";
@@ -10,7 +10,7 @@ interface AdminHeaderProps {
   user?: {
     fullName: string;
     email: string;
-    platformRole: string;
+    platformRole?: string;
   } | null;
   onLogout: () => void;
 }

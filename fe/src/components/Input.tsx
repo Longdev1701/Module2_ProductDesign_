@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   icon?: React.ReactNode;
@@ -8,7 +8,8 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 export function Input({ icon, rightIcon, label, id, error, className = '', ...props }: InputProps) {
-  const inputId = id || Math.random().toString(36).substring(7);
+  const generatedId = useId();
+  const inputId = id || generatedId;
   
   return (
     <div className={`w-full flex flex-col gap-1.5 ${className}`}>

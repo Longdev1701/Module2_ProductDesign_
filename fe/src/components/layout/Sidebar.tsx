@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { api } from "@/lib/api";
+import type { AuthMeResponse } from "@/types/api";
 
 const baseNavItems = [
   { name: "Dashboard", href: "/dashboard", icon: "dashboard" },
@@ -23,7 +24,7 @@ export function Sidebar() {
   useEffect(() => {
     async function checkRole() {
       try {
-        const res = await api.get<any>('/auth/me');
+        const res = await api.get<AuthMeResponse>('/auth/me');
         const role = res.data?.user?.platformRole || res.data?.profile?.platformRole;
         if (role === 'SUPER_ADMIN' || role === 'PLATFORM_ADMIN') {
           setIsAdmin(true);

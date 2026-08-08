@@ -5,6 +5,8 @@ import { Mail, ArrowLeft } from 'lucide-react';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 import { api } from '../../lib/api';
+import type { MessageResponse } from "@/types/api";
+import { getErrorMessage } from "@/types/api";
 
 interface ForgotPasswordViewProps {
   onSwitchView: (view: 'login' | 'register') => void;
@@ -23,10 +25,10 @@ export function ForgotPasswordView({ onSwitchView }: ForgotPasswordViewProps) {
     setSuccessMsg(null);
 
     try {
-      const res = await api.post<any>('/auth/forgot-password', { email });
+      const res = await api.post<MessageResponse>('/auth/forgot-password', { email });
       setSuccessMsg(res.data?.message || 'Yêu cầu khôi phục mật khẩu đã được gửi đến email của bạn.');
-    } catch (err: any) {
-      setErrorMsg(err.message || 'Gửi yêu cầu thất bại. Vui lòng kiểm tra lại email.');
+    } catch (err: unknown) {
+      setErrorMsg(getErrorMessage(err, 'Gửi yêu cầu thất bại. Vui lòng kiểm tra lại email.'));
     } finally {
       setLoading(false);
     }

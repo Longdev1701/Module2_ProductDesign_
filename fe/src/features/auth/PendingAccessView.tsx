@@ -5,18 +5,19 @@ import { useRouter } from "next/navigation";
 import { ShieldAlert, LogOut, Building2, Mail, UserCheck, RefreshCw } from "lucide-react";
 import { Button } from "../../components/Button";
 import { api } from "../../lib/api";
+import type { AuthMeResponse, UserProfile } from "@/types/api";
 
 export function PendingAccessView() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
 
   useEffect(() => {
     async function loadMe() {
       try {
-        const res = await api.get<any>('/auth/me');
+        const res = await api.get<AuthMeResponse>('/auth/me');
         if (res.data) {
           // BE /auth/me trả về { user: {...}, organizations: [...] }
-          setUser(res.data.user);
+          setUser(res.data.user || res.data.profile || null);
           if (res.data.organizations && res.data.organizations.length > 0) {
             router.push('/dashboard');
           }

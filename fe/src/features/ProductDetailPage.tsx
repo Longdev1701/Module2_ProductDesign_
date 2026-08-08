@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Edit, FileText, History, Info, Package, ShieldCheck } from "lucide-react";
+import { Edit, History, Info, Package, ShieldCheck } from "lucide-react";
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 

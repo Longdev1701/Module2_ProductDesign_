@@ -5,6 +5,8 @@ import { Mail, Lock, User, Phone, ShieldCheck, AlertCircle, CheckCircle2, HelpCi
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 import { api } from '../../lib/api';
+import type { ApiError, RegisterResponse } from "@/types/api";
+import { getErrorMessage } from "@/types/api";
 
 interface RegisterViewProps {
   onSwitchView: () => void;
@@ -39,7 +41,7 @@ export function RegisterView({ onSwitchView }: RegisterViewProps) {
     }
 
     try {
-      const res = await api.post<any>('/auth/register', {
+      const res = await api.post<RegisterResponse>('/auth/register', {
         fullName,
         email,
         password,
@@ -51,16 +53,17 @@ export function RegisterView({ onSwitchView }: RegisterViewProps) {
           onSwitchView();
         }, 1500);
       }
-    } catch (err: any) {
-      if (err.details && typeof err.details === 'object') {
+    } catch (err: unknown) {
+      const apiError = err as ApiError;
+      if (apiError.details && typeof apiError.details === 'object') {
         const detailsArray: string[] = [];
         let hasPasswordError = false;
 
-        Object.entries(err.details).forEach(([field, messages]: [string, any]) => {
+        Object.entries(apiError.details).forEach(([field, messages]) => {
           if (Array.isArray(messages)) {
             if (field === 'password') hasPasswordError = true;
             const fieldName = field === 'password' ? 'Mật khẩu' : field === 'email' ? 'Email' : field === 'fullName' ? 'Họ và tên' : field;
-            detailsArray.push(`${fieldName}: ${messages.join(', ')}`);
+            detailsArray.push(`${fieldName}: ${messages.map(String).join(', ')}`);
           }
         });
 
@@ -73,10 +76,10 @@ export function RegisterView({ onSwitchView }: RegisterViewProps) {
             setFixSuggestion('Vui lòng kiểm tra lại thông tin bị lỗi ở trên và nhập lại.');
           }
         } else {
-          setErrorMsg(err.message || 'Đăng ký tài khoản thất bại.');
+          setErrorMsg(getErrorMessage(err, 'Đăng ký tài khoản thất bại.'));
         }
       } else {
-        const errMsg = err.message || 'Đăng ký tài khoản thất bại.';
+        const errMsg = getErrorMessage(err, 'Đăng ký tài khoản thất bại.');
         setErrorMsg(errMsg);
         if (errMsg.toLowerCase().includes('already registered') || errMsg.toLowerCase().includes('đã tồn tại')) {
           setFixSuggestion('Email này đã có tài khoản. Bạn vui lòng bấm nút "Đăng nhập" bên dưới hoặc dùng tính năng "Quên mật khẩu?".');

@@ -4,19 +4,20 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
+import type { AuthMeResponse, OrganizationSummary, UserProfile } from "@/types/api";
 
 export function UserDropdown() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
-  const [activeOrg, setActiveOrg] = useState<any>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [activeOrg, setActiveOrg] = useState<OrganizationSummary | null>(null);
   const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     async function loadUserData() {
       try {
-        const res = await api.get<any>('/auth/me');
+        const res = await api.get<AuthMeResponse>('/auth/me');
         if (res.data) {
-          setUser(res.data.user || res.data.profile);
+          setUser(res.data.user || res.data.profile || null);
           if (res.data.organizations && res.data.organizations.length > 0) {
             const org = res.data.organizations[0];
             setActiveOrg(org);
@@ -71,8 +72,8 @@ export function UserDropdown() {
           <span className="font-semibold text-primary truncate max-w-[180px]">
             {activeOrg.name}
           </span>
-          <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold border ${roleColors[activeOrg.role] || 'bg-gray-100'}`}>
-            {activeOrg.role}
+            <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold border ${activeOrg.role ? roleColors[activeOrg.role] : 'bg-gray-100'}`}>
+            {activeOrg.role || 'VIEWER'}
           </span>
         </div>
       )}

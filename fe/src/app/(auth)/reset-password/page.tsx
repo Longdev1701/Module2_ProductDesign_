@@ -7,6 +7,8 @@ import { Input } from '../../../components/Input';
 import { Button } from '../../../components/Button';
 import { AuthBrandingPanel } from '../../../features/auth/AuthBrandingPanel';
 import { api } from '../../../lib/api';
+import type { MessageResponse } from "@/types/api";
+import { getErrorMessage } from "@/types/api";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -31,7 +33,7 @@ export default function ResetPasswordPage() {
     }
 
     try {
-      const res = await api.post<any>('/auth/reset-password', {
+      const res = await api.post<MessageResponse>('/auth/reset-password', {
         email,
         newPassword,
       });
@@ -40,8 +42,8 @@ export default function ResetPasswordPage() {
       setTimeout(() => {
         router.push('/login');
       }, 2000);
-    } catch (err: any) {
-      setErrorMsg(err.message || 'Đặt lại mật khẩu thất bại. Vui lòng kiểm tra lại thông tin.');
+    } catch (err: unknown) {
+      setErrorMsg(getErrorMessage(err, 'Đặt lại mật khẩu thất bại. Vui lòng kiểm tra lại thông tin.'));
     } finally {
       setLoading(false);
     }
