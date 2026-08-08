@@ -1,4 +1,10 @@
-import React from 'react';
+"use client";
+
+import { AlertCircle, FileText, RefreshCw } from 'lucide-react';
+
+import { useLegalUpdates } from '@/features/legal-updates/use-legal-updates';
+
+import type { Regulation } from '@/features/legal-updates/types';
 
 export interface LegalTrackingItem {
   id: string | number;
@@ -7,62 +13,112 @@ export interface LegalTrackingItem {
   title: string;
   description: string;
   actionText?: string;
-  onAction?: () => void;
+  href?: string;
 }
 
-const defaultTrackingItems: LegalTrackingItem[] = [
-  {
-    id: 1,
+function formatDate(date: string) {
+  return new Intl.DateTimeFormat('vi-VN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  }).format(new Date(date));
+}
+
+function toTrackingItem(update: Regulation): LegalTrackingItem {
+  if (!update.isActive) {
+    return {
+      id: update.id,
+      status: 'NGỪNG HIỆU LỰC',
+      statusType: 'error',
+      title: update.title,
+      description: update.description ?? 'Quy định này không còn hiệu lực. Hãy rà soát các hồ sơ liên quan.',
+      actionText: 'Xem chi tiết',
+      href: update.sourceUrl ?? undefined,
+    };
+  }
+
+  if (update.effectiveDate && new Date(update.effectiveDate) > new Date()) {
+    return {
+      id: update.id,
+      status: 'SẮP HIỆU LỰC',
+      statusType: 'neutral',
+      title: update.title,
+      description: update.description ?? `Có hiệu lực từ ${formatDate(update.effectiveDate)}.`,
+      actionText: 'Xem quy định',
+      href: update.sourceUrl ?? undefined,
+    };
+  }
+
+  return {
+    id: update.id,
     status: 'MỚI NHẤT',
     statusType: 'primary',
-    title: 'EU: Thay đổi MRL Trái cây khô',
-    description: 'Vừa cập nhật 2 giờ trước. Ảnh hưởng đến 14 sản phẩm của bạn.',
+    title: update.title,
+    description: update.description ?? `Cập nhật ngày ${formatDate(update.createdAt)}.`,
     actionText: 'Xem chi tiết',
-  },
-  {
-    id: 2,
-    status: 'CẢNH BÁO',
-    statusType: 'error',
-    title: 'FDA: Kiểm tra nhãn mác mới',
-    description: 'Quy định có hiệu lực trong 45 ngày tới. Cần rà soát bao bì.',
-    actionText: 'Bắt đầu rà soát',
-  },
-  {
-    id: 3,
-    status: 'DỰ THẢO',
-    statusType: 'neutral',
-    title: 'Trung Quốc: Luật BVTV 2025',
-    description: 'Đang trong quá trình lấy ý kiến phản hồi công khai.',
-    actionText: 'Xem dự thảo',
-  },
-];
+    href: update.sourceUrl ?? undefined,
+  };
+}
 
 export function LegalTrackingWidget({
   title = "Theo dõi pháp lý",
-  items = defaultTrackingItems,
   className = ""
 }: {
   title?: string;
-  items?: LegalTrackingItem[];
   className?: string;
 }) {
+  const { updates, isLoading, error, refresh } = useLegalUpdates();
+  const items = updates.map(toTrackingItem);
+
   return (
-    <div className={`bg-white p-6 rounded-2xl border border-[#c3c6d5]/60 shadow-xs space-y-6 ${className}`}>
+    <section className={`bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant shadow-xs space-y-6 ${className}`} aria-labelledby="legal-tracking-title">
       {/* Title */}
-      <h3 className="font-serif text-2xl font-bold text-[#191c1e]">{title}</h3>
+      <h3 id="legal-tracking-title" className="font-serif text-2xl font-bold text-on-surface">{title}</h3>
+
+      {isLoading && (
+        <div className="space-y-4" aria-label="Đang tải cập nhật pháp lý">
+          {[1, 2, 3].map((item) => (
+            <div key={item} className="h-20 animate-pulse rounded-lg bg-surface-container" />
+          ))}
+        </div>
+      )}
+
+      {!isLoading && error && (
+        <div className="rounded-lg border border-error bg-error-container p-4 text-on-error-container" role="alert">
+          <div className="flex items-start gap-2">
+            <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
+            <div>
+              <p className="font-semibold">Không thể tải cập nhật pháp lý</p>
+              <p className="mt-1 text-sm">{error}</p>
+              <button type="button" onClick={() => void refresh()} className="mt-3 inline-flex items-center gap-2 font-semibold underline">
+                <RefreshCw className="h-4 w-4" aria-hidden="true" />
+                Thử lại
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {!isLoading && !error && items.length === 0 && (
+        <div className="rounded-lg border border-outline-variant p-5 text-center text-on-surface-variant">
+          <FileText className="mx-auto h-6 w-6" aria-hidden="true" />
+          <p className="mt-2 font-semibold text-on-surface">Chưa có cập nhật pháp lý</p>
+          <p className="mt-1 text-sm">Các quy định mới sẽ xuất hiện tại đây.</p>
+        </div>
+      )}
 
       {/* Timeline List */}
-      <div className="relative pl-6 space-y-7 before:absolute before:left-2 before:top-2.5 before:bottom-2.5 before:w-[1.5px] before:bg-[#c3c6d5]/40">
+      {!isLoading && !error && items.length > 0 && <div className="relative pl-6 space-y-7 before:absolute before:left-2 before:top-2.5 before:bottom-2.5 before:w-px before:bg-outline-variant">
         {items.map((item) => {
-          let dotBg = "bg-[#00327d]";
-          let tagColor = "text-[#00327d]";
+          let dotBg = "bg-primary";
+          let tagColor = "text-primary";
 
           if (item.statusType === 'error') {
-            dotBg = "bg-[#ba1a1a]";
-            tagColor = "text-[#ba1a1a]";
+            dotBg = "bg-error";
+            tagColor = "text-error";
           } else if (item.statusType === 'neutral') {
-            dotBg = "bg-[#c3c6d5]";
-            tagColor = "text-[#737784]";
+            dotBg = "bg-outline-variant";
+            tagColor = "text-outline";
           }
 
           return (
@@ -80,30 +136,32 @@ export function LegalTrackingWidget({
                 </div>
 
                 {/* Item Title */}
-                <h4 className="font-sans text-base font-bold text-[#191c1e] group-hover:text-[#00327d] transition-colors leading-snug">
+                <h4 className="font-sans text-base font-bold text-on-surface group-hover:text-primary transition-colors leading-snug">
                   {item.title}
                 </h4>
 
                 {/* Description */}
-                <p className="text-sm text-[#434653] leading-relaxed">
+                <p className="text-sm text-on-surface-variant leading-relaxed">
                   {item.description}
                 </p>
 
                 {/* Action Link */}
-                {item.actionText && (
-                  <button 
-                    onClick={item.onAction}
-                    className="pt-1 text-sm font-semibold text-[#00327d] hover:text-[#0047ab] hover:underline flex items-center gap-1 transition-all cursor-pointer"
+                {item.actionText && item.href && (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="pt-1 text-sm font-semibold text-primary hover:text-primary-container hover:underline flex items-center gap-1 transition-all"
                   >
                     {item.actionText}
-                  </button>
+                  </a>
                 )}
               </div>
             </div>
           );
         })}
-      </div>
-    </div>
+      </div>}
+    </section>
   );
 }
 
