@@ -9,6 +9,7 @@ Tất cả các thay đổi quan trọng của dự án **Themis LexiGuard** s�
 ## [Unreleased]
 
 ### Added
+- Add frontend legal-update widget states, Zod API validation, and Supabase Realtime refresh support.
 - Khởi tạo thư mục quy tắc và kiến trúc `.agents/` chuẩn hóa theo Antigravity format.
 - Tạo bộ skill phân tách rõ ràng: `frontend`, `backend`, `ai-compliance`, `database`, `security`.
 - Tạo các tài liệu tham chiếu chi tiết trong `.agents/ref/` (từ `01-product.md` đến `10-done.md`).
