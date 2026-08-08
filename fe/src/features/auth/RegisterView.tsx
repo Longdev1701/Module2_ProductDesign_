@@ -90,25 +90,25 @@ export function RegisterView({ onSwitchView }: RegisterViewProps) {
   };
 
   return (
-    <div className="bg-white border border-outline-variant rounded-lg overflow-hidden shadow-sm relative">
+    <div className="bg-white border border-outline-variant rounded-xl overflow-hidden shadow-sm relative">
       <div className="absolute top-0 left-0 right-0 h-1 bg-primary"></div>
       
-      <div className="p-8">
-        <div className="text-center mb-6">
+      <div className="p-6 sm:p-8">
+        <div className="text-center mb-5">
           <h2 className="text-2xl font-serif text-primary font-bold mb-1">Tạo tài khoản mới</h2>
           <p className="text-on-surface-variant text-xs">Đăng ký hệ thống quản lý tuân thủ pháp lý</p>
         </div>
 
-        {/* Detailed Error Box with Fix Guidance */}
+        {/* Detailed Error Box */}
         {errorMsg && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-800 text-xs rounded-lg space-y-2 shadow-sm">
-            <div className="flex items-center gap-2 font-bold text-red-900 text-sm">
-              <AlertCircle className="w-5 h-5 flex-shrink-0 text-red-600" />
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-800 text-xs rounded-lg space-y-1 shadow-sm">
+            <div className="flex items-center gap-2 font-bold text-red-900">
+              <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-600" />
               <span>{errorMsg}</span>
             </div>
 
             {errorDetails.length > 0 && (
-              <ul className="list-disc pl-7 space-y-1 text-red-700">
+              <ul className="list-disc pl-6 space-y-0.5 text-red-700">
                 {errorDetails.map((detail, idx) => (
                   <li key={idx} className="font-semibold">{detail}</li>
                 ))}
@@ -116,9 +116,9 @@ export function RegisterView({ onSwitchView }: RegisterViewProps) {
             )}
 
             {fixSuggestion && (
-              <div className="mt-2 pt-2 border-t border-red-200/80 flex items-start gap-1.5 text-red-900 font-medium">
-                <HelpCircle className="w-4 h-4 flex-shrink-0 text-amber-600 mt-0.5" />
-                <span><strong className="text-amber-800">Cách khắc phục:</strong> {fixSuggestion}</span>
+              <div className="mt-1.5 pt-1.5 border-t border-red-200/80 flex items-start gap-1 text-red-900 font-medium">
+                <HelpCircle className="w-3.5 h-3.5 flex-shrink-0 text-amber-600 mt-0.5" />
+                <span><strong className="text-amber-800">Khắc phục:</strong> {fixSuggestion}</span>
               </div>
             )}
           </div>
@@ -126,79 +126,72 @@ export function RegisterView({ onSwitchView }: RegisterViewProps) {
 
         {/* Success Alert */}
         {successMsg && (
-          <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded-lg flex items-center gap-2 font-semibold shadow-sm">
-            <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-emerald-600" />
+          <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded-lg flex items-center gap-2 font-semibold shadow-sm">
+            <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-emerald-600" />
             <span>{successMsg}</span>
           </div>
         )}
 
-        <form className="space-y-6" onSubmit={handleRegisterSubmit}>
-          {/* Section 1: Personal Info */}
-          <div className="bg-surface-container-low p-6 rounded-md border border-outline-variant/30 space-y-4">
-            <h3 className="text-xs font-mono font-semibold text-primary uppercase tracking-wider mb-2">
-              THÔNG TIN CÁ NHÂN
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input 
-                label="Họ và tên" 
-                placeholder="Nhập họ và tên (Ví dụ: Rốt Thi)" 
-                type="text"
-                required
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                icon={<User className="w-4 h-4" />}
-              />
-              <Input 
-                label="Số điện thoại" 
-                placeholder="Số điện thoại" 
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                icon={<Phone className="w-4 h-4" />}
-              />
-            </div>
+        <form className="space-y-4" onSubmit={handleRegisterSubmit}>
+          {/* Personal Info Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <Input 
+              label="Họ và tên" 
+              placeholder="Nhập họ và tên" 
+              type="text"
+              required
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              icon={<User className="w-4 h-4" />}
+            />
+            <Input 
+              label="Số điện thoại" 
+              placeholder="Số điện thoại" 
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              icon={<Phone className="w-4 h-4" />}
+            />
           </div>
 
-          {/* Section 2: Account Info */}
-          <div className="bg-surface-container-low p-6 rounded-md border border-outline-variant/30 space-y-4">
-            <h3 className="text-xs font-mono font-semibold text-primary uppercase tracking-wider mb-2">
-              THÔNG TIN TÀI KHOẢN
-            </h3>
-            <Input 
-              label="Email" 
-              placeholder="ten@congty.com" 
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              icon={<Mail className="w-4 h-4" />}
-            />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Input 
-                  label="Mật khẩu" 
-                  placeholder="Tạo mật khẩu" 
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  icon={<Lock className="w-4 h-4" />}
-                />
-                <p className="text-[10px] text-on-surface-variant mt-1.5 leading-relaxed">
-                  💡 *Tối thiểu 8 ký tự, gồm chữ hoa [A-Z] & chữ số [0-9] (Ví dụ: <span className="font-mono font-bold text-primary">Rochthi59!</span>)
-                </p>
-              </div>
+          {/* Email */}
+          <Input 
+            label="Email công việc" 
+            placeholder="ten@congty.com" 
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            icon={<Mail className="w-4 h-4" />}
+          />
+
+          {/* Password Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
               <Input 
-                label="Xác nhận mật khẩu" 
-                placeholder="Nhập lại mật khẩu" 
+                label="Mật khẩu" 
+                placeholder="Tạo mật khẩu" 
                 type="password"
                 required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                icon={<ShieldCheck className="w-4 h-4" />}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                icon={<Lock className="w-4 h-4" />}
               />
             </div>
+            <Input 
+              label="Xác nhận mật khẩu" 
+              placeholder="Nhập lại mật khẩu" 
+              type="password"
+              required
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              icon={<ShieldCheck className="w-4 h-4" />}
+            />
           </div>
+
+          <p className="text-[11px] text-on-surface-variant/80 -mt-1 leading-tight">
+            💡 <em>Mật khẩu tối thiểu 8 ký tự, gồm chữ hoa [A-Z] & chữ số [0-9] (Ví dụ: <span className="font-mono font-bold text-primary">Rochthi59!</span>)</em>
+          </p>
 
           <div className="pt-2">
             <Button fullWidth type="submit" disabled={loading}>
@@ -206,14 +199,14 @@ export function RegisterView({ onSwitchView }: RegisterViewProps) {
             </Button>
           </div>
 
-          <div className="text-center text-sm text-on-surface-variant pt-2">
+          <div className="text-center text-xs text-on-surface-variant pt-1">
             Đã có tài khoản?{' '}
             <button 
               type="button" 
               onClick={onSwitchView}
-              className="font-medium text-primary hover:underline focus:outline-none cursor-pointer"
+              className="font-semibold text-primary hover:underline focus:outline-none cursor-pointer"
             >
-              Đăng nhập
+              Đăng nhập ngay
             </button>
           </div>
         </form>
