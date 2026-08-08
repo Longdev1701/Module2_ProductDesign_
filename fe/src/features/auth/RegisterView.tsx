@@ -68,7 +68,7 @@ export function RegisterView({ onSwitchView }: RegisterViewProps) {
           setErrorDetails(detailsArray);
           setErrorMsg('Dữ liệu nhập vào chưa đúng định dạng:');
           if (hasPasswordError) {
-            setFixSuggestion('Mật khẩu cần tối thiểu 8 ký tự, có ít nhất 1 chữ hoa [A-Z] và 1 chữ số [0-9] (Ví dụ: Rochthi59!).');
+            setFixSuggestion('Mật khẩu cần tối thiểu 8 ký tự, có ít nhất 1 chữ hoa [A-Z] và 1 chữ số [0-9] (Ví dụ: Themis2026!).');
           } else {
             setFixSuggestion('Vui lòng kiểm tra lại thông tin bị lỗi ở trên và nhập lại.');
           }
@@ -81,7 +81,7 @@ export function RegisterView({ onSwitchView }: RegisterViewProps) {
         if (errMsg.toLowerCase().includes('already registered') || errMsg.toLowerCase().includes('đã tồn tại')) {
           setFixSuggestion('Email này đã có tài khoản. Bạn vui lòng bấm nút "Đăng nhập" bên dưới hoặc dùng tính năng "Quên mật khẩu?".');
         } else {
-          setFixSuggestion('Vui lòng thử lại với email và mật khẩu hợp lệ (Ví dụ mật khẩu: Rochthi59!).');
+          setFixSuggestion('Vui lòng thử lại với email và mật khẩu hợp lệ (Ví dụ mật khẩu: Themis2026!).');
         }
       }
     } finally {
@@ -190,7 +190,7 @@ export function RegisterView({ onSwitchView }: RegisterViewProps) {
           </div>
 
           <p className="text-[11px] text-on-surface-variant/80 -mt-1 leading-tight">
-            💡 <em>Mật khẩu tối thiểu 8 ký tự, gồm chữ hoa [A-Z] & chữ số [0-9] (Ví dụ: <span className="font-mono font-bold text-primary">Rochthi59!</span>)</em>
+            💡 <em>Mật khẩu tối thiểu 8 ký tự, gồm chữ hoa [A-Z] & chữ số [0-9] (Ví dụ: <span className="font-mono font-bold text-primary">Themis2026!</span>)</em>
           </p>
 
           <div className="pt-2">
