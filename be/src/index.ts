@@ -27,20 +27,24 @@ app.get('/health', (_req, res) => {
   });
 });
 
+import authRouter from './modules/auth/router';
+import orgRouter from './modules/organization/router';
+import adminRouter from './modules/admin/router';
+
 // ─── API Routes ─────────────────────────────────────────
-// TODO: Sprint 1 — Auth routes
-// TODO: Sprint 2 — Product & Batch routes
-// TODO: Sprint 3 — Document routes
-// TODO: Sprint 4 — Regulation routes
-// TODO: Sprint 5 — Compliance & AI routes
-// TODO: Sprint 6 — Report routes
-// TODO: Sprint 7 — Dashboard & Integrity routes
+app.use('/api/auth', authRouter);
+app.use('/api/organizations', orgRouter);
+app.use('/api/admin', adminRouter);
 
 app.get('/api', (_req, res) => {
   res.json({
     message: 'Themis LexiGuard API',
     version: '1.0.0',
-    docs: '/api/docs',
+    endpoints: {
+      auth: '/api/auth',
+      organizations: '/api/organizations',
+      admin: '/api/admin',
+    },
   });
 });
 

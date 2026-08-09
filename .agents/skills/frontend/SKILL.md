@@ -1,4 +1,4 @@
-﻿---
+---
 name: frontend
 description: Build Next.js 15 App Router pages, React components, Tailwind UI for Themis LexiGuard. Use when creating/editing FE files in fe/src/.
 ---
@@ -14,13 +14,16 @@ animation: motion
 router: file-based App Router
 
 ## DIR STRUCTURE
-fe/src/app/(auth)/          — login, register, onboarding
-fe/src/app/(dashboard)/     — all protected pages
-fe/src/components/          — shared UI primitives
-fe/src/features/<name>/     — feature-scoped components + hooks
-fe/src/hooks/               — shared custom hooks
-fe/src/lib/                 — api client, utils
-fe/src/types/               — shared TypeScript types
+fe/src/app/(auth)/                  — login, register, onboarding, reset-password
+fe/src/app/(dashboard)/             — root dashboard group
+fe/src/app/(dashboard)/(shell)/     — pages with Sidebar + Topbar (dashboard, checks, history, integrity, products, regulations, reports, settings)
+fe/src/app/(dashboard)/admin        — standalone full-page Admin Portal
+fe/src/app/(dashboard)/pending-access — standalone waiting screen for unassigned users
+fe/src/components/                  — shared UI primitives & layout (Sidebar, Topbar, UserDropdown, LegalTrackingWidget)
+fe/src/features/<name>/             — feature-scoped components + hooks
+fe/src/hooks/                       — shared custom hooks
+fe/src/lib/                         — api client, utils
+fe/src/types/                       — shared TypeScript types
 
 ## ROUTING RULES
 - Protected routes → middleware redirect to /login if no session
@@ -35,12 +38,18 @@ fe/src/types/               — shared TypeScript types
 - Success shape: { data: {}, meta: { requestId } }
 
 ## COMPONENT RULES
+- **Single Responsibility Principle (SRP) Modularization:**
+  - Monolithic files (>200 lines) are FORBIDDEN. Split feature pages into focused sub-components under `fe/src/features/<name>/` (e.g. `features/settings/{ProfileSettingsTab.tsx, MemberSettingsTab.tsx, SecuritySettingsTab.tsx, NotificationSettingsTab.tsx, index.tsx}` and `features/auth/{AuthBrandingPanel.tsx, LoginView.tsx, RegisterView.tsx, index.tsx}`).
+  - Separate layout components into single-responsibility files: `components/layout/{Sidebar.tsx, Topbar.tsx, UserDropdown.tsx}`.
+- **Dynamic Session & RBAC Integration:**
+  - Topbar Header MUST fetch active session via `api.get('/auth/me')` and display real user name, initial avatar, active Organization name, and `OrganizationRole` badge (`OWNER` | `MANAGER` | `COMPLIANCE` | `VIEWER`).
+  - Settings page MUST display real profile, real enterprise export info, real team members list, and disable edit controls for non-OWNER/MANAGER roles with clear permission badges.
 - Every interactive component needs: loading | empty | error state
 - Status/severity → always show icon + text (never color alone)
 - Tables → server-side pagination, not client-side filter
 - Forms → React Hook Form + Zod schema, disable submit on loading
 - Modals → trap focus, Escape closes
-- No hardcoded colors — use var(--color-*)
+- No hardcoded colors — use CSS token variables
 
 ## REQUIRED STATES PER FEATURE
 loading: skeleton preferred over spinner for content areas
