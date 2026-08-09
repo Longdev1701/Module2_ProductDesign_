@@ -28,6 +28,16 @@ Tất cả các thay đổi quan trọng của dự án **Themis LexiGuard** s�
 - Hiển thị đầy đủ Badge phân quyền (`PLATFORM_ADMIN`, `OWNER`, `MANAGER`, `COMPLIANCE`), Họ tên và Email tài khoản đang đăng nhập ở Topbar.
 
 ### Added
+- Ghi rõ công nghệ realtime trong plan legal updates: Supabase Postgres, Supabase Realtime `postgres_changes`, `@supabase/supabase-js` và refetch qua Express API.
+- Cập nhật plan legal news summary để Gemini là model tóm tắt mặc định cho MVP; model router/fallback để sau MVP.
+- Bổ sung chiến lược dùng Gemini API free tier cho MVP legal news summary, gồm giới hạn quota, dữ liệu được phép gửi, job concurrency, retry, dedupe/cache và fallback production.
+- Bổ sung hướng realtime cho legal updates: Supabase Realtime chỉ làm signal refresh, frontend refetch API, hỗ trợ widget/list/detail, fallback và RBAC.
+- Bổ sung hướng dẫn legal update JSON tương thích frontend hiện tại: tách `frontendSummaryVi` cho dashboard/widget và `detailedSummaryVi` cho trang chi tiết.
+- Ghi rõ kiến trúc legal news summary: AI tóm tắt/dịch một lần ở backend, lưu bản đã validate/review vào DB, frontend đọc qua API thay vì gọi AI trực tiếp khi xem tin.
+- Làm rõ plan legal updates theo thứ tự triển khai: AI tóm tắt tin tức pháp lý đưa lên frontend trước, sau đó mới mở rộng RAG/Q&A cho model.
+- Điều chỉnh plan legal updates theo hướng ưu tiên MVP tổng hợp tin tức pháp lý trước, hoãn RAG/Q&A sang phase sau khi feed và quy trình review ổn định.
+- Bổ sung schema JSON chuẩn cho AI đọc tin pháp lý nông sản đa sản phẩm trong plan legal updates, gồm enum category/severity/status/relevance và mapping sang `legal_updates`.
+- Add planning document for legal updates, realtime feed, multi-language model summary, and RAG knowledge architecture.
 - Add frontend legal-update widget states, Zod API validation, and Supabase Realtime refresh support.
 - Khởi tạo thư mục quy tắc và kiến trúc `.agents/` chuẩn hóa theo Antigravity format.
 - Tạo bộ skill phân tách rõ ràng: `frontend`, `backend`, `ai-compliance`, `database`, `security`.
