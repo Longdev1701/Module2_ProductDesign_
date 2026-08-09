@@ -1,9 +1,9 @@
-﻿# THEMIS LEXIGUARD — AI AGENT RULES
+# THEMIS LEXIGUARD — AI AGENT RULES
 
 ## IDENTITY
 product: Themis LexiGuard
 tagline: AI Compliance Navigator for Agricultural Export
-mvp_scope: coffee × EU market only
+mvp_scope: durian × CHINA market (Nghị định thư Hải quan Trung Quốc GACC - Mã HS: 0810.60.00)
 stack: Next.js15 + Express + Supabase + Prisma + Gemini
 dirs: fe/ (frontend) | be/ (backend) | docs/ | .agents/
 

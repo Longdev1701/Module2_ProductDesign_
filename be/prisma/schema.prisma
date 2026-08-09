@@ -1,8 +1,9 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// ─── THEMIS LEXIGUARD — PRISMA SCHEMA ────────────────────
+// Stack: PostgreSQL + Supabase Auth + Prisma ORM
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -11,47 +12,96 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// ─── AUTH & ORGANIZATION ────────────────────────────────
+// ─── AUTH, PROFILE & ORGANIZATION ───────────────────────
 
-model User {
-  id             String   @id @default(uuid())
-  email          String   @unique
-  name           String
-  avatarUrl      String?
-  role           Role     @default(MEMBER)
-  organizationId String?
-  organization   Organization? @relation(fields: [organizationId], references: [id])
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+model Profile {
+  id           String       @id // Maps to Supabase auth.users.id
+  email        String       @unique
+  fullName     String
+  avatarUrl    String?
+  jobTitle     String?      // Chức danh công việc (VD: Giám đốc XNK, Cán bộ Pháp chế)
+  platformRole PlatformRole @default(USER) // Quyền trên toàn hệ thống/nền tảng
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
 
   // Relations
-  auditLogs      AuditLog[]
-  complianceChecks ComplianceCheck[]
+  organizationMembers OrganizationMember[]
+  auditLogs           AuditLog[]
+  complianceChecks    ComplianceCheck[]
 
-  @@map("users")
+  @@map("profiles")
 }
 
 model Organization {
-  id        String   @id @default(uuid())
-  name      String
-  taxCode   String?
-  address   String?
-  industry  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                  String   @id @default(uuid())
+  name                String
+  taxCode             String?
+  address             String?
+  legalRepresentative String?
+  contactEmail        String?
+  contactPhone        String?
+  primaryProduct      String?  // Cà phê, Sầu riêng, v.v.
+  exportMarkets       Json?    // ["EU", "CHINA", "USA"]
+  exportForm          String?  // Chính ngạch, B2B, OEM
+  exportScale         String?  // Sản lượng/năm
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   // Relations
-  users     User[]
-  products  Product[]
-  documents Document[]
+  members     OrganizationMember[]
+  invitations Invitation[]
+  products    Product[]
+  documents   Document[]
 
   @@map("organizations")
 }
 
-enum Role {
-  ADMIN
+model OrganizationMember {
+  id             String           @id @default(uuid())
+  organizationId String
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  profile        Profile          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role           OrganizationRole @default(COMPLIANCE) // Quyền nội bộ doanh nghiệp
+  status         MemberStatus     @default(ACTIVE)
+  joinedAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@unique([organizationId, userId])
+  @@map("organization_members")
+}
+
+enum PlatformRole {
+  USER
+  SUPPORT
+  PLATFORM_ADMIN
+  SUPER_ADMIN
+}
+
+enum OrganizationRole {
+  OWNER
   MANAGER
-  MEMBER
+  COMPLIANCE
+  VIEWER
+}
+
+enum MemberStatus {
+  ACTIVE
+  INACTIVE
+  INVITED
+}
+
+model Invitation {
+  id             String           @id @default(uuid())
+  organizationId String
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  email          String
+  role           OrganizationRole @default(COMPLIANCE)
+  token          String           @unique
+  expiresAt      DateTime
+  createdAt      DateTime         @default(now())
+
+  @@map("invitations")
 }
 
 // ─── PRODUCTS & BATCHES ─────────────────────────────────
@@ -64,7 +114,7 @@ model Product {
   description    String?
   origin         String?
   organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
@@ -79,7 +129,7 @@ model Batch {
   id          String      @id @default(uuid())
   batchCode   String      @unique
   productId   String
-  product     Product     @relation(fields: [productId], references: [id])
+  product     Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
   quantity    Float?
   unit        String?
   status      BatchStatus @default(DRAFT)
@@ -97,18 +147,20 @@ model Batch {
 
 enum BatchStatus {
   DRAFT
+  COLLECTING_DOCUMENTS
   READY_FOR_CHECK
   CHECKING
-  PASSED
-  FAILED
-  EXPORTED
+  ACTION_REQUIRED
+  COMPLIANT
+  NON_COMPLIANT
+  EXPIRED
 }
 
 model ProductMarketRequirement {
   id         String  @id @default(uuid())
   productId  String
-  product    Product @relation(fields: [productId], references: [id])
-  marketCode String  // e.g., "EU", "US", "JP"
+  product    Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  marketCode String  // e.g., "EU", "US", "CN"
   marketName String
 
   @@unique([productId, marketCode])
@@ -125,7 +177,7 @@ model Document {
   fileSize       Int?
   mimeType       String?
   organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
@@ -138,9 +190,9 @@ model Document {
 model BatchDocument {
   id         String   @id @default(uuid())
   batchId    String
-  batch      Batch    @relation(fields: [batchId], references: [id])
+  batch      Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
   documentId String
-  document   Document @relation(fields: [documentId], references: [id])
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
 
   @@unique([batchId, documentId])
@@ -155,23 +207,24 @@ enum DocumentType {
   CONTRACT
   INVOICE
   PACKING_LIST
+  GPS_MAP   // Bản đồ định vị GPS (EUDR)
   OTHER
 }
 
 // ─── REGULATIONS ────────────────────────────────────────
 
 model Regulation {
-  id            String           @id @default(uuid())
-  code          String           @unique  // e.g., "EC-396-2005"
+  id            String             @id @default(uuid())
+  code          String             @unique  // e.g., "EC-396-2005"
   title         String
   description   String?
   category      RegulationCategory
-  market        String           // e.g., "EU", "US"
+  market        String             // e.g., "EU", "US"
   effectiveDate DateTime?
   sourceUrl     String?
-  isActive      Boolean          @default(true)
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
+  isActive      Boolean            @default(true)
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
 
   // Relations
   complianceItems ComplianceItem[]
@@ -194,11 +247,11 @@ enum RegulationCategory {
 model MRLLimit {
   id           String     @id @default(uuid())
   regulationId String
-  regulation   Regulation @relation(fields: [regulationId], references: [id])
+  regulation   Regulation @relation(fields: [regulationId], references: [id], onDelete: Cascade)
   substance    String     // e.g., "Chlorpyrifos"
   maxLimit     Float      // e.g., 0.01
   unit         String     @default("mg/kg")
-  productGroup String?    // e.g., "Coffee", "Rice"
+  productGroup String?    // e.g., "Coffee", "Durian"
   createdAt    DateTime   @default(now())
 
   @@map("mrl_limits")
@@ -207,54 +260,67 @@ model MRLLimit {
 // ─── COMPLIANCE CHECK ───────────────────────────────────
 
 model ComplianceCheck {
-  id          String          @id @default(uuid())
-  batchId     String
-  batch       Batch           @relation(fields: [batchId], references: [id])
-  userId      String
-  user        User            @relation(fields: [userId], references: [id])
-  market      String          // Target market
-  overallStatus ComplianceStatus @default(PENDING)
-  aiConfidence  Float?        // 0-100
-  summary     String?
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  id            String           @id @default(uuid())
+  batchId       String
+  batch         Batch            @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  userId        String
+  profile       Profile          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  market        String           // Target market
+  checkStatus   CheckStatus      @default(QUEUED)
+  result        ComplianceResult @default(MANUAL_REVIEW_REQUIRED)
+  aiConfidence  Float?           // 0-100
+  summary       String?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
 
   // Relations
-  items       ComplianceItem[]
-  report      Report?
+  items         ComplianceItem[]
+  report        Report?
 
   @@map("compliance_checks")
+}
+
+enum CheckStatus {
+  QUEUED
+  PROCESSING
+  NEEDS_INPUT
+  COMPLETED
+  FAILED
+  CANCELLED
+  SUPERSEDED
+}
+
+enum ComplianceResult {
+  COMPLIANT
+  CONDITIONALLY_COMPLIANT
+  NON_COMPLIANT
+  INSUFFICIENT_INFORMATION
+  NOT_APPLICABLE
+  MANUAL_REVIEW_REQUIRED
 }
 
 model ComplianceItem {
   id                String           @id @default(uuid())
   complianceCheckId String
-  complianceCheck   ComplianceCheck  @relation(fields: [complianceCheckId], references: [id])
+  complianceCheck   ComplianceCheck  @relation(fields: [complianceCheckId], references: [id], onDelete: Cascade)
   regulationId      String?
   regulation        Regulation?      @relation(fields: [regulationId], references: [id])
   requirement       String
-  status            ComplianceStatus
+  status            ComplianceResult
   deviation         String?          // Mô tả sai lệch
   remediation       String?          // Cách khắc phục
-  severity          Severity         @default(INFO)
+  severity          FindingSeverity  @default(INFORMATIONAL)
   createdAt         DateTime         @default(now())
 
   @@map("compliance_items")
 }
 
-enum ComplianceStatus {
-  PENDING
-  PASS
-  FAIL
-  WARNING
-}
-
-enum Severity {
+enum FindingSeverity {
   CRITICAL
   HIGH
   MEDIUM
   LOW
-  INFO
+  INFORMATIONAL
 }
 
 // ─── REPORTS ────────────────────────────────────────────
@@ -262,15 +328,24 @@ enum Severity {
 model Report {
   id                String          @id @default(uuid())
   complianceCheckId String          @unique
-  complianceCheck   ComplianceCheck @relation(fields: [complianceCheckId], references: [id])
+  complianceCheck   ComplianceCheck @relation(fields: [complianceCheckId], references: [id], onDelete: Cascade)
   title             String
   pdfUrl            String?
   version           Int             @default(1)
-  isPublished       Boolean         @default(false)
+  status            ReportStatus    @default(DRAFT)
+  integrityHash     String?
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
 
   @@map("reports")
+}
+
+enum ReportStatus {
+  DRAFT
+  IN_REVIEW
+  CHANGES_REQUESTED
+  APPROVED
+  FINAL
 }
 
 // ─── AUDIT LOG ──────────────────────────────────────────
@@ -278,9 +353,9 @@ model Report {
 model AuditLog {
   id         String   @id @default(uuid())
   userId     String
-  user       User     @relation(fields: [userId], references: [id])
-  action     String   // e.g., "CREATE_PRODUCT", "RUN_CHECK"
-  entity     String   // e.g., "Product", "Batch"
+  profile    Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action     String   // e.g., "user.login_success", "org.created"
+  entity     String   // e.g., "Organization", "Batch"
   entityId   String?
   metadata   Json?
   ipAddress  String?

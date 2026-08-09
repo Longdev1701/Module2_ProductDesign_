@@ -1,7 +1,7 @@
-﻿# THEMIS LEXIGUARD — MASTER AGENT RULES
+# THEMIS LEXIGUARD — MASTER AGENT RULES
 
 product: Themis LexiGuard | AI Compliance Navigator for Agricultural Export
-mvp: coffee × EU | stack: Next.js15 + Express + Supabase + Prisma + Gemini
+mvp: durian × CHINA | stack: Next.js15 + Express + Supabase + Prisma + Gemini
 dirs: fe/ | be/ | docs/ | .agents/
 
 ---

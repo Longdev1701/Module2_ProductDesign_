@@ -463,23 +463,27 @@ function determineResult(findings, hasManualReview, hasInsufficientInfo): Compli
 
 ---
 
-## UC-01.6 — Review & Approve báo cáo
+## UC-01.6 — Review, Approval & Versioning Báo cáo Tuân thủ
 
-### UC-01.6.2 — Approve báo cáo
+> **Vòng đời Báo cáo (Report Lifecycle):**
+> `DRAFT` (Dự thảo) ──► `IN_REVIEW` (Đang thẩm định) ──► `CHANGES_REQUESTED` (Yêu cầu chỉnh sửa) ──► `APPROVED` (Đã duyệt) ──► `FINAL` (Chính thức - Bất biến)
+
+### UC-01.6.2 — Phê duyệt Báo cáo (Approve Report)
 
 | Trường | Nội dung |
 |--------|----------|
 | **Mã UC** | UC-01.6.2 |
-| **Actor** | Manager, Owner |
-| **Tiền điều kiện** | Report tồn tại, check.status = "completed" |
-| **Hậu điều kiện** | Report.status = "approved", immutable (không sửa được) |
+| **Actor** | Compliance Manager, Owner |
+| **Tiền điều kiện** | Báo cáo ở trạng thái `DRAFT` hoặc `IN_REVIEW`, các lỗi `CRITICAL` đã được giải trình/khắc phục |
+| **Hậu điều kiện** | Report chuyển sang trạng thái `FINAL` (Chính thức - Immutable), không thể sửa trực tiếp |
 | **API** | `POST /api/reports/:id/approve` |
 
-**Business Rule:**
-- Không thể approve nếu check vẫn đang `processing`
-- Approved report → không thể sửa → phải tạo re-check mới
+**Quy tắc nghiệp vụ:**
+- Báo cáo đã chuyển sang `FINAL` là **BẤT BIẾN (Immutable)** để phục vụ Kiểm toán (Audit Trail).
+- Nếu cần điều chỉnh báo cáo đã `FINAL`, hệ thống **không ghi đè**, mà tạo **Phiên bản hiệu chỉnh mới (Revision)**: `Report v1 FINAL` ──► `Tạo Revision` ──► `Report v2 DRAFT`.
+- Mọi báo cáo `FINAL` đều đi kèm Snapshot dữ liệu tài liệu + Snapshot trích dẫn luật tại thời điểm duyệt + Integrity Hash.
 
-**Audit Log:** `{ action: "report.approved", reportId, approverId, timestamp }`
+**Audit Log:** `{ action: "report.approved", reportId, version: 1, approverId, integrityHash, timestamp }`
 
 ---
 

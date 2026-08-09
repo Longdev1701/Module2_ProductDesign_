@@ -6,41 +6,52 @@
 
 ---
 
+## 🔑 Tài Khoản Thử Nghiệm (Sample Test Credentials)
+
+> **Dữ liệu tài khoản doanh nghiệp thử nghiệm sẵn có trên Database Supabase:**
+
+* **Email:** `themis_exporter_1786179990121@yopmail.com`
+* **Mật khẩu:** `ThemisLexiGuard2026!`
+* **Doanh nghiệp đã gắn sẵn:** *Công ty CP Xuất Nhập Khẩu Nông Sản Tây Nguyên* (`Org ID: 8f694b72-d9ce-4026-8854-31637e869af4`)
+* **Vai trò (OrganizationRole):** `OWNER` (Chủ doanh nghiệp)
+* **Sản phẩm chiến lược:** Sầu riêng Tươi Ri6 / Dona & Sầu riêng Cấp đông (Mã HS: 0810.60.00)
+* **Thị trường xuất khẩu mục tiêu:** CHINA (Tổng cục Hải quan Trung Quốc - GACC Protocol)
+* **Hồ sơ tuân thủ trọng điểm:** Mã số Vùng trồng (PUC), Mã số Cơ sở đóng gói (PHC), Kiểm nghiệm vi sinh & Dư lượng kim loại nặng Cadmium, Hoạt chất Bảo vệ thực vật.
+
+---
+
 ## Cây phân rã
 
 ```
-UC-00: Xác thực & Phân quyền
-├── UC-00.1: Đăng ký tài khoản
-│   ├── UC-00.1.1: Nhập thông tin đăng ký
-│   ├── UC-00.1.2: Xác thực email (OTP / magic link)
-│   └── UC-00.1.3: Khởi tạo hồ sơ cá nhân (Profile)
+UC-00: Xác thực & Phân quyền (Admin-Provisioned Enterprise SaaS)
+├── UC-00.1: Đăng ký tài khoản & Chờ cấp quyền (Access Pending)
+│   ├── UC-00.1.1: Nhập thông tin đăng ký (Họ tên, Email, Mật khẩu)
+│   ├── UC-00.1.2: Tự động khởi tạo Profile tài khoản (Chưa thuộc Doanh nghiệp)
+│   └── UC-00.1.3: Chuyển hướng màn hình Chờ Cấp Quyền (/pending-access)
 │
-├── UC-00.2: Đăng nhập
-│   ├── UC-00.2.1: Đăng nhập bằng email + password
-│   ├── UC-00.2.2: Refresh token tự động
-│   └── UC-00.2.3: Đăng xuất (Logout)
+├── UC-00.2: Đăng nhập, Đăng xuất & Khôi phục Mật khẩu
+│   ├── UC-00.2.1: Đăng nhập bằng Email + Password
+│   ├── UC-00.2.2: Đăng xuất & Ghi vết Audit Log (Logout)
+│   ├── UC-00.2.3: Quên mật khẩu & Đặt lại mật khẩu mới (Forgot & Reset Password)
+│   └── UC-00.2.4: Phân luồng chuyển hướng (Có Org -> /dashboard | Chưa Org -> /pending-access | Admin -> /admin)
 │
-├── UC-00.3: Quản lý Organization
-│   ├── UC-00.3.1: Tạo organization mới (Onboarding)
-│   ├── UC-00.3.2: Cập nhật thông tin organization
-│   └── UC-00.3.3: Chuyển đổi organization (Organization Switcher)
+├── UC-00.3: Quản trị Platform Admin (Admin Provisioning Portal)
+│   ├── UC-00.3.1: Platform Admin khởi tạo Doanh nghiệp xuất khẩu mới (Create Organization)
+│   ├── UC-00.3.2: Platform Admin cấp quyền & gán User vào Doanh nghiệp (Assign User & OrganizationRole)
+│   ├── UC-00.3.3: Platform Admin quản lý danh sách Doanh nghiệp & User hệ thống
+│   └── UC-00.3.4: OWNER / MANAGER cập nhật hồ sơ năng lực Doanh nghiệp (org.manage)
 │
-├── UC-00.4: Quản lý thành viên (Member Management)
-│   ├── UC-00.4.1: Mời thành viên qua email
-│   ├── UC-00.4.2: Chấp nhận lời mời
-│   ├── UC-00.4.3: Thay đổi role thành viên
-│   ├── UC-00.4.4: Tạm khóa / xóa thành viên
-│   └── UC-00.4.5: Rời khỏi organization
+├── UC-00.4: Quản lý thành viên nội bộ Doanh nghiệp (Tenant Member Management)
+│   ├── UC-00.4.1: OWNER / MANAGER gửi lời mời nhân sự mới qua email (member.invite)
+│   ├── UC-00.4.2: Nhân sự chấp nhận lời mời và gia nhập Doanh nghiệp
+│   └── UC-00.4.3: OWNER đổi vai trò / tạm khóa thành viên (member.role_change)
 │
-├── UC-00.5: Kiểm soát phân quyền (RBAC Enforcement)
-│   ├── UC-00.5.1: Kiểm tra quyền tại backend middleware
-│   ├── UC-00.5.2: Kiểm tra org membership
-│   └── UC-00.5.3: Kiểm tra entity ownership
+├── UC-00.5: Kiểm soát phân quyền 2 tầng (Two-Tier Authorization)
+│   ├── UC-00.5.1: Tầng Nền tảng (PlatformRole: SUPER_ADMIN, PLATFORM_ADMIN, SUPPORT, USER)
+│   ├── UC-00.5.2: Tầng Doanh nghiệp (OrganizationRole: OWNER, MANAGER, COMPLIANCE, VIEWER)
+│   └── UC-00.5.3: Ma trận phân quyền 13 Quyền nghiệp vụ chuyên sâu (TENANT_PERMISSION_MATRIX)
 │
-└── UC-00.6: Audit Log xác thực
-    ├── UC-00.6.1: Ghi log đăng nhập thành công / thất bại
-    ├── UC-00.6.2: Ghi log thay đổi phân quyền
-    └── UC-00.6.3: Ghi log thay đổi cấu hình org
+└── UC-00.6: Audit Log xác thực & Quản trị
 ```
 
 ---
@@ -224,46 +235,62 @@ password: required | không trống
 
 ---
 
-## UC-00.3 — Quản lý Organization
+## UC-00.3 — Quản trị Platform Admin & Organization (Admin-Provisioned Enterprise SaaS)
 
-### UC-00.3.1 — Tạo Organization mới (Onboarding)
+### UC-00.3.1 — Platform Admin khởi tạo Doanh nghiệp xuất khẩu (Enterprise Provisioning)
 
 | Trường | Nội dung |
 |--------|----------|
 | **Mã UC** | UC-00.3.1 |
-| **Tên** | Tạo organization (Onboarding) |
-| **Mục tiêu** | Người dùng đầu tiên thiết lập workspace cho doanh nghiệp |
-| **Actor** | User đã đăng nhập, chưa thuộc org nào |
-| **Tiền điều kiện** | Email đã xác thực, chưa có org |
-| **Hậu điều kiện** | Organization tạo thành công, user được gán role `owner`, redirect `/dashboard` |
-| **Trigger** | Redirect từ login (chưa có org) hoặc user truy cập `/onboarding` |
-| **Input** | `orgName`, `taxCode`, `industry`, `country`, `primaryMarket` |
-| **Output** | Organization record + OrganizationMember(owner) |
+| **Tên** | Platform Admin khởi tạo Doanh nghiệp xuất khẩu |
+| **Mục tiêu** | Quản trị viên hệ thống (Platform Admin) khởi tạo hồ sơ Doanh nghiệp xuất khẩu nông sản chính thức |
+| **Actor** | Platform Admin (`SUPER_ADMIN`, `PLATFORM_ADMIN`) — **Cấm User thường tự tạo** |
+| **Tiền điều kiện** | Platform Admin đăng nhập thành công, có quyền `platformRole IN ('SUPER_ADMIN', 'PLATFORM_ADMIN')` |
+| **Hậu điều kiện** | Bản ghi Doanh nghiệp (`Organization`) được tạo lập sẵn sàng để cấp quyền nhân sự |
+| **Trigger** | Platform Admin truy cập Admin Portal (`/admin`) chọn "Tạo Doanh nghiệp Mới" |
+| **Input** | `name`, `taxCode`, `address`, `legalRepresentative`, `contactEmail`, `contactPhone`, `primaryProduct`, `exportMarkets` |
+| **Output** | Doanh nghiệp mới khởi tạo thành công + Ghi vết Audit Log `org.created` |
 
 **Main Flow:**
-1. User vào `/onboarding`
-2. Bước 1: Nhập tên doanh nghiệp, mã số thuế, ngành nghề
-3. Bước 2: Chọn thị trường xuất khẩu chính (EU / USA / ...)
-4. FE gọi `POST /api/organizations` với payload
-5. BE validate Zod: tên doanh nghiệp không trống, taxCode unique trong hệ thống
-6. BE tạo `Organization` + tạo `OrganizationMember { userId, role: "owner", status: "active" }`
-7. BE ghi Audit Log
-8. FE redirect `/dashboard`
+1. Platform Admin truy cập Admin Portal `/admin` chọn "Tạo Doanh nghiệp Mới".
+2. Điền đầy đủ thông tin Doanh nghiệp xuất khẩu: Tên công ty, Mã số thuế, Địa chỉ trụ sở, Người đại diện, Email liên hệ XNK, Sản phẩm chiến lược, Thị trường xuất khẩu.
+3. FE gửi request `POST /api/admin/organizations`.
+4. BE middleware `platformRbacMiddleware(['SUPER_ADMIN', 'PLATFORM_ADMIN'])` xác thực quyền Admin.
+5. BE tạo bản ghi `Organization` mới trong Database.
+6. BE ghi vết `AuditLog`: `{ action: "org.created", entity: "Organization", entityId }`.
+7. FE hiển thị thông báo thành công và chuyển sang bước cấp quyền nhân sự (`Assign Member`).
 
-**Validation:**
-```
-orgName:       required | 3–200 ký tự
-taxCode:       optional | format 10-13 số
-primaryMarket: required | enum: EU | USA | Japan | China
-```
+**Exception Flow:**
+- User thường cố tình gửi `POST /api/organizations` ──► BE từ chối trả về **403 Forbidden**.
+- Mã số thuế / Tên doanh nghiệp bị trùng ──► BE trả về 409 Conflict.
 
-**Database tác động:**
-- `organizations`: INSERT
-- `organization_members`: INSERT (owner)
+### UC-00.3.2 — Platform Admin Cấp Quyền & Gán Thành Viên vào Doanh Nghiệp (User Provisioning)
 
-**API:** `POST /api/organizations`
+| Trường | Nội dung |
+|--------|----------|
+| **Mã UC** | UC-00.3.2 |
+| **Tên** | Platform Admin cấp quyền & gán thành viên vào Doanh nghiệp |
+| **Mục tiêu** | Gán nhân sự cá nhân (`Profile`) vào Doanh nghiệp xuất khẩu với vai trò cụ thể (`OrganizationRole`) mà **không cần tạo hay can thiệp mật khẩu nhân viên** |
+| **Actor** | Platform Admin (`SUPER_ADMIN`, `PLATFORM_ADMIN`) |
+| **Tiền điều kiện** | Platform Admin đăng nhập thành công, Doanh nghiệp đã được khởi tạo trước đó |
+| **Hậu điều kiện** | Bản ghi `OrganizationMember` được tạo mới với trạng thái `ACTIVE` |
+| **Trigger** | Admin chọn User trên Admin Portal (`/admin`) và bấm "Cấp / Sửa Quyền" |
+| **Input** | `userId`, `organizationId`, `role` (`OWNER`, `MANAGER`, `COMPLIANCE`, `VIEWER`) |
+| **Output** | Bản ghi kết nối Doanh nghiệp - Nhân sự + Audit Log `admin.member_assigned` |
 
-**Audit Log:** `{ action: "org.created", userId, orgId, orgName, timestamp }`
+**Main Flow:**
+1. Platform Admin truy cập Admin Portal (`/admin`), chuyển tab "Quản lý User & Cấp quyền".
+2. Hệ thống hiển thị danh sách tất cả User cá nhân (gồm cả User đang ở trạng thái `PENDING_PROVISIONING`).
+3. Admin chọn một User, chọn Doanh nghiệp mục tiêu và chọn Vai trò Doanh nghiệp (`OWNER` | `MANAGER` | `COMPLIANCE` | `VIEWER`).
+4. FE gửi request `POST /api/admin/organizations/:id/assign-member` với `userId` và `role`.
+5. BE middleware `platformRbacMiddleware` kiểm tra quyền Platform Admin.
+6. BE thực hiện upsert `OrganizationMember` gắn `userId` vào `organizationId` với vai trò `role` được chỉ định.
+7. BE ghi vết `AuditLog`: `{ action: "admin.member_assigned", targetUserId, orgId, role }`.
+8. Lần tiếp theo User đăng nhập hoặc refresh trang `/pending-access`, hệ thống tự động nhận dạng Doanh nghiệp và cho phép truy cập `/dashboard`.
+
+**Exception Flow:**
+- Admin chọn User không tồn tại ──► BE trả về 404 Not Found.
+- User thường truy cập API Admin ──► BE từ chối **403 Forbidden**.
 
 ---
 
@@ -398,48 +425,71 @@ role:  required | enum: manager | analyst | viewer
 
 ---
 
-## UC-00.5 — RBAC Enforcement (Backend Middleware)
+## UC-00.5 — Phân Quyền 2 Tầng (Two-Tier Authorization Architecture)
 
-### UC-00.5.1 — Kiểm tra Auth Middleware
+> **NGUYÊN TẮC BẢO MẬT TUYỆT ĐỐI (Zero-Trust Data Boundary):**
+> Tách biệt hoàn toàn **Tầng Nền tảng (Platform Level)** và **Tầng Doanh nghiệp (Tenant Level)**.
+> Admin hệ thống (`SUPER_ADMIN`, `PLATFORM_ADMIN`) quản lý hạ tầng và người dùng, nhưng **KHÔNG mặc định có quyền đọc/sửa dữ liệu nghiệp vụ riêng của Doanh nghiệp (Shipments, Documents, Reports)** để ngăn ngừa nguy cơ rò rỉ dữ liệu chéo (Cross-tenant Data Leakage).
 
-**Flow mỗi request:**
+```
+PlatformRole (Hệ thống):   SUPER_ADMIN  ──► PLATFORM_ADMIN ──► SUPPORT ──► USER
+OrganizationRole (Nội bộ): OWNER        ──► MANAGER        ──► COMPLIANCE ──► VIEWER
+```
+
+### UC-00.5.1 — Middleware Phân Quyền
+
+**Pipeline kiểm tra mỗi request:**
 ```
 Request
   → authMiddleware:
       1. Đọc header: Authorization: Bearer <token>
-      2. Verify JWT via Supabase (issuer, audience, expiration)
-      3. Extract userId = token.sub (KHÔNG từ body)
-      4. Lỗi → 401 Unauthorized
-      5. Attach req.user = { id, email }
-  → orgMiddleware:
-      1. Đọc orgId từ route param / query / body
-      2. Query: OrganizationMember WHERE userId = req.user.id AND orgId AND status = "active"
-      3. Lỗi → 403 Forbidden
-      4. Attach req.orgMember = { role }
-  → rbacMiddleware(requiredPermission):
-      1. Kiểm tra role có permission không (theo RBAC matrix)
-      2. Lỗi → 403 Forbidden
+      2. Verify JWT via Supabase Auth
+      3. Extract userId = token.sub (KHÔNG lấy từ req.body)
+      4. Attach req.user = { id, email, platformRole }
+  → platformRbacMiddleware (cho các API Admin /api/admin/...):
+      1. Verify req.user.platformRole IN (SUPER_ADMIN, PLATFORM_ADMIN)
+      2. Cho phép quản trị hệ thống / từ chối 403 Forbidden
+  → orgMiddleware (cho các API Doanh nghiệp /api/organizations/:id/...):
+      1. Đọc orgId từ route param / header x-organization-id
+      2. Query: OrganizationMember WHERE userId = req.user.id AND organizationId AND status = "ACTIVE"
+      3. Attach req.orgMember = { id, organizationId, role: OrganizationRole }
+  → rbacMiddleware (requiredTenantPermission):
+      1. Kiểm tra req.orgMember.role có nằm trong TENANT_PERMISSION_MATRIX không
+      2. Cho phép truy cập / từ chối 403 Forbidden
   → Controller
 ```
 
-### UC-00.5.2 — Ma trận RBAC
+### UC-00.5.2 — Ma trận Phân quyền Doanh nghiệp (Tenant Level)
 
-| Permission | owner | manager | analyst | viewer |
-|-----------|:-----:|:-------:|:-------:|:------:|
-| org.manage | ✓ | ✗ | ✗ | ✗ |
-| member.invite | ✓ | ✗ | ✗ | ✗ |
-| product.create | ✓ | ✓ | ✓ | ✗ |
-| product.delete | ✓ | ✓ | ✗ | ✗ |
-| batch.create | ✓ | ✓ | ✓ | ✗ |
-| document.upload | ✓ | ✓ | ✓ | ✗ |
-| check.run | ✓ | ✓ | ✓ | ✗ |
-| report.approve | ✓ | ✓ | ✗ | ✗ |
-| report.view | ✓ | ✓ | ✓ | ✓ |
-| task.create | ✓ | ✓ | ✗ | ✗ |
-| auditlog.view | ✓ | ✓ | ✗ | ✗ |
-| ai.run | ✓ | ✓ | ✓ | ✗ |
-| dashboard.view | ✓ | ✓ | ✓ | ✓ |
-| export.report | ✓ | ✓ | ✓ | ✓ |
+| Permission | OWNER (Chủ DN/CEO) | MANAGER (Trưởng phòng XNK) | COMPLIANCE (Cán bộ Tuân thủ) | VIEWER (Nhân sự xem) |
+|---|:---:|:---:|:---:|:---:|
+| `org.manage` (Cấu hình Doanh nghiệp) | **✓** | ✗ | ✗ | ✗ |
+| `member.invite` (Mời thành viên) | **✓** | **✓** *(Theo scope)* | ✗ | ✗ |
+| `member.role_change` (Đổi phân quyền) | **✓** | ✗ | ✗ | ✗ |
+| `shipment.create` (Tạo lô hàng) | **✓** | **✓** | **✓** | ✗ |
+| `shipment.delete` (Xóa lô hàng) | **✓** | **✓** | ✗ | ✗ |
+| `document.upload` (Upload chứng từ) | **✓** | **✓** | **✓** | ✗ |
+| `check.run` (Chạy AI Compliance Engine) | **✓** | **✓** | **✓** | ✗ |
+| `finding.resolve` (Xử lý & Khắc phục lỗi) | **✓** | **✓** | **✓** | ✗ |
+| `report.draft` (Lập dự thảo Báo cáo) | **✓** | **✓** | **✓** | ✗ |
+| `report.approve` (Duyệt Báo cáo Chính thức) | **✓** | **✓** | ✗ | ✗ |
+| `report.view` (Xem Báo cáo) | **✓** | **✓** | **✓** | **✓** |
+| `auditlog.view` (Xem Nhật ký Kiểm toán) | **✓** | **✓** | ✗ | ✗ |
+| `dashboard.view` (Xem Dashboard) | **✓** | **✓** | **✓** | **✓** |
+
+### UC-00.5.3 — Tích hợp Frontend Dynamic Session & Kiến trúc Component Đơn nhiệm (SRP)
+
+**1. Đồng bộ Session & Header Topbar (`fe/src/components/layout/`):**
+* `UserDropdown.tsx`: Tự động gọi `GET /api/auth/me` nạp tên thật, avatar ký tự đầu, Tên Doanh nghiệp đang hoạt động và Badge vai trò phân quyền (`OWNER`, `MANAGER`, `COMPLIANCE`, `VIEWER`).
+* `Topbar.tsx`: Hiển thị thanh tìm kiếm độc lập và nhúng `UserDropdown`.
+* `Sidebar.tsx`: Chuyên trách menu điều hướng ứng dụng.
+
+**2. Trang Cài Đặt & Quản trị Nhân sự Modular (`fe/src/features/settings/`):**
+* `ProfileSettingsTab.tsx`: Form cập nhật thông tin cá nhân và hồ sơ năng lực Doanh nghiệp xuất khẩu (`PATCH /api/organizations/:id`). Chỉ mở khóa nút lưu cho vai trò `OWNER` / `MANAGER` (`org.manage`).
+* `MemberSettingsTab.tsx`: Bảng hiển thị danh sách nhân sự thực tế (`GET /api/organizations/:id`) và Form gửi lời mời thành viên mới (`POST /api/organizations/:id/invitations`) (`member.invite`).
+* `SecuritySettingsTab.tsx`: Trực quan hóa kiến trúc phân quyền 2 tầng và ma trận RBAC.
+* `NotificationSettingsTab.tsx`: Cấu hình nhận cảnh báo luật EUDR/MRL khẩn cấp.
+* `index.tsx`: Component điều phối quản lý tab chính.
 
 ---
 
