@@ -19,15 +19,16 @@ model Profile {
   email        String       @unique
   fullName     String
   avatarUrl    String?
-  jobTitle     String?      // Chức danh công việc (VD: Giám đốc XNK, Cán bộ Pháp chế)
+  jobTitle     String? // Chức danh công việc (VD: Giám đốc XNK, Cán bộ Pháp chế)
   platformRole PlatformRole @default(USER) // Quyền trên toàn hệ thống/nền tảng
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 
   // Relations
-  organizationMembers OrganizationMember[]
-  auditLogs           AuditLog[]
-  complianceChecks    ComplianceCheck[]
+  organizationMembers  OrganizationMember[]
+  auditLogs            AuditLog[]
+  complianceChecks     ComplianceCheck[]
+  reviewedLegalUpdates LegalUpdate[]        @relation("LegalUpdateReviewer")
 
   @@map("profiles")
 }
@@ -40,18 +41,19 @@ model Organization {
   legalRepresentative String?
   contactEmail        String?
   contactPhone        String?
-  primaryProduct      String?  // Cà phê, Sầu riêng, v.v.
-  exportMarkets       Json?    // ["EU", "CHINA", "USA"]
-  exportForm          String?  // Chính ngạch, B2B, OEM
-  exportScale         String?  // Sản lượng/năm
+  primaryProduct      String? // Cà phê, Sầu riêng, v.v.
+  exportMarkets       Json? // ["EU", "CHINA", "USA"]
+  exportForm          String? // Chính ngạch, B2B, OEM
+  exportScale         String? // Sản lượng/năm
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
   // Relations
-  members     OrganizationMember[]
-  invitations Invitation[]
-  products    Product[]
-  documents   Document[]
+  members      OrganizationMember[]
+  invitations  Invitation[]
+  products     Product[]
+  documents    Document[]
+  legalUpdates LegalUpdate[]
 
   @@map("organizations")
 }
@@ -65,7 +67,7 @@ model OrganizationMember {
   role           OrganizationRole @default(COMPLIANCE) // Quyền nội bộ doanh nghiệp
   status         MemberStatus     @default(ACTIVE)
   joinedAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  updatedAt      DateTime         @updatedAt
 
   @@unique([organizationId, userId])
   @@map("organization_members")
@@ -107,7 +109,7 @@ model Invitation {
 // ─── PRODUCTS & BATCHES ─────────────────────────────────
 
 model Product {
-  id             String   @id @default(uuid())
+  id             String       @id @default(uuid())
   name           String
   category       String
   hsCode         String?
@@ -115,28 +117,28 @@ model Product {
   origin         String?
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
   // Relations
-  batches        Batch[]
+  batches            Batch[]
   marketRequirements ProductMarketRequirement[]
 
   @@map("products")
 }
 
 model Batch {
-  id          String      @id @default(uuid())
-  batchCode   String      @unique
-  productId   String
-  product     Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
-  quantity    Float?
-  unit        String?
-  status      BatchStatus @default(DRAFT)
-  producedAt  DateTime?
-  expiresAt   DateTime?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id         String      @id @default(uuid())
+  batchCode  String      @unique
+  productId  String
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity   Float?
+  unit       String?
+  status     BatchStatus @default(DRAFT)
+  producedAt DateTime?
+  expiresAt  DateTime?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 
   // Relations
   complianceChecks ComplianceCheck[]
@@ -160,7 +162,7 @@ model ProductMarketRequirement {
   id         String  @id @default(uuid())
   productId  String
   product    Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  marketCode String  // e.g., "EU", "US", "CN"
+  marketCode String // e.g., "EU", "US", "CN"
   marketName String
 
   @@unique([productId, marketCode])
@@ -182,7 +184,7 @@ model Document {
   updatedAt      DateTime     @updatedAt
 
   // Relations
-  batches        BatchDocument[]
+  batches BatchDocument[]
 
   @@map("documents")
 }
@@ -200,14 +202,14 @@ model BatchDocument {
 }
 
 enum DocumentType {
-  CO        // Certificate of Origin
-  CQ        // Certificate of Quality
-  PHYTO     // Phytosanitary Certificate
+  CO // Certificate of Origin
+  CQ // Certificate of Quality
+  PHYTO // Phytosanitary Certificate
   LAB_REPORT
   CONTRACT
   INVOICE
   PACKING_LIST
-  GPS_MAP   // Bản đồ định vị GPS (EUDR)
+  GPS_MAP // Bản đồ định vị GPS (EUDR)
   OTHER
 }
 
@@ -215,11 +217,11 @@ enum DocumentType {
 
 model Regulation {
   id            String             @id @default(uuid())
-  code          String             @unique  // e.g., "EC-396-2005"
+  code          String             @unique // e.g., "EC-396-2005"
   title         String
   description   String?
   category      RegulationCategory
-  market        String             // e.g., "EU", "US"
+  market        String // e.g., "EU", "US"
   effectiveDate DateTime?
   sourceUrl     String?
   isActive      Boolean            @default(true)
@@ -229,29 +231,139 @@ model Regulation {
   // Relations
   complianceItems ComplianceItem[]
   mrlLimits       MRLLimit[]
+  legalUpdates    LegalUpdate[]
 
   @@map("regulations")
 }
 
 enum RegulationCategory {
-  MRL          // Maximum Residue Limits
-  LABELING     // Nhãn mác
-  PACKAGING    // Bao bì
+  MRL // Maximum Residue Limits
+  LABELING // Nhãn mác
+  PACKAGING // Bao bì
   TRACEABILITY // Truy xuất nguồn gốc
-  EUDR         // EU Deforestation Regulation
-  ESG          // Environmental Social Governance
-  FOOD_SAFETY  // An toàn thực phẩm
+  EUDR // EU Deforestation Regulation
+  ESG // Environmental Social Governance
+  FOOD_SAFETY // An toàn thực phẩm
   OTHER
+}
+
+// ─── LEGAL UPDATES ───────────────────────────────────────
+
+model LegalUpdate {
+  id                 String                  @id @default(uuid())
+  organizationId     String?
+  organization       Organization?           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  regulationId       String?
+  regulation         Regulation?             @relation(fields: [regulationId], references: [id], onDelete: SetNull)
+  sourceAgency       String
+  sourceCountry      String?
+  sourceUrl          String
+  documentUrl        String?
+  sourceReference    String?
+  sourceLanguage     String?
+  rawArticleId       String?
+  checksum           String
+  titleOriginal      String?
+  titleVi            String
+  frontendTitleVi    String?
+  frontendSummaryVi  String?
+  summaryVi          String
+  detailedSummaryVi  Json?
+  businessImpactVi   String?
+  recommendedActions Json?
+  citations          Json?
+  market             String
+  category           LegalUpdateCategory     @default(OTHER)
+  severity           LegalUpdateSeverity     @default(INFORMATIONAL)
+  status             LegalUpdateStatus       @default(PUBLISHED)
+  relevanceStatus    LegalUpdateRelevance    @default(NEEDS_REVIEW)
+  relevanceReasonVi  String?
+  affectedProducts   Json?
+  affectedGroups     String[]                @default([])
+  hsCodes            String[]                @default([])
+  confidence         LegalUpdateConfidence   @default(MEDIUM)
+  publishedAt        DateTime?
+  effectiveAt        DateTime?
+  reviewStatus       LegalUpdateReviewStatus @default(PENDING_REVIEW)
+  reviewedByUserId   String?
+  reviewedBy         Profile?                @relation("LegalUpdateReviewer", fields: [reviewedByUserId], references: [id], onDelete: Restrict)
+  reviewedAt         DateTime?
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+
+  @@unique([sourceUrl, checksum], map: "legal_updates_source_url_checksum_key")
+  @@index([organizationId, reviewStatus, publishedAt])
+  @@index([market, reviewStatus, publishedAt])
+  @@index([status, effectiveAt])
+  @@index([regulationId])
+  @@index([hsCodes], type: Gin)
+  @@map("legal_updates")
+}
+
+enum LegalUpdateCategory {
+  PHYTOSANITARY
+  MRL
+  FOOD_SAFETY
+  LABELING
+  PACKAGING
+  TRACEABILITY
+  CUSTOMS
+  CERTIFICATE
+  ORGANIC
+  EUDR
+  ESG
+  QUOTA_TARIFF
+  REGISTRATION
+  INSPECTION
+  RECALL
+  MARKET_ACCESS
+  OTHER
+}
+
+enum LegalUpdateSeverity {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+  INFORMATIONAL
+}
+
+enum LegalUpdateStatus {
+  DRAFT
+  PUBLISHED
+  UPCOMING
+  EFFECTIVE
+  AMENDED
+  REPEALED
+  ARCHIVED
+}
+
+enum LegalUpdateReviewStatus {
+  PENDING_REVIEW
+  PUBLISHED
+  REJECTED
+}
+
+enum LegalUpdateRelevance {
+  RELEVANT
+  NOT_RELEVANT
+  NEEDS_REVIEW
+}
+
+enum LegalUpdateConfidence {
+  HIGH
+  MEDIUM
+  LOW
 }
 
 model MRLLimit {
   id           String     @id @default(uuid())
   regulationId String
   regulation   Regulation @relation(fields: [regulationId], references: [id], onDelete: Cascade)
-  substance    String     // e.g., "Chlorpyrifos"
-  maxLimit     Float      // e.g., 0.01
+  substance    String // e.g., "Chlorpyrifos"
+  maxLimit     Float // e.g., 0.01
   unit         String     @default("mg/kg")
-  productGroup String?    // e.g., "Coffee", "Durian"
+  productGroup String? // e.g., "Coffee", "Durian"
   createdAt    DateTime   @default(now())
 
   @@map("mrl_limits")
@@ -260,22 +372,22 @@ model MRLLimit {
 // ─── COMPLIANCE CHECK ───────────────────────────────────
 
 model ComplianceCheck {
-  id            String           @id @default(uuid())
-  batchId       String
-  batch         Batch            @relation(fields: [batchId], references: [id], onDelete: Cascade)
-  userId        String
-  profile       Profile          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  market        String           // Target market
-  checkStatus   CheckStatus      @default(QUEUED)
-  result        ComplianceResult @default(MANUAL_REVIEW_REQUIRED)
-  aiConfidence  Float?           // 0-100
-  summary       String?
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
+  id           String           @id @default(uuid())
+  batchId      String
+  batch        Batch            @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  userId       String
+  profile      Profile          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  market       String // Target market
+  checkStatus  CheckStatus      @default(QUEUED)
+  result       ComplianceResult @default(MANUAL_REVIEW_REQUIRED)
+  aiConfidence Float? // 0-100
+  summary      String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
 
   // Relations
-  items         ComplianceItem[]
-  report        Report?
+  items  ComplianceItem[]
+  report Report?
 
   @@map("compliance_checks")
 }
@@ -307,8 +419,8 @@ model ComplianceItem {
   regulation        Regulation?      @relation(fields: [regulationId], references: [id])
   requirement       String
   status            ComplianceResult
-  deviation         String?          // Mô tả sai lệch
-  remediation       String?          // Cách khắc phục
+  deviation         String? // Mô tả sai lệch
+  remediation       String? // Cách khắc phục
   severity          FindingSeverity  @default(INFORMATIONAL)
   createdAt         DateTime         @default(now())
 
@@ -351,15 +463,15 @@ enum ReportStatus {
 // ─── AUDIT LOG ──────────────────────────────────────────
 
 model AuditLog {
-  id         String   @id @default(uuid())
-  userId     String
-  profile    Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  action     String   // e.g., "user.login_success", "org.created"
-  entity     String   // e.g., "Organization", "Batch"
-  entityId   String?
-  metadata   Json?
-  ipAddress  String?
-  createdAt  DateTime @default(now())
+  id        String   @id @default(uuid())
+  userId    String
+  profile   Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action    String // e.g., "user.login_success", "org.created"
+  entity    String // e.g., "Organization", "Batch"
+  entityId  String?
+  metadata  Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
 
   @@index([userId])
   @@index([entity, entityId])

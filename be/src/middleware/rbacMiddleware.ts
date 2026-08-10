@@ -42,6 +42,7 @@ export function rbacMiddleware(requiredPermission: TenantPermission) {
         error: {
           code: 'FORBIDDEN',
           message: 'Yêu cầu ngữ cảnh thành viên doanh nghiệp',
+          requestId: req.requestId ?? '',
         },
       });
     }
@@ -52,6 +53,7 @@ export function rbacMiddleware(requiredPermission: TenantPermission) {
         error: {
           code: 'FORBIDDEN',
           message: `Từ chối truy cập: Thao tác '${requiredPermission}' yêu cầu vai trò [${allowedRoles.join(', ')}]`,
+          requestId: req.requestId ?? '',
         },
       });
     }
@@ -70,6 +72,7 @@ export function platformRbacMiddleware(allowedPlatformRoles: PlatformRole[]) {
         error: {
           code: 'FORBIDDEN',
           message: 'Yêu cầu quyền truy cập nền tảng',
+          requestId: req.requestId ?? '',
         },
       });
     }
@@ -79,6 +82,7 @@ export function platformRbacMiddleware(allowedPlatformRoles: PlatformRole[]) {
         error: {
           code: 'FORBIDDEN',
           message: `Từ chối truy cập Nền tảng: Yêu cầu vai trò [${allowedPlatformRoles.join(', ')}]`,
+          requestId: req.requestId ?? '',
         },
       });
     }

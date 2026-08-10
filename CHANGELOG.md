@@ -8,6 +8,23 @@ Tất cả các thay đổi quan trọng của dự án **Themis LexiGuard** s�
 
 ## [Unreleased]
 
+### Added
+- Wrap the baseline RLS hardening migration in a PostgreSQL transaction, and make malformed URL input fail validation safely instead of throwing from a URL parser.
+- Add a fail-fast RLS hardening migration for every baseline business table and Legal Updates. It scopes organization data to active members, keeps global regulations authenticated-only, and keeps audit logs append-only for client roles.
+- Restrict Legal Update source/document URLs to `http` and `https` in the backend contract, frontend response validation, and rendered outbound links. Publishing now requires `publishedAt`, enforced both by the API service and database constraint so a newly approved update remains visible in the newest feed.
+- Prevent the Legal Update detail dialog from retaining a previously loaded title or content while a newly selected update is loading.
+- Harden Legal Updates frontend detail loading against stale A-to-B responses, correct the example API base URL, and expand the detail dialog with complete structured summaries, affected products, action bases/priorities, and citation metadata.
+- Add frontend Legal Updates tests for API-response Zod validation, Realtime authentication/subscription cleanup, feed refetching, and stale detail response protection.
+- Complete the Legal Updates Dashboard widget with validated API feed/detail data, loading/empty/error/success states, an accessible detail dialog, manual refresh, and organization-aware refetching. Supabase Realtime now authenticates with the current JWT and only signals a REST API refetch for `public.legal_updates` INSERT/UPDATE events.
+- Harden Legal Updates API review flow with optimistic concurrency checks on `reviewStatus` and `updatedAt`, preventing concurrent publish/reject/update requests from overwriting each other. Audit entries now retain complete safe business snapshots before and after every mutation; published records permit lifecycle-only changes (`status`, `effectiveAt`).
+- Improve Legal Updates API behavior: `POST /publish` accepts an empty body, nullable date sorting always places null values last, and severity sorting matches the API contract (`critical` before `informational`). Add unit coverage for these review, audit, sorting and lifecycle cases.
+- Thêm Backend API Phase 1 cho Legal Updates: user feed/detail có phân trang, filter/sort server-side và isolation theo organization; admin create/update/publish/reject có platform RBAC, Zod validation, checksum chống trùng, transition riêng và AuditLog trong transaction.
+- Thêm request ID middleware, error handler an toàn và bộ unit test Legal Updates cho validation, visibility, review transition, audit log và duplicate conflict.
+- Thêm schema Prisma `LegalUpdate` và enum phân loại, mức độ, trạng thái hiệu lực, mức duyệt và mức liên quan cho Phase 1 Legal Updates. Bảng lưu metadata nguồn, bản tóm tắt tiếng Việt, hành động đề xuất, citation, sản phẩm/HS code, ngày công bố/hiệu lực và vòng đời `pending_review` → `published`.
+- Thêm migration SQL cho `legal_updates`: RLS chỉ cho đọc tin đã publish trong phạm vi global/tổ chức, chặn client mutation, unique dedupe theo URL/checksum và source reference/checksum, CHECK bắt buộc reviewer khi publish, GIN index HS code và Supabase Realtime publication.
+- Thêm baseline migration cho schema hiện hữu trước Legal Updates, để Prisma có thể replay toàn bộ migrations trên database sạch; giữ partial unique index `sourceReference + checksum` ở SQL thủ công và bảo vệ audit reviewer bằng `ON DELETE RESTRICT`.
+- Harden migration `legal_updates` theo hướng fail fast: không bỏ qua enum, bảng, index, policy hoặc Realtime publication đã tồn tại để phát hiện schema drift trước deploy.
+
 - Bổ sung hỗ trợ biến môi trường Supabase key naming mới (`SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, `SUPABASE_JWKS_URL`) đồng thời giữ tương thích với `SUPABASE_ANON_KEY` và `SUPABASE_SERVICE_ROLE_KEY`.
 - Sửa lỗi terminal Frontend do ESLint/TypeScript strict: thay `any` bằng type dùng chung, sửa `Input` dùng `useId`, sửa hook effect trong Admin/Settings, và xác nhận `next build` chạy thành công; Backend `tsc --noEmit` chạy thành công.
 - Tái cấu trúc lại Hệ thống Điều hướng Shell Layout `src/app/(dashboard)/(shell)/` chứa toàn bộ các trang tính năng (`/dashboard`, `/checks/new`, `/history`, `/integrity`, `/products`, `/regulations`, `/reports`, `/settings`) tích hợp sẵn **Sidebar** bên trái và **Topbar** ở trên.

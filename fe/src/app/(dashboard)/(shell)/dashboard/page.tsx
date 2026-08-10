@@ -29,6 +29,7 @@ export default function DashboardPage() {
         setUser(userData);
         setOrg(orgs[0]);
         localStorage.setItem("active_org_id", orgs[0].id);
+        window.dispatchEvent(new Event("themis:organization-changed"));
       } catch { router.replace("/login"); }
       finally { setLoading(false); }
     }

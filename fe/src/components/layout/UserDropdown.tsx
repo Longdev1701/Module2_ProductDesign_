@@ -22,6 +22,7 @@ export function UserDropdown() {
             const org = res.data.organizations[0];
             setActiveOrg(org);
             localStorage.setItem('active_org_id', org.id);
+            window.dispatchEvent(new Event('themis:organization-changed'));
           }
         }
       } catch (err) {

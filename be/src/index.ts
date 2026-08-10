@@ -3,6 +3,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import { errorHandler } from './middleware/error-handler';
+import { requestIdMiddleware } from './middleware/request-id-middleware';
 
 dotenv.config();
 
@@ -10,6 +12,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // ─── Middleware ──────────────────────────────────────────
+app.use(requestIdMiddleware);
 app.use(helmet());
 app.use(cors({
   origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
@@ -21,55 +24,57 @@ app.use(express.json({ limit: '10mb' }));
 // ─── Health Check ───────────────────────────────────────
 app.get('/health', (_req, res) => {
   res.json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    service: 'themis-lexiguard-api',
+    data: {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      service: 'themis-lexiguard-api',
+    },
+    meta: { requestId: _req.requestId ?? '' },
   });
 });
 
 import authRouter from './modules/auth/router';
 import orgRouter from './modules/organization/router';
 import adminRouter from './modules/admin/router';
+import { adminLegalUpdatesRouter, legalUpdatesRouter } from './modules/legal-updates/router';
 
 // ─── API Routes ─────────────────────────────────────────
 app.use('/api/auth', authRouter);
 app.use('/api/organizations', orgRouter);
+app.use('/api/legal-updates', legalUpdatesRouter);
+app.use('/api/admin/legal-updates', adminLegalUpdatesRouter);
 app.use('/api/admin', adminRouter);
 
 app.get('/api', (_req, res) => {
   res.json({
-    message: 'Themis LexiGuard API',
-    version: '1.0.0',
-    endpoints: {
-      auth: '/api/auth',
-      organizations: '/api/organizations',
-      admin: '/api/admin',
+    data: {
+      message: 'Themis LexiGuard API',
+      version: '1.0.0',
+      endpoints: {
+        auth: '/api/auth',
+        organizations: '/api/organizations',
+        admin: '/api/admin',
+        legalUpdates: '/api/legal-updates',
+        adminLegalUpdates: '/api/admin/legal-updates',
+      },
     },
+    meta: { requestId: _req.requestId ?? '' },
   });
 });
 
 // ─── 404 Handler ────────────────────────────────────────
-app.use((_req, res) => {
+app.use((req, res) => {
   res.status(404).json({
     error: {
       code: 'NOT_FOUND',
       message: 'Route not found',
+      requestId: req.requestId ?? '',
     },
   });
 });
 
 // ─── Error Handler ──────────────────────────────────────
-app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error('Unhandled error:', err);
-  res.status(500).json({
-    error: {
-      code: 'INTERNAL_ERROR',
-      message: process.env.NODE_ENV === 'production'
-        ? 'An unexpected error occurred'
-        : err.message,
-    },
-  });
-});
+app.use(errorHandler);
 
 // ─── Start Server ───────────────────────────────────────
 app.listen(PORT, () => {

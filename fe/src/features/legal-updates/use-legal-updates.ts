@@ -1,67 +1,27 @@
 "use client";
 
-import { createClient } from "@supabase/supabase-js";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
+import { subscribeToLegalUpdates } from "@/lib/supabase-realtime";
 import { api } from "@/lib/api";
-
-import {
-  legalUpdatesResponseSchema,
-  type Regulation,
-} from "@/features/legal-updates/types";
 import { getErrorMessage } from "@/types/api";
 
-const LEGAL_UPDATES_ENDPOINT = "/regulations?page=1&pageSize=3&sort=createdAt:desc";
+import {
+  legalUpdateFeedResponseSchema,
+  type LegalUpdateFeedItem,
+} from "./types";
 
-// Supabase Realtime only signals that legal data changed; the API remains the
-// authorized source of truth for the latest records.
-const DEVELOPMENT_FALLBACK_UPDATES: Regulation[] = [
-  {
-    id: "development-1",
-    code: "EU-MRL-DEMO",
-    title: "EU: Thay đổi MRL Trái cây khô",
-    description: "Vừa cập nhật 2 giờ trước. Ảnh hưởng đến 14 sản phẩm của bạn.",
-    category: "MRL",
-    market: "EU",
-    effectiveDate: null,
-    sourceUrl: "/regulations",
-    isActive: true,
-    createdAt: "2026-08-08T00:00:00.000Z",
-  },
-  {
-    id: "development-2",
-    code: "FDA-LABEL-DEMO",
-    title: "FDA: Kiểm tra nhãn mác mới",
-    description: "Quy định có hiệu lực trong 45 ngày tới. Cần rà soát bao bì.",
-    category: "LABELING",
-    market: "US",
-    effectiveDate: "2026-09-22T00:00:00.000Z",
-    sourceUrl: "/regulations",
-    isActive: true,
-    createdAt: "2026-08-08T00:00:00.000Z",
-  },
-  {
-    id: "development-3",
-    code: "CN-TRACEABILITY-DEMO",
-    title: "Trung Quốc: Luật BVTV 2025",
-    description: "Đang trong quá trình lấy ý kiến phản hồi công khai.",
-    category: "TRACEABILITY",
-    market: "CN",
-    effectiveDate: null,
-    sourceUrl: "/regulations",
-    isActive: true,
-    createdAt: "2026-08-08T00:00:00.000Z",
-  },
-];
+const LEGAL_UPDATES_ENDPOINT = "/legal-updates/feed?page=1&pageSize=3&sort=publishedAt:desc";
 
-type LegalUpdatesResult =
-  | { updates: Regulation[]; error: null }
-  | { updates: Regulation[]; error: string };
+type FeedResult = {
+  updates: LegalUpdateFeedItem[];
+  error: string | null;
+};
 
-async function requestLegalUpdates(): Promise<LegalUpdatesResult> {
+async function requestLegalUpdates(): Promise<FeedResult> {
   try {
     const response = await api.get<unknown>(LEGAL_UPDATES_ENDPOINT);
-    const parsedResponse = legalUpdatesResponseSchema.safeParse(response);
+    const parsedResponse = legalUpdateFeedResponseSchema.safeParse(response);
 
     if (!parsedResponse.success) {
       return {
@@ -79,71 +39,98 @@ async function requestLegalUpdates(): Promise<LegalUpdatesResult> {
   }
 }
 
-function resolveUpdates(result: LegalUpdatesResult): LegalUpdatesResult {
-  if (result.error && process.env.NODE_ENV === "development") {
-    return { updates: DEVELOPMENT_FALLBACK_UPDATES, error: null };
-  }
-
-  return result;
-}
-
 export function useLegalUpdates() {
-  const [updates, setUpdates] = useState<Regulation[]>([]);
+  const [updates, setUpdates] = useState<LegalUpdateFeedItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const hasLoadedRef = useRef(false);
+  const isMountedRef = useRef(true);
+  const inFlightRefreshRef = useRef<Promise<void> | null>(null);
+  const pendingRefreshRef = useRef(false);
+  const refreshRef = useRef<(() => Promise<void>) | null>(null);
 
   const refresh = useCallback(async () => {
-    setIsLoading(true);
-    const result = resolveUpdates(await requestLegalUpdates());
-    setUpdates(result.updates);
-    setError(result.error);
-    setIsLoading(false);
-  }, []);
-
-  useEffect(() => {
-    let isCurrent = true;
-
-    const loadInitialUpdates = async () => {
-      const result = resolveUpdates(await requestLegalUpdates());
-
-      if (!isCurrent) {
-        return;
-      }
-
-      setUpdates(result.updates);
-      setError(result.error);
-      setIsLoading(false);
-    };
-
-    void loadInitialUpdates();
-
-    return () => {
-      isCurrent = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-    if (!supabaseUrl || !supabaseAnonKey) {
-      return;
+    if (inFlightRefreshRef.current) {
+      pendingRefreshRef.current = true;
+      return inFlightRefreshRef.current;
     }
 
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
-    const channel = supabase
-      .channel("legal-updates")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "regulations" },
-        () => void refresh(),
-      )
-      .subscribe();
+    const initialLoad = !hasLoadedRef.current;
+    if (initialLoad) {
+      setIsLoading(true);
+    } else {
+      setIsRefreshing(true);
+    }
 
+    const task = requestLegalUpdates()
+      .then((result) => {
+        if (!isMountedRef.current) {
+          return;
+        }
+        if (!result.error) {
+          setUpdates(result.updates);
+        } else if (initialLoad) {
+          setUpdates([]);
+        }
+        setError(result.error);
+        hasLoadedRef.current = true;
+      })
+      .finally(() => {
+        if (isMountedRef.current) {
+          setIsLoading(false);
+          setIsRefreshing(false);
+        }
+        inFlightRefreshRef.current = null;
+
+        if (pendingRefreshRef.current) {
+          pendingRefreshRef.current = false;
+          queueMicrotask(() => void refreshRef.current?.());
+        }
+      });
+
+    inFlightRefreshRef.current = task;
+    return task;
+  }, []);
+
+  useEffect(() => {
+    refreshRef.current = refresh;
     return () => {
-      void supabase.removeChannel(channel);
+      refreshRef.current = null;
     };
   }, [refresh]);
 
-  return { updates, isLoading, error, refresh };
+  useEffect(() => {
+    isMountedRef.current = true;
+    void refresh();
+
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, [refresh]);
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem("access_token");
+    if (!accessToken) {
+      return;
+    }
+
+    return subscribeToLegalUpdates({
+      accessToken,
+      onChange: () => void refresh(),
+    }) ?? undefined;
+  }, [refresh]);
+
+  useEffect(() => {
+    const refreshWhenOrganizationChanges = () => void refresh();
+    window.addEventListener("storage", refreshWhenOrganizationChanges);
+    window.addEventListener("themis:organization-changed", refreshWhenOrganizationChanges);
+
+    return () => {
+      window.removeEventListener("storage", refreshWhenOrganizationChanges);
+      window.removeEventListener("themis:organization-changed", refreshWhenOrganizationChanges);
+    };
+  }, [refresh]);
+
+  return { updates, isLoading, isRefreshing, error, refresh };
 }

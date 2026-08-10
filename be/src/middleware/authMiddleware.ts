@@ -10,6 +10,7 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
         error: {
           code: 'UNAUTHORIZED',
           message: 'Authorization Bearer token is missing',
+          requestId: req.requestId ?? '',
         },
       });
     }
@@ -22,6 +23,7 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
         error: {
           code: 'UNAUTHORIZED',
           message: 'Invalid or expired token',
+          requestId: req.requestId ?? '',
         },
       });
     }
@@ -40,12 +42,12 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
     };
 
     return next();
-  } catch (err: any) {
+  } catch (_error: unknown) {
     return res.status(401).json({
       error: {
         code: 'UNAUTHORIZED',
         message: 'Authentication failed',
-        details: process.env.NODE_ENV === 'development' ? err.message : undefined,
+        requestId: req.requestId ?? '',
       },
     });
   }
