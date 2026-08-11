@@ -6,6 +6,8 @@ Tất cả các thay đổi quan trọng của dự án **Themis LexiGuard** s�
 
 ---
 
+- **Đồng bộ 1:1 Giao diện Dashboard từ Mẫu Thiết kế Stitch MCP (AgriExport Compliance AI Hub)**:
+  - Cập nhật [fe/src/features/DashboardPage.tsx](file:///e:/Projects/Project_ca_nhan/Module2/fe/src/features/DashboardPage.tsx) đồng bộ 1:1 bố cục thiết kế từ Stitch MCP: Chào mừng Doanh nghiệp, Mã số Vùng trồng PUC/PHC, Bộ lọc nhanh dòng Sầu riêng, Bản đồ Rủi ro Thị trường SVG (Trung Quốc GACC 96.8% Safe), Smart Alerts Panel GACC (3 cảnh báo ưu tiên), Bảng Kiểm tra tuân thủ gần đây với Thanh tiến trình Stepper AI 3 bước, Thư viện Quy định Pinned (Lệnh 248/249, Nghị định thư GACC 2022) và Trung tâm tải tệp Báo cáo PDF Tiếng Việt.
 - **Bổ sung Bảng Danh sách Thành viên Thực hiện Dự án (Project Team Members)**:
   - Cập nhật [README.md](file:///e:/Projects/Project_ca_nhan/Module2/README.md), [docs/THEMIS_LEXIGUARD_MASTER_SPECIFICATION.md](file:///e:/Projects/Project_ca_nhan/Module2/docs/THEMIS_LEXIGUARD_MASTER_SPECIFICATION.md) và biên dịch lại tệp Word [docs/Themis_LexiGuard_Tai_Lieu_Quy_Chuan_Doanh_Nghiep.docx](file:///e:/Projects/Project_ca_nhan/Module2/docs/Themis_LexiGuard_Tai_Lieu_Quy_Chuan_Doanh_Nghiep.docx): Bổ sung bảng phân công vai trò và nhiệm vụ chính của 6 thành viên dự án (Phạm Thành Long - Tech Lead & AI, Đàm Công Tú - PO/QA, Chăm Rốch Thi - FE Core/Auth, Huỳnh Hoàng Quân - FE Data UI, Nguyễn Tiến Thành - FE Forms/Ops, Hà Anh Tuấn - BE API/DB).
 - **Chuẩn hóa Tệp Hướng dẫn & Giới thiệu Dự án (README.md)**:
