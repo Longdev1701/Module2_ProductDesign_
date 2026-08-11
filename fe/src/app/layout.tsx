@@ -12,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi">
+    <html lang="vi" suppressHydrationWarning>
       <head>
         {/* Google Fonts: Inter + Material Symbols Outlined */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -22,7 +22,9 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-screen bg-surface antialiased">{children}</body>
+      <body className="min-h-screen bg-surface antialiased" suppressHydrationWarning>
+        {children}
+      </body>
     </html>
   );
 }

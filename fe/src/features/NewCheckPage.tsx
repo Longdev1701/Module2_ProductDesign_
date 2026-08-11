@@ -29,7 +29,7 @@ export default function NewCheckPage() {
   const initialBatch = searchParams.get('batch');
 
   const [selectedBatch, setSelectedBatch] = useState<string | null>(
-    initialBatch ? `${initialProduct} (Lô ${initialBatch})` : null
+    initialBatch ? `${initialProduct} (Lô ${initialBatch})` : "Sầu riêng Tươi Ri6 (Lô DURIAN-2026-CN088)"
   );
 
   const [messages, setMessages] = useState<ChatMessage[]>(() => {
@@ -38,7 +38,7 @@ export default function NewCheckPage() {
         {
           id: 1,
           sender: 'ai',
-          text: `Hello, tôi đã kích hoạt hồ sơ lô hàng [${initialProduct} - Lô: ${initialBatch}]. Bạn cần tôi kiểm tra tiêu chuẩn EUDR, dư lượng MRL hay hồ sơ CO/CQ nào cho lô hàng này?`,
+          text: `Xin chào! Tôi đã kích hoạt hồ sơ lô hàng [${initialProduct} - Lô: ${initialBatch}]. Dựa trên Nghị định thư Hải quan Trung Quốc (GACC), bạn cần tôi kiểm tra dư lượng MRL Cadmium (GB 2762-2022), Dithiocarbamates hay hồ sơ Phytosanitary PSC cho lô sầu riêng này?`,
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
       ];
@@ -47,29 +47,29 @@ export default function NewCheckPage() {
       {
         id: 1,
         sender: 'ai',
-        text: 'Hello, tôi là AI Themis. Tôi có thể giúp gì cho bạn trong việc phân tích pháp lý và kiểm tra tuân thủ hôm nay?',
+        text: 'Xin chào, tôi là AI Themis LexiGuard. Tôi phụ trách thẩm định tuân thủ pháp lý Hải quan Trung Quốc (GACC Protocol) cho Lô Sầu riêng xuất khẩu (Mã HS: 0810.60.00). Tôi có thể giúp gì cho bạn hôm nay?',
         time: '10:30 AM'
       },
       {
         id: 2,
         sender: 'user',
-        text: 'Tôi cần kiểm tra hợp đồng phân phối độc quyền này theo luật thương mại mới nhất.',
-        attachment: 'hop_dong_phan_phoi_v2.pdf',
+        text: 'Tôi cần quét kiểm tra toàn bộ hồ sơ Lô sầu riêng DURIAN-2026-CN088 bao gồm Phiếu thử nghiệm Eurofins MRL và Giấy Phytosanitary.',
+        attachment: 'Phytosanitary_PSC_VN_2026_9912.pdf',
         time: '10:31 AM'
       },
       {
         id: 3,
         sender: 'ai',
-        text: 'Tôi đã phân tích xong hợp đồng. Dưới đây là kết quả đánh giá rủi ro pháp lý chi tiết:',
+        text: 'Tôi đã hoàn tất phân tích đối soát Lô sầu riêng DURIAN-2026-CN088 theo Nghị định thư GACC 2022 và Tiêu chuẩn GB 2762/2763. Dưới đây là báo cáo đánh giá:',
         time: '10:32 AM',
         report: {
-          title: 'Báo cáo Rủi ro Phân phối - Nghị định EUDR & Thương mại 2024',
+          title: 'Báo cáo Thẩm định Sầu riêng GACC — Lô DURIAN-2026-CN088',
           items: [
-            { status: 'error', text: 'Điều khoản bồi thường (Mục 4.2) không tuân thủ Nghị định mới về giới hạn trách nhiệm.' },
-            { status: 'success', text: 'Quy định về giải quyết tranh chấp trọng tài hợp lệ.' },
-            { status: 'warning', text: 'Cần bổ sung phụ lục kê khai minh bạch nguồn gốc vùng trồng cà phê.' }
+            { status: 'success', text: 'Chỉ số Cadmium (Cd) = 0.02 mg/kg <= 0.05 mg/kg (Đạt chuẩn GB 2762-2022).' },
+            { status: 'success', text: 'Mã số Vùng trồng VN-WBPH-0125 & Cơ sở đóng gói VN-DBPH-088 hợp lệ trên cổng GACC.' },
+            { status: 'warning', text: 'Yêu cầu dán bổ sung tem nhãn phụ Tiếng Trung (输往中华人民共和国) lên 925 thùng sầu riêng trước khi kẹp chì container.' }
           ],
-          pdfName: 'Bao_cao_danh_gia_rui_ro_hop_dong.pdf'
+          pdfName: 'Bao_Cao_Tham_Dinh_Tuan_Thu_GACC_Sau_Rieng.pdf'
         }
       }
     ];
@@ -81,10 +81,10 @@ export default function NewCheckPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const [history, setHistory] = useState<ChatHistoryItem[]>([
-    { id: '1', title: 'Review hợp đồng phân phối', time: '10:32 AM', active: true },
-    { id: '2', title: 'Tư vấn luật lao động 2024', time: 'Thứ 3' },
-    { id: '3', title: 'So sánh NDA mẫu A & B', time: 'Thứ 2' },
-    { id: '4', title: 'Kiểm tra quy định MRL Đức', time: '20/10' },
+    { id: '1', title: 'Thẩm định Lô DURIAN-2026-CN088', time: '10:32 AM', active: true },
+    { id: '2', title: 'Đối soát MRL Cadmium Sầu riêng Dona', time: 'Hôm qua' },
+    { id: '3', title: 'Kiểm tra mã PUC Krông Pắc GACC', time: 'Thứ 2' },
+    { id: '4', title: 'Rà soát tem nhãn Tiếng Trung Lệnh 248', time: '08/08' },
   ]);
 
   useEffect(() => {
@@ -108,277 +108,273 @@ export default function NewCheckPage() {
     setAttachedFileName(null);
     setIsTyping(true);
 
-    // Simulate AI response after 1.2 seconds
     setTimeout(() => {
       setIsTyping(false);
       const aiReply: ChatMessage = {
         id: Date.now() + 1,
         sender: 'ai',
-        text: `Tôi đã tiếp nhận yêu cầu "${text.slice(0, 40)}...". Dựa trên cơ sở dữ liệu pháp lý mới nhất, tôi xin phản hồi như sau:`,
+        text: `Tôi đã đối soát yêu cầu "${text.slice(0, 40)}..." với CSDL Nghị định thư Hải quan GACC Sầu riêng 2022. Dưới đây là kết quả tư vấn:`,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         report: {
-          title: 'Kết quả rà soát tự động Themis AI',
+          title: 'Kết quả rà soát tự động GACC AI Engine',
           items: [
-            { status: 'success', text: 'Nội dung phù hợp với Khung pháp lý xuất khẩu EUDR 2024.' },
-            { status: 'warning', text: 'Khuyến nghị rà soát lại mốc thời gian áp dụng trước ngày 15/11/2024.' }
+            { status: 'success', text: 'Thông tin phù hợp với Tiêu chuẩn An toàn Thực phẩm Nhập khẩu Trung Quốc.' },
+            { status: 'success', text: 'Thời hạn hiệu lực Giấy chứng nhận Phytosanitary hợp lệ.' }
           ],
-          pdfName: 'Ket_qua_tu_van_Themis.pdf'
+          pdfName: 'Bao_Cao_Tham_Dinh_Tuan_Thu_GACC_Sau_Rieng.pdf'
         }
       };
       setMessages(prev => [...prev, aiReply]);
     }, 1200);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
+  const handleQuickPrompt = (promptText: string) => {
+    handleSendMessage(promptText);
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setAttachedFileName(file.name);
     }
   };
 
-  const handleNewChat = () => {
-    setMessages([
-      {
-        id: Date.now(),
-        sender: 'ai',
-        text: 'Hello, tôi là AI Themis. Bạn cần tư vấn điều khoản hay kiểm tra hồ sơ pháp lý nào mới?',
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      }
-    ]);
-  };
-
   return (
-    <div className="h-[calc(100vh-100px)] flex flex-col lg:flex-row bg-white rounded-2xl border border-[#c3c6d5]/60 shadow-sm overflow-hidden -mt-2">
-      
-      {/* Main Chat Center Section */}
-      <div className="flex-1 flex flex-col h-full relative bg-[#f7f9fb]/40">
-        
-        {/* Chat Messages Container */}
-        <div className="flex-1 overflow-y-auto p-6 pb-36 space-y-6">
-          {messages.map((msg) => (
+    <div className="flex h-[calc(100vh-6.5rem)] gap-4 animate-fadeIn">
+      {/* Left Chat History Panel */}
+      <div className="w-72 bg-white rounded-xl border border-[#c3c6d5]/60 flex flex-col shadow-xs hidden md:flex">
+        <div className="p-4 border-b border-[#c3c6d5]/60 flex items-center justify-between">
+          <h3 className="font-serif text-base font-bold text-[#191c1e]">Lịch sử tư vấn GACC</h3>
+          <button 
+            onClick={() => {
+              setMessages([
+                {
+                  id: Date.now(),
+                  sender: 'ai',
+                  text: 'Xin chào! Tôi đã sẵn sàng hỗ trợ thẩm định phiên kiểm tra Lô sầu riêng GACC mới.',
+                  time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                }
+              ]);
+            }}
+            className="p-1.5 hover:bg-[#eceef0] rounded-lg text-[#00327d] transition-colors cursor-pointer" 
+            title="Phiên làm việc mới"
+          >
+            <span className="material-symbols-outlined text-xl">add</span>
+          </button>
+        </div>
+
+        {/* Selected Context Badge */}
+        <div className="p-3 bg-[#d2e0fe]/40 border-b border-[#c3c6d5]/60">
+          <p className="text-[10px] font-bold text-[#00327d] uppercase tracking-wider mb-1">Ngữ cảnh Lô Sầu Riêng</p>
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-[#191c1e]">
+            <span className="material-symbols-outlined text-sm text-[#00327d]">eco</span>
+            <span className="truncate">{selectedBatch || "Chưa chọn lô hàng"}</span>
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-2 space-y-1">
+          {history.map(item => (
+            <div 
+              key={item.id}
+              onClick={() => {
+                setHistory(prev => prev.map(h => ({ ...h, active: h.id === item.id })));
+              }}
+              className={`p-3 rounded-lg text-xs cursor-pointer transition-colors flex items-center justify-between ${
+                item.active 
+                  ? 'bg-[#00327d]/10 text-[#00327d] font-bold border border-[#00327d]/20' 
+                  : 'hover:bg-[#f7f9fb] text-[#434653]'
+              }`}
+            >
+              <div className="flex items-center gap-2 truncate">
+                <span className="material-symbols-outlined text-base">chat_bubble_outline</span>
+                <span className="truncate">{item.title}</span>
+              </div>
+              <span className="text-[10px] text-[#737784] flex-shrink-0 ml-1">{item.time}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Main Chat Interface */}
+      <div className="flex-1 bg-white rounded-xl border border-[#c3c6d5]/60 flex flex-col shadow-xs overflow-hidden">
+        {/* Chat Header */}
+        <div className="p-4 border-b border-[#c3c6d5]/60 flex items-center justify-between bg-[#f7f9fb]">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#00327d] text-white flex items-center justify-center font-serif font-bold text-lg shadow-xs">
+              TL
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="font-serif text-base font-bold text-[#191c1e]">Trợ lý Thẩm định AI GACC Sầu riêng</h3>
+                <span className="px-2 py-0.5 bg-[#b5f1bf] text-[#18512c] text-[10px] font-bold rounded-full flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#18512c] animate-pulse"></span> GACC Protocol 2022
+                </span>
+              </div>
+              <p className="text-xs text-[#434653]">Nông sản: Sầu riêng Tươi Ri6 / Dona (Mã HS: 0810.60.00) — Thị trường: Trung Quốc</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Messages List */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#f7f9fb]/50">
+          {messages.map(msg => (
             <div 
               key={msg.id} 
-              className={`flex gap-4 max-w-3xl ${msg.sender === 'user' ? 'ml-auto flex-row-reverse' : ''}`}
+              className={`flex gap-3 max-w-3xl ${msg.sender === 'user' ? 'ml-auto flex-row-reverse' : ''}`}
             >
-              {/* Avatar */}
-              {msg.sender === 'ai' ? (
-                <div className="w-10 h-10 rounded-xl bg-[#00327d] flex-shrink-0 flex items-center justify-center shadow-xs">
-                  <span className="material-symbols-outlined text-white text-xl">smart_toy</span>
-                </div>
-              ) : (
-                <img 
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcRsI47L64XKqkZPYgVHCgsoPQCxLnyp7LGytq6byi01HEQthYrmb6j37qfgs1EIzbKLswYPw9s7A3EpEiAZTNkwKi-_J0XgEIIDyZLX78THSixQ5Atmfzdo7hhcALoL35gWvQusyVUfk9IYwGn-zFFO5EM1d10CVvxlKa59EnCpkmAMSpqu99iSpOz1bxh1UEyrvUvzP5LeIeel272ztO5b87mbcCXtUIdM3qfg5g_MJJCAU4oRhLS3iNrc9EnAPn4DnbYdMi_fAK" 
-                  alt="User Avatar" 
-                  className="w-10 h-10 rounded-full object-cover border border-[#c3c6d5] shadow-xs flex-shrink-0"
-                />
-              )}
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold ${
+                msg.sender === 'ai' ? 'bg-[#00327d] text-white' : 'bg-[#eceef0] text-[#191c1e]'
+              }`}>
+                {msg.sender === 'ai' ? 'AI' : 'Bạn'}
+              </div>
 
-              {/* Message Content */}
-              <div className={`space-y-2 ${msg.sender === 'user' ? 'text-right' : ''}`}>
-                <div className={`inline-block p-4 rounded-2xl text-sm leading-relaxed ${
+              <div className="space-y-2">
+                <div className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed shadow-2xs ${
                   msg.sender === 'user' 
-                    ? 'bg-[#00327d] text-white rounded-tr-none shadow-xs' 
-                    : 'bg-white text-[#191c1e] border border-[#c3c6d5]/60 rounded-tl-none shadow-xs'
+                    ? 'bg-[#00327d] text-white rounded-tr-none' 
+                    : 'bg-white text-[#191c1e] border border-[#c3c6d5]/60 rounded-tl-none'
                 }`}>
                   <p>{msg.text}</p>
 
-                  {/* User File Attachment */}
+                  {/* Attached File Display */}
                   {msg.attachment && (
-                    <div className="mt-3 inline-flex items-center gap-2 bg-white/10 p-2 rounded-lg border border-white/20 text-xs">
-                      <span className="material-symbols-outlined text-amber-300 text-base">description</span>
-                      <span className="font-semibold">{msg.attachment}</span>
+                    <div className="mt-3 p-2.5 bg-black/10 rounded-lg flex items-center gap-2 text-xs">
+                      <span className="material-symbols-outlined text-base">description</span>
+                      <span className="font-semibold truncate">{msg.attachment}</span>
+                    </div>
+                  )}
+
+                  {/* Embedded Structured Compliance Report */}
+                  {msg.report && (
+                    <div className="mt-4 p-4 bg-[#f7f9fb] text-[#191c1e] rounded-xl border border-[#c3c6d5] space-y-3">
+                      <div className="flex items-center justify-between border-b border-[#c3c6d5] pb-2">
+                        <span className="font-serif font-bold text-xs text-[#00327d] flex items-center gap-1.5">
+                          <span className="material-symbols-outlined text-sm">verified</span>
+                          {msg.report.title}
+                        </span>
+                        <span className="text-[10px] font-bold text-[#854d0e] bg-[#fef9c3] px-2 py-0.5 rounded border border-[#fde047]">
+                          ACTION REQUIRED
+                        </span>
+                      </div>
+
+                      <div className="space-y-2 text-xs">
+                        {msg.report.items.map((item, idx) => (
+                          <div key={idx} className="flex items-start gap-2">
+                            {item.status === 'error' && <span className="material-symbols-outlined text-sm text-[#93000a] mt-0.5">error</span>}
+                            {item.status === 'warning' && <span className="material-symbols-outlined text-sm text-[#854d0e] mt-0.5">warning</span>}
+                            {item.status === 'success' && <span className="material-symbols-outlined text-sm text-[#18512c] mt-0.5">check_circle</span>}
+                            <span className="flex-1 text-[#434653]">{item.text}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {msg.report.pdfName && (
+                        <div className="pt-2 border-t border-[#c3c6d5] flex justify-end">
+                          <button 
+                            onClick={() => window.open("/Bao_Cao_Tham_Dinh_Tuan_Thu_GACC_Sau_Rieng.pdf", "_blank")}
+                            className="px-3 py-1.5 bg-[#00327d] hover:bg-[#0047ab] text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                          >
+                            <span className="material-symbols-outlined text-sm">picture_as_pdf</span>
+                            Xem Báo cáo PDF GACC
+                          </button>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
 
-                {/* AI Structured Report Card */}
-                {msg.report && (
-                  <div className="bg-white border-l-4 border-[#00327d] border-y border-r border-[#c3c6d5]/60 rounded-r-xl p-5 shadow-sm space-y-3 text-left max-w-xl">
-                    <h3 className="font-serif text-base font-bold text-[#00327d]">{msg.report.title}</h3>
-                    <ul className="space-y-2">
-                      {msg.report.items.map((item, i) => (
-                        <li key={i} className="flex items-start gap-2 text-xs text-[#191c1e]">
-                          {item.status === 'error' && (
-                            <span className="material-symbols-outlined text-[#ba1a1a] text-sm mt-0.5">error</span>
-                          )}
-                          {item.status === 'success' && (
-                            <span className="material-symbols-outlined text-[#01401e] text-sm mt-0.5">check_circle</span>
-                          )}
-                          {item.status === 'warning' && (
-                            <span className="material-symbols-outlined text-amber-600 text-sm mt-0.5">warning</span>
-                          )}
-                          <span>{item.text}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    {msg.report.pdfName && (
-                      <div className="pt-2 border-t border-[#c3c6d5]/40 flex items-center justify-between">
-                        <span className="text-xs text-[#434653] font-semibold">{msg.report.pdfName}</span>
-                        <button className="px-3 py-1.5 bg-[#00327d] text-white text-xs font-semibold rounded hover:bg-[#0047ab] transition-colors flex items-center gap-1.5 cursor-pointer">
-                          <span className="material-symbols-outlined text-xs">download</span> Download PDF
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                <div className="text-[10px] text-[#737784] font-medium px-1">{msg.time}</div>
+                <span className={`text-[10px] text-[#737784] block ${msg.sender === 'user' ? 'text-right' : ''}`}>
+                  {msg.time}
+                </span>
               </div>
             </div>
           ))}
 
           {/* Typing Indicator */}
           {isTyping && (
-            <div className="flex gap-4 max-w-xl items-center">
-              <div className="w-10 h-10 rounded-xl bg-[#00327d] flex-shrink-0 flex items-center justify-center shadow-xs">
-                <span className="material-symbols-outlined text-white text-xl animate-spin">auto_awesome</span>
+            <div className="flex gap-3 max-w-3xl">
+              <div className="w-8 h-8 rounded-full bg-[#00327d] text-white flex items-center justify-center text-xs font-bold">
+                AI
               </div>
-              <div className="bg-white border border-[#c3c6d5]/60 px-4 py-3 rounded-2xl rounded-tl-none shadow-xs text-xs text-[#434653] flex items-center gap-2">
-                <span>Themis AI đang phân tích dữ liệu pháp lý...</span>
-                <span className="flex gap-1">
-                  <span className="w-1.5 h-1.5 bg-[#00327d] rounded-full animate-bounce"></span>
-                  <span className="w-1.5 h-1.5 bg-[#00327d] rounded-full animate-bounce [animation-delay:0.2s]"></span>
-                  <span className="w-1.5 h-1.5 bg-[#00327d] rounded-full animate-bounce [animation-delay:0.4s]"></span>
-                </span>
+              <div className="p-4 bg-white border border-[#c3c6d5]/60 rounded-2xl rounded-tl-none text-xs text-[#737784] flex items-center gap-2">
+                <span className="material-symbols-outlined text-base animate-spin">sync</span>
+                Đang đối soát quy định Nghị định thư GACC &amp; MRL Cadmium...
               </div>
             </div>
           )}
+
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Floating Input Area */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-white/95 backdrop-blur-md border-t border-[#c3c6d5]/60 space-y-3">
-          
-          {/* Quick Action Chips & Linked Batch Selector */}
-          <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-            <div className="flex items-center gap-2 overflow-x-auto">
-              {/* Batch Selector Dropdown */}
-              <select 
-                value={selectedBatch || ""}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setSelectedBatch(val || null);
-                  if (val) {
-                    handleSendMessage(`Yêu cầu AI quét tuân thủ pháp lý & tiêu chuẩn MRL cho [${val}]`);
-                  }
-                }}
-                className="px-3 py-1.5 bg-[#d2e0fe]/50 border border-[#00327d]/30 text-[#00327d] font-bold rounded-lg focus:outline-none cursor-pointer"
-              >
-                <option value="">📦 Chọn Lô hàng để phân tích...</option>
-                <option value="Cà phê Robusta (Lô COFFEE-2024-889)">☕ Cà phê Robusta (Lô COFFEE-2024-889)</option>
-                <option value="Cà phê Arabica Cầu Đất (Lô COFFEE-2024-912)">☕ Cà phê Arabica Cầu Đất (Lô COFFEE-2024-912)</option>
-                <option value="Gạo ST25 Hữu cơ (Lô RICE-2024-301)">🌾 Gạo ST25 Hữu cơ (Lô RICE-2024-301)</option>
-                <option value="Hạt tiêu đen Chư Sê (Lô PEPPER-2024-104)">🌱 Hạt tiêu đen Chư Sê (Lô PEPPER-2024-104)</option>
-              </select>
-
-              <button 
-                onClick={() => handleSendMessage('Kiểm tra tuân thủ tiêu chuẩn EUDR mới nhất')}
-                className="px-3 py-1.5 bg-[#eceef0] hover:bg-[#e6e8ea] text-[#191c1e] font-semibold rounded-lg border border-[#c3c6d5]/60 transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
-              >
-                <span className="material-symbols-outlined text-sm text-[#00327d]">fact_check</span> Check EUDR
-              </button>
-              <button 
-                onClick={() => handleSendMessage('So sánh điều khoản hợp đồng phân phối mẫu A & B')}
-                className="px-3 py-1.5 bg-[#eceef0] hover:bg-[#e6e8ea] text-[#191c1e] font-semibold rounded-lg border border-[#c3c6d5]/60 transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
-              >
-                <span className="material-symbols-outlined text-sm text-[#00327d]">compare_arrows</span> So sánh hợp đồng
-              </button>
-            </div>
-
-            {selectedBatch && (
-              <span className="px-2.5 py-1 bg-amber-400/15 border border-amber-500/30 text-amber-900 font-semibold text-[11px] rounded-lg flex items-center gap-1">
-                <span className="material-symbols-outlined text-xs text-amber-600">verified</span> Đã liên kết: {selectedBatch}
-              </span>
-            )}
-          </div>
-
-          {/* Active File Attachment Chip */}
-          {attachedFileName && (
-            <div className="flex items-center gap-2 bg-[#d2e0fe]/40 border border-[#00327d]/30 px-3 py-1.5 rounded-lg text-xs w-fit">
-              <span className="material-symbols-outlined text-[#00327d] text-sm">description</span>
-              <span className="font-semibold text-[#00327d]">{attachedFileName}</span>
-              <button onClick={() => setAttachedFileName(null)} className="text-[#ba1a1a] hover:text-red-700 ml-1">
-                <span className="material-symbols-outlined text-sm">close</span>
-              </button>
-            </div>
-          )}
-
-          {/* Main Textarea Bar */}
-          <div className="relative flex items-center bg-white border-2 border-[#00327d]/40 rounded-xl focus-within:border-[#00327d] shadow-sm">
-            <button 
-              onClick={() => setAttachedFileName('hop_dong_tu_van.pdf')}
-              className="p-3 text-[#434653] hover:text-[#00327d] transition-colors cursor-pointer"
-              title="Đính kèm tệp PDF"
-            >
-              <span className="material-symbols-outlined">attach_file</span>
-            </button>
-            
-            <textarea 
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              onKeyDown={handleKeyDown}
-              rows={1}
-              placeholder="Nhập yêu cầu tư vấn hoặc phân tích hợp đồng pháp lý... (Nhấn Enter để gửi)" 
-              className="w-full bg-transparent border-none focus:outline-none focus:ring-0 py-3.5 px-2 text-sm text-[#191c1e] placeholder:text-[#737784] resize-none"
-            />
-
-            <button 
-              onClick={() => handleSendMessage()}
-              className="p-2.5 m-1.5 bg-[#00327d] hover:bg-[#0047ab] text-white rounded-lg transition-colors flex items-center justify-center cursor-pointer shadow-xs"
-              title="Gửi câu hỏi"
-            >
-              <span className="material-symbols-outlined text-lg">send</span>
-            </button>
-          </div>
-        </div>
-
-      </div>
-
-      {/* Right Sidebar - Lịch sử trò chuyện (Chat History) */}
-      <div className="w-full lg:w-[300px] bg-[#f7f9fb] border-t lg:border-t-0 lg:border-l border-[#c3c6d5]/60 flex flex-col h-auto lg:h-full">
-        <div className="p-4 border-b border-[#c3c6d5]/60 bg-white flex items-center justify-between">
-          <h2 className="font-serif text-lg font-bold text-[#191c1e] flex items-center gap-2">
-            <span className="material-symbols-outlined text-[#00327d]">history</span> Lịch sử trò chuyện
-          </h2>
+        {/* Suggested Prompt Pills */}
+        <div className="p-3 bg-white border-t border-[#c3c6d5]/60 flex items-center gap-2 overflow-x-auto">
+          <span className="text-[10px] font-bold text-[#737784] uppercase tracking-wider whitespace-nowrap flex items-center gap-1">
+            <span className="material-symbols-outlined text-sm">lightbulb</span> Gợi ý câu hỏi:
+          </span>
           <button 
-            onClick={handleNewChat}
-            className="p-1.5 bg-[#00327d]/10 hover:bg-[#00327d]/20 text-[#00327d] rounded-lg transition-colors cursor-pointer"
-            title="Tạo cuộc hội thoại mới"
+            onClick={() => handleQuickPrompt("Kiểm tra chỉ số dư lượng Cadmium và Dithiocarbamates lô sầu riêng này.")}
+            className="px-3 py-1 bg-[#f7f9fb] hover:bg-[#d2e0fe]/60 text-[#00327d] border border-[#c3c6d5] rounded-full text-xs font-medium whitespace-nowrap transition-colors cursor-pointer"
           >
-            <span className="material-symbols-outlined text-sm">add</span>
+            🔍 Kiểm tra Cadmium &amp; Dithiocarbamates
+          </button>
+          <button 
+            onClick={() => handleQuickPrompt("Mã PUC VN-WBPH-0125 và PHC VN-DBPH-088 đã có trên danh sách GACC chưa?")}
+            className="px-3 py-1 bg-[#f7f9fb] hover:bg-[#d2e0fe]/60 text-[#00327d] border border-[#c3c6d5] rounded-full text-xs font-medium whitespace-nowrap transition-colors cursor-pointer"
+          >
+            📋 Đối soát mã PUC/PHC GACC
+          </button>
+          <button 
+            onClick={() => handleQuickPrompt("Quy định tem nhãn tiếng Trung Lệnh 248 cho 925 thùng sầu riêng?")}
+            className="px-3 py-1 bg-[#f7f9fb] hover:bg-[#d2e0fe]/60 text-[#00327d] border border-[#c3c6d5] rounded-full text-xs font-medium whitespace-nowrap transition-colors cursor-pointer"
+          >
+            🏷️ Tem nhãn Tiếng Trung Lệnh 248
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          <div className="space-y-2">
-            <p className="text-[11px] font-bold text-[#737784] uppercase tracking-wider">Hôm nay</p>
-            {history.map((item) => (
-              <button 
-                key={item.id}
-                onClick={() => {
-                  setHistory(prev => prev.map(h => ({ ...h, active: h.id === item.id })));
-                }}
-                className={`w-full text-left p-3 rounded-xl border transition-all flex items-start gap-3 cursor-pointer ${
-                  item.active 
-                    ? 'bg-[#d2e0fe]/40 border-[#00327d]/40 shadow-xs' 
-                    : 'bg-white hover:bg-[#eceef0] border-[#c3c6d5]/40 text-[#434653]'
-                }`}
-              >
-                <span className={`material-symbols-outlined text-sm mt-0.5 ${item.active ? 'text-[#00327d]' : 'text-[#737784]'}`}>
-                  chat_bubble
-                </span>
-                <div className="flex-1 min-w-0">
-                  <p className={`text-xs font-semibold truncate ${item.active ? 'text-[#00327d]' : 'text-[#191c1e]'}`}>
-                    {item.title}
-                  </p>
-                  <p className="text-[10px] text-[#737784] mt-0.5">{item.time}</p>
-                </div>
-              </button>
-            ))}
-          </div>
+        {/* Chat Input Bar */}
+        <div className="p-4 bg-white border-t border-[#c3c6d5]/60">
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSendMessage();
+            }}
+            className="flex items-center gap-3"
+          >
+            <label className="p-2 hover:bg-[#eceef0] text-[#434653] rounded-lg cursor-pointer transition-colors" title="Đính kèm file chứng từ">
+              <span className="material-symbols-outlined text-xl">attach_file</span>
+              <input type="file" className="hidden" onChange={handleFileUpload} />
+            </label>
+
+            <div className="relative flex-1">
+              <input 
+                type="text" 
+                placeholder={attachedFileName ? `File đính kèm: ${attachedFileName}` : "Nhập thắc mắc pháp lý GACC hoặc yêu cầu thẩm định sầu riêng..."}
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                className="w-full pl-4 pr-10 py-3 bg-[#f7f9fb] border border-[#c3c6d5] rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-[#00327d] text-[#191c1e]"
+              />
+              {attachedFileName && (
+                <button 
+                  type="button" 
+                  onClick={() => setAttachedFileName(null)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#737784] hover:text-[#93000a]"
+                >
+                  <span className="material-symbols-outlined text-sm">close</span>
+                </button>
+              )}
+            </div>
+
+            <button 
+              type="submit"
+              disabled={!inputText.trim() && !attachedFileName}
+              className="px-5 py-3 bg-[#00327d] hover:bg-[#0047ab] disabled:opacity-50 text-white font-semibold text-sm rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-xs"
+            >
+              <span>Gửi</span>
+              <span className="material-symbols-outlined text-sm">send</span>
+            </button>
+          </form>
         </div>
       </div>
-
     </div>
   );
 }

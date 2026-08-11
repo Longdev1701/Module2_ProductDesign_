@@ -68,6 +68,8 @@ model OrganizationMember {
   updatedAt       DateTime         @updatedAt
 
   @@unique([organizationId, userId])
+  @@index([userId, status])
+  @@index([organizationId, status])
   @@map("organization_members")
 }
 
@@ -122,6 +124,7 @@ model Product {
   batches        Batch[]
   marketRequirements ProductMarketRequirement[]
 
+  @@index([organizationId])
   @@map("products")
 }
 
@@ -142,6 +145,7 @@ model Batch {
   complianceChecks ComplianceCheck[]
   documents        BatchDocument[]
 
+  @@index([productId, status])
   @@map("batches")
 }
 
@@ -184,6 +188,7 @@ model Document {
   // Relations
   batches        BatchDocument[]
 
+  @@index([organizationId, type])
   @@map("documents")
 }
 
@@ -277,6 +282,8 @@ model ComplianceCheck {
   items         ComplianceItem[]
   report        Report?
 
+  @@index([batchId, createdAt(sort: Desc)])
+  @@index([userId])
   @@map("compliance_checks")
 }
 
@@ -312,6 +319,7 @@ model ComplianceItem {
   severity          FindingSeverity  @default(INFORMATIONAL)
   createdAt         DateTime         @default(now())
 
+  @@index([complianceCheckId, severity])
   @@map("compliance_items")
 }
 
@@ -361,7 +369,7 @@ model AuditLog {
   ipAddress  String?
   createdAt  DateTime @default(now())
 
-  @@index([userId])
+  @@index([userId, createdAt(sort: Desc)])
   @@index([entity, entityId])
   @@map("audit_logs")
 }

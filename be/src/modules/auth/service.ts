@@ -2,8 +2,21 @@ import { prisma } from '../../lib/prisma';
 import { supabasePublic, supabaseAdmin } from '../../lib/supabase';
 import { RegisterInput, LoginInput, UpdateProfileInput } from './schema';
 import { createAuditLog } from '../../services/auditLogService';
+import { cacheService } from '../../services/cacheService';
 
 export class AuthService {
+  static async refreshToken(refreshToken: string) {
+    const { data, error } = await supabasePublic.auth.refreshSession({ refresh_token: refreshToken });
+    if (error || !data.session) {
+      throw new Error(error?.message || 'Refresh token không hợp lệ hoặc đã hết hạn');
+    }
+    return {
+      accessToken: data.session.access_token,
+      refreshToken: data.session.refresh_token,
+      expiresAt: data.session.expires_at,
+    };
+  }
+
   static async register(input: RegisterInput, ipAddress?: string) {
     // 1. SignUp with Supabase Auth Admin to avoid public email rate limits
     let userId = '';
@@ -154,13 +167,33 @@ export class AuthService {
   }
 
   static async getMe(userId: string) {
+    const cacheKey = `user_me_${userId}`;
+    const cached = cacheService.get<any>(cacheKey);
+    if (cached) return cached;
+
     const profile = await prisma.profile.findUnique({
       where: { id: userId },
-      include: {
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        avatarUrl: true,
+        jobTitle: true,
+        platformRole: true,
+        createdAt: true,
         organizationMembers: {
           where: { status: 'ACTIVE' },
-          include: {
-            organization: true,
+          select: {
+            role: true,
+            organization: {
+              select: {
+                id: true,
+                name: true,
+                taxCode: true,
+                primaryProduct: true,
+                exportMarkets: true,
+              },
+            },
           },
         },
       },
@@ -170,14 +203,14 @@ export class AuthService {
       throw new Error('Không tìm thấy thông tin hồ sơ người dùng');
     }
 
-    return {
+    const result = {
       user: {
         id: profile.id,
         email: profile.email,
         fullName: profile.fullName,
         avatarUrl: profile.avatarUrl,
         jobTitle: profile.jobTitle,
-        platformRole: profile.platformRole, // cần thiết để FE redirect đúng
+        platformRole: profile.platformRole,
         createdAt: profile.createdAt,
       },
       organizations: profile.organizationMembers.map((m: any) => ({
@@ -189,9 +222,13 @@ export class AuthService {
         exportMarkets: m.organization.exportMarkets,
       })),
     };
+
+    cacheService.set(cacheKey, result, 10);
+    return result;
   }
 
   static async updateProfile(userId: string, input: UpdateProfileInput) {
+    cacheService.delete(`user_me_${userId}`);
     const updated = await prisma.profile.update({
       where: { id: userId },
       data: {

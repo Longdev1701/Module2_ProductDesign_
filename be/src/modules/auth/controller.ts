@@ -29,6 +29,35 @@ export class AuthController {
     }
   }
 
+  static async refreshToken(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { refreshToken } = req.body;
+      if (!refreshToken) {
+        return res.status(400).json({
+          error: {
+            code: 'BAD_REQUEST',
+            message: 'refreshToken là bắt buộc',
+          },
+        });
+      }
+
+      const result = await AuthService.refreshToken(refreshToken);
+      return res.status(200).json({
+        data: result,
+        meta: {
+          requestId: req.requestId || '',
+        },
+      });
+    } catch (err: any) {
+      return res.status(401).json({
+        error: {
+          code: 'UNAUTHENTICATED',
+          message: err.message || 'Refresh token không hợp lệ',
+        },
+      });
+    }
+  }
+
   static async login(req: Request, res: Response, next: NextFunction) {
     try {
       const validation = loginSchema.safeParse(req.body);

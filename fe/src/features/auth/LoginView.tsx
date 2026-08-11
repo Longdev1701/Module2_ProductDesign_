@@ -35,6 +35,9 @@ export function LoginView({ onSwitchView, onSwitchToForgot }: LoginViewProps) {
       
       if (res.data?.session?.accessToken) {
         localStorage.setItem('access_token', res.data.session.accessToken);
+        if (res.data.session.refreshToken) {
+          localStorage.setItem('refresh_token', res.data.session.refreshToken);
+        }
 
         const userData = res.data.user;
         const platformRole = userData?.platformRole;
