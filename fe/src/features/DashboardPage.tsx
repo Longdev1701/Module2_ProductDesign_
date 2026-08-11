@@ -11,7 +11,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="space-y-8 animate-fadeIn text-[#131b2e] pb-12">
+    <div className="space-y-8 animate-fadeIn text-[#131b2e] pb-12 relative">
       {/* Top Header / Welcome Banner */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#c5c5d3]/50 pb-6">
         <div>
@@ -28,7 +28,7 @@ export default function DashboardPage() {
             <span className="bg-[#e2e7ff] text-[#00236f] px-2 py-0.5 rounded font-bold">PUC: VN-WBPH-0125 / PHC: VN-DBPH-088</span>
             <span className="text-[#757682]">|</span>
             <span className="text-[#15803d] font-bold flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-[#15803d] animate-pulse"></span> GACC Active Enterprise
+              <span className="w-2 h-2 rounded-full bg-[#15803d] animate-pulse"></span> Premium Subscription
             </span>
           </div>
         </div>
@@ -45,7 +45,7 @@ export default function DashboardPage() {
       {/* Quick Filter Bar */}
       <div className="flex flex-wrap items-center gap-3 bg-white p-3.5 rounded-xl border border-[#c5c5d3]/60 shadow-2xs text-xs">
         <span className="font-bold text-[#444651] uppercase tracking-wider flex items-center gap-1">
-          <span className="material-symbols-outlined text-sm text-[#00236f]">filter_list</span> Bộ lọc nhanh:
+          <span className="material-symbols-outlined text-sm text-[#00236f]">filter_list</span> BỘ LỌC NHANH:
         </span>
         <div className="flex flex-wrap items-center gap-2">
           <button 
@@ -97,55 +97,14 @@ export default function DashboardPage() {
         </span>
       </div>
 
-      {/* Grid KPI & Smart Alerts (Stitch MCP 1:1) */}
+      {/* Grid KPI Cards & Smart Alerts (Lovable 1:1) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         
-        {/* Stat Card 1: Market Risk Map */}
-        <div className="bg-white border border-[#c5c5d3]/60 p-6 rounded-xl flex flex-col justify-between shadow-2xs">
-          <div className="flex justify-between items-center mb-6">
-            <h4 className="font-serif font-bold text-lg text-[#131b2e]">Bản đồ rủi ro thị trường</h4>
-            <Link href="/regulations" className="text-[#00236f] font-bold text-sm hover:underline">Chi tiết</Link>
-          </div>
-
-          <div className="flex-1 flex flex-col items-center justify-center relative mb-6">
-            <svg className="w-full h-auto text-[#e2e7ff]" viewBox="0 0 800 400" fill="currentColor">
-              <path d="M150,100 C180,80 220,90 250,120 C280,150 260,200 230,250 C200,300 150,350 100,300 C50,250 80,150 120,130 Z" opacity="0.4" />
-              <path d="M400,50 C450,40 500,60 550,100 C600,140 580,200 530,220 C480,240 420,200 380,150 C340,100 360,60 400,50 Z" opacity="0.4" />
-              <path d="M650,150 C680,140 720,160 750,200 C780,240 760,280 720,300 C680,320 620,280 600,240 C580,200 620,160 650,150 Z" opacity="0.4" />
-              <circle cx="180" cy="150" fill="#b45309" r="8" />
-              <circle cx="450" cy="120" fill="#ba1a1a" r="10" />
-              <circle cx="700" cy="180" fill="#15803d" r="8" />
-              <circle cx="620" cy="160" fill="#15803d" r="12" className="animate-pulse" />
-            </svg>
-          </div>
-
-          <div className="grid grid-cols-1 gap-2 mt-auto">
-            <div className="flex items-center justify-between p-2 bg-[#15803d]/10 rounded-lg border border-[#15803d]/20">
-              <span className="flex items-center text-xs font-bold text-[#15803d]">
-                <span className="w-2 h-2 bg-[#15803d] rounded-full mr-2"></span> An toàn
-              </span>
-              <span className="text-[10px] font-medium text-[#444651]">China, Japan</span>
-            </div>
-            <div className="flex items-center justify-between p-2 bg-[#b45309]/10 rounded-lg border border-[#b45309]/20">
-              <span className="flex items-center text-xs font-bold text-[#b45309]">
-                <span className="w-2 h-2 bg-[#b45309] rounded-full mr-2"></span> Cảnh báo
-              </span>
-              <span className="text-[10px] font-medium text-[#444651]">USA</span>
-            </div>
-            <div className="flex items-center justify-between p-2 bg-[#ba1a1a]/10 rounded-lg border border-[#ba1a1a]/20">
-              <span className="flex items-center text-xs font-bold text-[#ba1a1a]">
-                <span className="w-2 h-2 bg-[#ba1a1a] rounded-full mr-2"></span> Nguy cơ cao
-              </span>
-              <span className="text-[10px] font-medium text-[#444651]">EU</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Stat Card 2: Compliance Rate */}
+        {/* Stat Card 1: Compliance Rate (TỶ LỆ ĐẠT 97%) */}
         <div className="bg-white border border-[#c5c5d3]/60 p-6 rounded-xl flex flex-col justify-between shadow-2xs">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <p className="text-xs font-bold text-[#444651] uppercase tracking-widest mb-1">Tỷ lệ đạt</p>
+              <p className="text-xs font-bold text-[#444651] uppercase tracking-widest mb-1">TỶ LỆ ĐẠT</p>
               <h3 className="text-3xl font-bold text-[#15803d] font-serif flex items-end">
                 97%
                 <svg className="w-16 h-8 ml-3 text-[#15803d] opacity-80" fill="none" stroke="currentColor" viewBox="0 0 50 20">
@@ -160,6 +119,25 @@ export default function DashboardPage() {
           <div className="flex items-center gap-1 text-xs mt-auto">
             <span className="text-[#444651]">Tg. xử lý TB:</span>
             <span className="text-[#131b2e] font-medium">2.4 ngày</span>
+          </div>
+        </div>
+
+        {/* Stat Card 2: HỒ SƠ ĐANG XỬ LÝ (18) */}
+        <div className="bg-white border border-[#c5c5d3]/60 p-6 rounded-xl flex flex-col justify-between shadow-2xs">
+          <div className="flex justify-between items-start mb-4">
+            <div>
+              <p className="text-xs font-bold text-[#444651] uppercase tracking-widest mb-1">HỒ SƠ ĐANG XỬ LÝ</p>
+              <h3 className="text-3xl font-bold text-[#00236f] font-serif">
+                18
+              </h3>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-[#00236f]/10 flex items-center justify-center text-[#00236f]">
+              <span className="material-symbols-outlined">fact_check</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-1 text-xs mt-auto">
+            <span className="text-[#444651]">Chờ phê duyệt:</span>
+            <span className="text-[#131b2e] font-medium">5 hồ sơ</span>
           </div>
         </div>
 
@@ -212,7 +190,7 @@ export default function DashboardPage() {
 
       </div>
 
-      {/* Market Risk Map & News Section (Stitch MCP 1:1) */}
+      {/* Market Risk Map & News Section (Lovable 1:1) */}
       <div className="grid grid-cols-12 gap-6 items-stretch">
         
         {/* Left Market Risk Map Section */}
@@ -296,7 +274,7 @@ export default function DashboardPage() {
 
       </div>
 
-      {/* Main Table: Recent Compliance Checks (Stitch MCP Stepper Line 1:1) */}
+      {/* Main Table: Recent Compliance Checks (Lovable Stepper 1:1) */}
       <div className="bg-white border border-[#c5c5d3]/60 rounded-xl overflow-hidden shadow-2xs">
         <div className="p-6 border-b border-[#c5c5d3]/40 flex justify-between items-center bg-white">
           <h3 className="font-serif text-xl font-bold text-[#131b2e]">Kiểm tra tuân thủ gần đây</h3>
@@ -307,11 +285,11 @@ export default function DashboardPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-[#f2f3ff] text-[#444651] uppercase text-[11px] font-bold tracking-widest border-b border-[#c5c5d3]/40">
-                <th className="px-6 py-4">Sản phẩm</th>
-                <th className="px-6 py-4">Thị trường</th>
-                <th className="px-6 py-4">Tiến độ phân tích</th>
-                <th className="px-6 py-4">Trạng thái</th>
-                <th className="px-6 py-4 text-right">Hành động</th>
+                <th className="px-6 py-4">SẢN PHẨM</th>
+                <th className="px-6 py-4">THỊ TRƯỜNG</th>
+                <th className="px-6 py-4">TIẾN ĐỘ PHÂN TÍCH</th>
+                <th className="px-6 py-4">TRẠNG THÁI</th>
+                <th className="px-6 py-4 text-right">HÀNH ĐỘNG</th>
               </tr>
             </thead>
             <tbody className="text-sm divide-y divide-[#c5c5d3]/30 text-[#131b2e]">
@@ -320,14 +298,15 @@ export default function DashboardPage() {
               <tr className="hover:bg-[#00236f]/5 transition-colors">
                 <td className="px-6 py-4 font-bold">Sầu riêng Ri6</td>
                 <td className="px-6 py-4">Trung Quốc (GACC)</td>
-                <td className="px-6 py-4 min-w-[200px]">
-                  <div className="space-y-1">
-                    <div className="flex justify-between items-center text-[10px] font-bold text-[#15803d]">
-                      <span>OCR</span><span>AI Analysis</span><span>Approval</span>
-                    </div>
-                    <div className="w-full bg-[#eaedff] rounded-full h-1.5 overflow-hidden flex">
-                      <div className="bg-[#15803d] h-1.5 w-full" />
-                    </div>
+                <td className="px-6 py-4 min-w-[220px]">
+                  <div className="relative flex justify-between items-center w-full my-1">
+                    <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-[#15803d] -translate-y-1/2 z-0"></div>
+                    <div className="relative z-10 w-4 h-4 bg-[#15803d] rounded-full flex items-center justify-center text-white"><span className="material-symbols-outlined text-[10px]">check</span></div>
+                    <div className="relative z-10 w-4 h-4 bg-[#15803d] rounded-full flex items-center justify-center text-white"><span className="material-symbols-outlined text-[10px]">check</span></div>
+                    <div className="relative z-10 w-4 h-4 bg-[#15803d] rounded-full flex items-center justify-center text-white"><span className="material-symbols-outlined text-[10px]">check</span></div>
+                  </div>
+                  <div className="flex justify-between text-[9px] uppercase font-bold text-[#444651] mt-1">
+                    <span>OCR</span><span>AI Analysis</span><span>Approval</span>
                   </div>
                 </td>
                 <td className="px-6 py-4">
@@ -344,14 +323,16 @@ export default function DashboardPage() {
               <tr className="hover:bg-[#00236f]/5 transition-colors">
                 <td className="px-6 py-4 font-bold">Thanh long - China</td>
                 <td className="px-6 py-4">Quảng Tây (Trung Quốc)</td>
-                <td className="px-6 py-4 min-w-[200px]">
-                  <div className="space-y-1">
-                    <div className="flex justify-between items-center text-[10px] font-bold text-[#b45309]">
-                      <span>OCR</span><span className="text-[#b45309]">AI Analysis</span><span>Approval</span>
-                    </div>
-                    <div className="w-full bg-[#eaedff] rounded-full h-1.5 overflow-hidden flex">
-                      <div className="bg-[#b45309] h-1.5 w-[50%]" />
-                    </div>
+                <td className="px-6 py-4 min-w-[220px]">
+                  <div className="relative flex justify-between items-center w-full my-1">
+                    <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-[#c5c5d3] -translate-y-1/2 z-0"></div>
+                    <div className="absolute top-1/2 left-0 w-1/2 h-0.5 bg-[#b45309] -translate-y-1/2 z-0"></div>
+                    <div className="relative z-10 w-4 h-4 bg-[#15803d] rounded-full flex items-center justify-center text-white"><span className="material-symbols-outlined text-[10px]">check</span></div>
+                    <div className="relative z-10 w-4 h-4 bg-[#b45309] rounded-full flex items-center justify-center text-white animate-pulse"><span className="material-symbols-outlined text-[10px]">sync</span></div>
+                    <div className="relative z-10 w-4 h-4 bg-[#e2e7ff] border border-[#c5c5d3] rounded-full flex items-center justify-center"></div>
+                  </div>
+                  <div className="flex justify-between text-[9px] uppercase font-bold text-[#444651] mt-1">
+                    <span>OCR</span><span className="text-[#b45309]">AI Analysis</span><span>Approval</span>
                   </div>
                 </td>
                 <td className="px-6 py-4">
@@ -368,14 +349,16 @@ export default function DashboardPage() {
               <tr className="hover:bg-[#00236f]/5 transition-colors">
                 <td className="px-6 py-4 font-bold">Sầu riêng Monthong</td>
                 <td className="px-6 py-4">Vân Nam (Trung Quốc)</td>
-                <td className="px-6 py-4 min-w-[200px]">
-                  <div className="space-y-1">
-                    <div className="flex justify-between items-center text-[10px] font-bold text-[#ba1a1a]">
-                      <span>OCR</span><span className="text-[#ba1a1a]">AI Analysis</span><span>Approval</span>
-                    </div>
-                    <div className="w-full bg-[#eaedff] rounded-full h-1.5 overflow-hidden flex">
-                      <div className="bg-[#ba1a1a] h-1.5 w-[50%]" />
-                    </div>
+                <td className="px-6 py-4 min-w-[220px]">
+                  <div className="relative flex justify-between items-center w-full my-1">
+                    <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-[#c5c5d3] -translate-y-1/2 z-0"></div>
+                    <div className="absolute top-1/2 left-0 w-1/2 h-0.5 bg-[#ba1a1a] -translate-y-1/2 z-0"></div>
+                    <div className="relative z-10 w-4 h-4 bg-[#15803d] rounded-full flex items-center justify-center text-white"><span className="material-symbols-outlined text-[10px]">check</span></div>
+                    <div className="relative z-10 w-4 h-4 bg-[#ba1a1a] rounded-full flex items-center justify-center text-white"><span className="material-symbols-outlined text-[10px]">close</span></div>
+                    <div className="relative z-10 w-4 h-4 bg-[#e2e7ff] border border-[#c5c5d3] rounded-full flex items-center justify-center"></div>
+                  </div>
+                  <div className="flex justify-between text-[9px] uppercase font-bold text-[#444651] mt-1">
+                    <span>OCR</span><span className="text-[#ba1a1a]">AI Analysis</span><span>Approval</span>
                   </div>
                 </td>
                 <td className="px-6 py-4">
@@ -392,14 +375,15 @@ export default function DashboardPage() {
               <tr className="hover:bg-[#00236f]/5 transition-colors">
                 <td className="px-6 py-4 font-bold">Xoài Cát Chu</td>
                 <td className="px-6 py-4">Trung Quốc (GACC)</td>
-                <td className="px-6 py-4 min-w-[200px]">
-                  <div className="space-y-1">
-                    <div className="flex justify-between items-center text-[10px] font-bold text-[#15803d]">
-                      <span>OCR</span><span>AI Analysis</span><span>Approval</span>
-                    </div>
-                    <div className="w-full bg-[#eaedff] rounded-full h-1.5 overflow-hidden flex">
-                      <div className="bg-[#15803d] h-1.5 w-full" />
-                    </div>
+                <td className="px-6 py-4 min-w-[220px]">
+                  <div className="relative flex justify-between items-center w-full my-1">
+                    <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-[#15803d] -translate-y-1/2 z-0"></div>
+                    <div className="relative z-10 w-4 h-4 bg-[#15803d] rounded-full flex items-center justify-center text-white"><span className="material-symbols-outlined text-[10px]">check</span></div>
+                    <div className="relative z-10 w-4 h-4 bg-[#15803d] rounded-full flex items-center justify-center text-white"><span className="material-symbols-outlined text-[10px]">check</span></div>
+                    <div className="relative z-10 w-4 h-4 bg-[#15803d] rounded-full flex items-center justify-center text-white"><span className="material-symbols-outlined text-[10px]">check</span></div>
+                  </div>
+                  <div className="flex justify-between text-[9px] uppercase font-bold text-[#444651] mt-1">
+                    <span>OCR</span><span>AI Analysis</span><span>Approval</span>
                   </div>
                 </td>
                 <td className="px-6 py-4">
@@ -417,7 +401,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Policy Updates & Reports Section (Stitch MCP 1:1) */}
+      {/* Policy Updates & Reports Section (Lovable 1:1) */}
       <div className="grid grid-cols-12 gap-6">
         
         {/* Left Column: Regulations & AI Policy Updates */}
@@ -430,7 +414,7 @@ export default function DashboardPage() {
           {/* Pinned Regulations */}
           <div className="p-4 bg-[#00236f]/5 border border-[#00236f]/20 rounded-lg">
             <h4 className="text-xs font-bold text-[#00236f] uppercase tracking-widest flex items-center mb-3">
-              <span className="material-symbols-outlined text-sm mr-1">push_pin</span> Quy định trọng điểm (Pinned)
+              <span className="material-symbols-outlined text-sm mr-1">push_pin</span> QUY ĐỊNH TRỌNG ĐIỂM (PINNED)
             </h4>
             <div className="space-y-3">
               <div className="flex items-start space-x-3">
@@ -529,6 +513,13 @@ export default function DashboardPage() {
         </div>
 
       </div>
+
+      {/* Floating Action Button (+) */}
+      <Link href="/checks/new">
+        <button className="fixed bottom-8 right-8 w-14 h-14 bg-[#00236f] text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50 ring-4 ring-[#00236f]/20 group cursor-pointer">
+          <span className="material-symbols-outlined text-3xl group-hover:rotate-90 transition-transform">add</span>
+        </button>
+      </Link>
     </div>
   );
 }
