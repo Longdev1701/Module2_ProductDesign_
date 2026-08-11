@@ -6,6 +6,9 @@ Tất cả các thay đổi quan trọng của dự án **Themis LexiGuard** s�
 
 ---
 
+- **Đồng bộ 1:1 Giao diện Trợ lý Tư vấn AI & Thư viện Pháp lý GACC từ Mẫu Thiết kế Stitch MCP**:
+  - Cập nhật [fe/src/features/NewCheckPage.tsx](file:///e:/Projects/Project_ca_nhan/Module2/fe/src/features/NewCheckPage.tsx): Đồng bộ 1:1 giao diện Trợ lý AI Thẩm định GACC với thanh ngữ cảnh sản phẩm Sầu riêng, chế độ Deep Research Mode, danh sách lịch sử phiên tư vấn, gợi ý câu hỏi GACC và thẻ phản hồi AI tích hợp mã trích dẫn luật.
+  - Cập nhật [fe/src/features/RegulationsPage.tsx](file:///e:/Projects/Project_ca_nhan/Module2/fe/src/features/RegulationsPage.tsx): Đồng bộ 1:1 giao diện Thư viện Pháp lý GACC với Smart Market Hub 4 thị trường (Trung Quốc GACC 96.8% Safe), 4 bộ tiêu chuẩn GACC cốt lõi (Nghị định thư 2022, GB 2762-2022, GB 2763-2021, Lệnh 248/249) và AI Policy Updates Tracker.
 - **Đồng bộ 1:1 Giao diện Dashboard từ Mẫu Thiết kế Stitch MCP (AgriExport Compliance AI Hub)**:
   - Cập nhật [fe/src/features/DashboardPage.tsx](file:///e:/Projects/Project_ca_nhan/Module2/fe/src/features/DashboardPage.tsx) đồng bộ 1:1 bố cục thiết kế từ Stitch MCP: Chào mừng Doanh nghiệp, Mã số Vùng trồng PUC/PHC, Bộ lọc nhanh dòng Sầu riêng, Bản đồ Rủi ro Thị trường SVG (Trung Quốc GACC 96.8% Safe), Smart Alerts Panel GACC (3 cảnh báo ưu tiên), Bảng Kiểm tra tuân thủ gần đây với Thanh tiến trình Stepper AI 3 bước, Thư viện Quy định Pinned (Lệnh 248/249, Nghị định thư GACC 2022) và Trung tâm tải tệp Báo cáo PDF Tiếng Việt.
 - **Bổ sung Bảng Danh sách Thành viên Thực hiện Dự án (Project Team Members)**:

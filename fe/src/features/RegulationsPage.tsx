@@ -1,115 +1,201 @@
 "use client";
 
+import React, { useState } from "react";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Settings, ShieldCheck, Sparkles, AlertTriangle, ExternalLink } from "lucide-react";
+import { Settings, ShieldCheck, Sparkles, AlertTriangle, ExternalLink, Download } from "lucide-react";
 
 export default function RegulationsPage() {
-  type BadgeVariant = "default" | "destructive" | "secondary";
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const documents = [
     {
-      type: "NGHỊ ĐỊNH THƯ GACC",
-      typeVariant: "destructive",
-      date: "Cập nhật: 11/08/2026",
-      title: "Nghị định thư Kiểm dịch Thực vật Sầu riêng Tươi (GACC & MARD 2022)",
-      desc: "Quy định mã số Vùng trồng (PUC), Mã số Cơ sở Đóng gói (PHC), kiểm soát 05 loài sinh vật kiểm dịch và dòng khai báo Phytosanitary bắt buộc."
+      id: "REG-GACC-01",
+      category: "NGHỊ ĐỊNH THƯ GACC",
+      badgeVariant: "destructive",
+      date: "11/08/2026",
+      title: "Nghị định thư Kiểm dịch Thực vật Sầu riêng Tươi (MARD/GACC Protocol 2022)",
+      desc: "Quy định mã số Vùng trồng (PUC), Mã số Cơ sở Đóng gói (PHC), kiểm soát 05 loài sinh vật kiểm dịch (Rệp sáp & Ruồi đục quả) và dòng khai báo Phytosanitary bắt buộc.",
+      authority: "Tổng cục Hải quan Trung Quốc (GACC) & MARD",
+      impact: "Trọng điểm Xuất khẩu Sầu riêng Tươi (Mã HS: 0810.60.00)"
     },
     {
-      type: "KIM LOẠI NẶNG GB 2762",
-      typeVariant: "destructive",
-      date: "Cập nhật: 01/08/2026",
-      title: "Tiêu chuẩn Quốc gia Trung Quốc GB 2762-2022: Giới hạn Cadmium (Cd)",
-      desc: "Quy định ngưỡng tối đa cho phép Cadmium trong sầu riêng tươi <= 0.05 mg/kg. Đây là tiêu chí kiểm tra tần suất cao nhất của GACC tại cửa khẩu."
+      id: "REG-GACC-02",
+      category: "KIM LOẠI NẶNG GB 2762",
+      badgeVariant: "destructive",
+      date: "01/08/2026",
+      title: "Tiêu chuẩn Quốc gia Trung Quốc GB 2762-2022: Giới hạn Kim loại Nặng Cadmium (Cd)",
+      desc: "Quy định ngưỡng tối đa cho phép Cadmium trong sầu riêng tươi <= 0.05 mg/kg. Đây là tiêu chí kiểm tra tần suất cao nhất của GACC tại các cửa khẩu Hữu Nghị, Tân Thanh.",
+      authority: "Ủy ban An toàn Thực phẩm Quốc gia Trung Quốc",
+      impact: "MRL Cadmium ≤ 0.05 mg/kg"
     },
     {
-      type: "MRL BẢO VỆ THỰC VẬT",
-      typeVariant: "default",
-      date: "Cập nhật: 28/07/2026",
+      id: "REG-GACC-03",
+      category: "MRL BẢO VỆ THỰC VẬT",
+      badgeVariant: "default",
+      date: "28/07/2026",
       title: "Tiêu chuẩn GB 2763-2021: Ngưỡng MRL Dithiocarbamates & Chlorpyrifos",
-      desc: "Ngưỡng Dithiocarbamates <= 2.0 mg/kg, Chlorpyrifos <= 0.01 mg/kg (nghiêm cấm sử dụng). Áp dụng cho nông sản xuất khẩu sang Trung Quốc."
+      desc: "Ngưỡng Dithiocarbamates <= 2.0 mg/kg, Chlorpyrifos <= 0.01 mg/kg (nghiêm cấm sử dụng). Áp dụng trực tiếp cho nông sản xuất khẩu sang Trung Quốc.",
+      authority: "Bộ Nông nghiệp Trung Quốc (MARA)",
+      impact: "Giới hạn Dư lượng Thuốc BVTV"
     },
     {
-      type: "LỆNH GACC 248 & 249",
-      typeVariant: "secondary",
-      date: "Cập nhật: 15/07/2026",
+      id: "REG-GACC-04",
+      category: "LỆNH GACC 248 & 249",
+      badgeVariant: "secondary",
+      date: "15/07/2026",
       title: "Quản lý Đăng ký Doanh nghiệp & Ghi nhãn phụ Tiếng Trung (Decree 248/249)",
-      desc: "Yêu cầu bắt buộc in dán nhãn phụ tiếng Trung chứa thông tin PUC, PHC và dòng chữ '输往中华人民共和国' trên 100% thùng sầu riêng."
+      desc: "Yêu cầu bắt buộc in dán nhãn phụ tiếng Trung chứa thông tin PUC, PHC và dòng chữ '输往中华人民共和国' trên 100% thùng sầu riêng trước khi kẹp chì.",
+      authority: "Cục An toàn Thực phẩm Nhập khẩu GACC",
+      impact: "Quy định Ghi nhãn & Bao bì"
     }
   ];
 
+  const handleDownloadPDF = () => {
+    window.open("/Bao_Cao_Tham_Dinh_Tuan_Thu_GACC_Sau_Rieng.pdf", "_blank");
+  };
+
   return (
-    <div className="flex flex-col lg:flex-row gap-8 animate-fadeIn">
-      {/* Main Content */}
-      <div className="flex-1 space-y-8">
+    <div className="space-y-8 animate-fadeIn text-[#131b2e] pb-12">
+      {/* Title & Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#c5c5d3]/50 pb-6">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-[#00327d] uppercase tracking-widest mb-1">
-            <Sparkles className="w-4 h-4 text-[#00327d]" /> THƯ VIỆN PHÁP LÝ HẢI QUAN TRUNG QUỐC (GACC)
+          <div className="flex items-center gap-2 text-xs font-bold text-[#00236f] uppercase tracking-widest mb-1">
+            <Sparkles className="w-4 h-4 text-[#00236f]" /> THƯ VIỆN PHÁP LÝ HẢI QUAN TRUNG QUỐC (GACC COMPLIANCE HUB)
           </div>
-          <h1 className="text-3xl font-serif font-bold text-on-surface mb-2">Thư viện Quy định Sầu riêng Xuất khẩu Trung Quốc</h1>
-          <p className="text-sm text-on-surface-variant max-w-3xl">Tra cứu Nghị định thư Hải quan GACC, Tiêu chuẩn MRL GB 2762/2763 và Lệnh 248/249 áp dụng cho Sầu riêng Tươi &amp; Cấp đông (Mã HS: 0810.60.00 / 0811.90.00).</p>
+          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#131b2e]">Thư viện Quy định Sầu riêng Xuất khẩu</h1>
+          <p className="text-xs sm:text-sm text-[#444651] max-w-3xl mt-1">
+            Trung tâm tình báo pháp lý: Tra cứu Nghị định thư GACC, Tiêu chuẩn MRL GB 2762/2763 và Lệnh 248/249 áp dụng cho Sầu riêng Tươi &amp; Cấp đông (Mã HS: 0810.60.00 / 0811.90.00).
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="p-6">
-            <h3 className="font-serif text-lg font-bold mb-4 flex items-center gap-2 text-[#00327d]">
-               <span className="w-6 h-6 rounded-full bg-[#00327d] flex items-center justify-center text-white text-xs font-bold">🇨🇳</span> Thị trường Xuất khẩu Trọng điểm
-            </h3>
-            <div className="grid grid-cols-2 gap-3">
-              <button className="flex items-center justify-between p-3.5 rounded-xl border-2 border-[#00327d] bg-[#f7f9fb] text-[#00327d] gap-2 transition-all cursor-pointer font-bold">
-                <span className="text-sm">Trung Quốc (GACC)</span>
-                <span className="text-xs bg-[#00327d] text-white px-2 py-0.5 rounded">ƯU TIÊN MVP</span>
-              </button>
-              <button className="flex items-center justify-between p-3.5 rounded-xl border border-outline-variant hover:border-outline gap-2 transition-all text-on-surface-variant cursor-not-allowed opacity-60">
-                <span className="text-sm">Châu Âu (EUDR)</span>
-                <span className="text-[10px] bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded">Sau MVP</span>
-              </button>
-            </div>
-          </Card>
-
-          <Card className="p-6">
-            <h3 className="font-serif text-lg font-bold mb-4 flex items-center gap-2 text-[#00327d]">
-               <ShieldCheck className="w-5 h-5 text-[#00327d]" /> Phân loại Tiêu chuẩn GACC
-            </h3>
-            <div className="space-y-2.5">
-              <label className="flex items-center gap-3 p-3 rounded-xl border border-[#00327d] bg-[#f7f9fb] cursor-pointer">
-                <div className="w-4 h-4 rounded border border-[#00327d] bg-[#00327d] flex items-center justify-center">
-                  <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
-                </div>
-                <span className="font-bold text-[#00327d] text-xs">MRL Dư lượng &amp; Cadmium (GB 2762 / 2763)</span>
-              </label>
-              <label className="flex items-center gap-3 p-3 rounded-xl border border-outline-variant cursor-pointer hover:bg-surface-container-lowest">
-                <div className="w-4 h-4 rounded border border-outline-variant flex items-center justify-center"></div>
-                <span className="text-on-surface text-xs font-medium">Mã PUC Vùng trồng &amp; Mã PHC Cơ sở đóng gói</span>
-              </label>
-            </div>
-          </Card>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={handleDownloadPDF}
+            className="px-4 py-2.5 bg-[#00236f] hover:bg-[#1e3a8a] text-white font-bold text-xs rounded-xl transition-all shadow-2xs flex items-center gap-2 cursor-pointer"
+          >
+            <Download className="w-4 h-4" /> Xuất Báo cáo PDF (Tiếng Việt)
+          </button>
         </div>
+      </div>
 
-        <div>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="font-serif text-xl font-bold">Văn bản Pháp lý GACC Sầu riêng (4 Văn bản cốt lõi)</h2>
-            <div className="flex items-center gap-2">
-                <span className="text-xs text-outline">Sắp xếp:</span>
-                <select className="bg-transparent font-bold text-xs text-[#00327d] outline-none cursor-pointer">
-                    <option>Ưu tiên Nóng nhất</option>
-                </select>
+      {/* 1. Smart Market Hub Cards Grid */}
+      <div className="space-y-4">
+        <h3 className="font-serif text-lg font-bold text-[#131b2e] flex items-center gap-2">
+          <ShieldCheck className="w-5 h-5 text-[#00236f]" /> Smart Market Hub (Sức khỏe Tuân thủ các Thị trường)
+        </h3>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Card 1: China GACC */}
+          <div className="p-4 bg-[#f2f3ff] border-2 border-[#00236f] rounded-2xl relative overflow-hidden shadow-2xs space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-bold text-[#00236f] bg-[#e2e7ff] px-2 py-0.5 rounded">🇨🇳 TRUNG QUỐC (GACC)</span>
+              <span className="text-[10px] font-bold text-[#15803d] bg-[#e8f5e9] px-2 py-0.5 rounded">ACTIVE (MVP)</span>
+            </div>
+            <div className="flex items-end justify-between pt-1">
+              <div>
+                <p className="font-serif text-2xl font-bold text-[#00236f]">96.8%</p>
+                <p className="text-[10px] font-bold text-[#757682]">Sức khỏe tuân thủ GACC</p>
+              </div>
+              <span className="text-xs font-bold text-[#15803d]">An toàn</span>
             </div>
           </div>
 
+          {/* Card 2: EU */}
+          <div className="p-4 bg-white border border-[#c5c5d3]/60 rounded-2xl relative overflow-hidden shadow-2xs space-y-2 opacity-80">
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-bold text-[#444651] bg-[#f2f3ff] px-2 py-0.5 rounded">🇪🇺 CHÂU ÂU (EUDR)</span>
+              <span className="text-[10px] font-bold text-[#757682] bg-gray-100 px-2 py-0.5 rounded">Sau MVP</span>
+            </div>
+            <div className="flex items-end justify-between pt-1">
+              <div>
+                <p className="font-serif text-2xl font-bold text-[#131b2e]">88.5%</p>
+                <p className="text-[10px] font-bold text-[#757682]">Sức khỏe tuân thủ EU</p>
+              </div>
+              <span className="text-xs font-bold text-[#b45309]">Cảnh báo</span>
+            </div>
+          </div>
+
+          {/* Card 3: USA */}
+          <div className="p-4 bg-white border border-[#c5c5d3]/60 rounded-2xl relative overflow-hidden shadow-2xs space-y-2 opacity-80">
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-bold text-[#444651] bg-[#f2f3ff] px-2 py-0.5 rounded">🇺🇸 HOA KỲ (FDA)</span>
+              <span className="text-[10px] font-bold text-[#757682] bg-gray-100 px-2 py-0.5 rounded">Sau MVP</span>
+            </div>
+            <div className="flex items-end justify-between pt-1">
+              <div>
+                <p className="font-serif text-2xl font-bold text-[#131b2e]">85.0%</p>
+                <p className="text-[10px] font-bold text-[#757682]">Sức khỏe tuân thủ FDA</p>
+              </div>
+              <span className="text-xs font-bold text-[#b45309]">Cảnh báo</span>
+            </div>
+          </div>
+
+          {/* Card 4: Japan */}
+          <div className="p-4 bg-white border border-[#c5c5d3]/60 rounded-2xl relative overflow-hidden shadow-2xs space-y-2 opacity-80">
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-bold text-[#444651] bg-[#f2f3ff] px-2 py-0.5 rounded">🇯🇵 NHẬT BẢN (JFS)</span>
+              <span className="text-[10px] font-bold text-[#757682] bg-gray-100 px-2 py-0.5 rounded">Sau MVP</span>
+            </div>
+            <div className="flex items-end justify-between pt-1">
+              <div>
+                <p className="font-serif text-2xl font-bold text-[#131b2e]">91.2%</p>
+                <p className="text-[10px] font-bold text-[#757682]">Sức khỏe tuân thủ JFS</p>
+              </div>
+              <span className="text-xs font-bold text-[#15803d]">An toàn</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Grid: Regulations List & Right AI Tracker Sidebar */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        {/* Left Column: Documents List */}
+        <div className="lg:col-span-8 space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-[#c5c5d3]/60 shadow-2xs">
+            <div className="relative flex-1">
+              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#757682] text-base">search</span>
+              <input 
+                type="text" 
+                placeholder="Tìm kiếm điều khoản GACC, Cadmium, MRL GB 2762, Lệnh 248..." 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 bg-[#faf8ff] border border-[#c5c5d3] rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-[#00236f] text-[#131b2e]"
+              />
+            </div>
+            <div className="flex gap-2">
+              <button className="px-3 py-2 bg-[#00236f] text-white rounded-xl text-xs font-bold shadow-2xs">
+                🇨🇳 GACC Trung Quốc
+              </button>
+            </div>
+          </div>
+
+          {/* Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {documents.map((doc, idx) => (
-              <Card key={idx} className="flex flex-col h-full hover:shadow-md transition-shadow cursor-pointer border-[#c3c6d5]/70">
+            {documents.map((doc) => (
+              <Card key={doc.id} className="flex flex-col h-full hover:shadow-md transition-all cursor-pointer border-[#c5c5d3]/70 rounded-2xl">
                 <CardContent className="p-6 flex-1 flex flex-col space-y-3">
                   <div className="flex items-start justify-between gap-2">
-                    <Badge variant={doc.typeVariant as BadgeVariant} className="text-[10px] py-1 font-bold">{doc.type}</Badge>
-                    <span className="text-xs text-outline text-right font-mono">{doc.date}</span>
+                    <span className="px-2.5 py-1 bg-[#e2e7ff] text-[#00236f] font-bold text-[10px] rounded-md">
+                      {doc.category}
+                    </span>
+                    <span className="text-[11px] text-[#757682] font-mono">{doc.date}</span>
                   </div>
-                  <h3 className="font-serif text-base font-bold text-[#191c1e] leading-snug">{doc.title}</h3>
-                  <p className="text-xs text-on-surface-variant leading-relaxed flex-1">{doc.desc}</p>
-                  <div className="pt-2 border-t border-outline-variant flex justify-between items-center text-xs font-bold text-[#00327d]">
-                    <span>Xem chi tiết điều khoản</span>
+
+                  <h3 className="font-serif text-base font-bold text-[#131b2e] leading-snug">{doc.title}</h3>
+                  <p className="text-xs text-[#444651] leading-relaxed flex-1">{doc.desc}</p>
+                  
+                  <div className="pt-3 border-t border-[#c5c5d3]/40 space-y-1 text-[11px]">
+                    <p className="text-[#757682]">Cơ quan ban hành: <strong className="text-[#131b2e]">{doc.authority}</strong></p>
+                    <p className="text-[#00236f] font-bold">Phạm vi: {doc.impact}</p>
+                  </div>
+
+                  <div className="pt-2 flex justify-between items-center text-xs font-bold text-[#00236f]">
+                    <span>Xem chi tiết nguồn luật</span>
                     <ExternalLink className="w-3.5 h-3.5" />
                   </div>
                 </CardContent>
@@ -117,41 +203,47 @@ export default function RegulationsPage() {
             ))}
           </div>
         </div>
-      </div>
 
-      {/* Right Sidebar */}
-      <div className="w-full lg:w-80 space-y-6">
-        <div>
-          <h2 className="font-serif text-xl font-bold mb-4 flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-[#854d0e]" /> Theo dõi Pháp lý GACC
-          </h2>
-          <div className="space-y-4 relative before:absolute before:inset-0 before:ml-1.5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-outline-variant before:to-transparent">
-            
-            <div className="relative pl-6">
-               <div className="absolute left-0 top-1 w-3 h-3 bg-[#00327d] rounded-full ring-4 ring-surface"></div>
-               <span className="text-[10px] font-mono font-bold text-[#00327d] tracking-wider uppercase block mb-1">MỚI CẬP NHẬT</span>
-               <h4 className="font-bold text-on-surface text-xs mb-1">GACC: Tăng tần suất kiểm tra Cadmium</h4>
-               <p className="text-xs text-on-surface-variant mb-2">Hải quan Trung Quốc tăng tỷ lệ lấy mẫu Cadmium lên 30% tại cửa khẩu.</p>
-               <a href="#" className="text-xs font-bold text-[#00327d] hover:underline">Xem hướng dẫn rà soát</a>
+        {/* Right Sidebar: AI Policy Tracker */}
+        <div className="lg:col-span-4 space-y-6">
+          
+          <div className="bg-white p-6 rounded-2xl border border-[#c5c5d3]/60 shadow-2xs space-y-4">
+            <h3 className="font-serif text-base font-bold text-[#131b2e] flex items-center gap-2 border-b border-[#c5c5d3]/40 pb-3">
+              <AlertTriangle className="w-4 h-4 text-[#b45309]" /> AI Policy Updates Tracker
+            </h3>
+
+            <div className="space-y-4 text-xs">
+              <div className="p-3 bg-[#f2f3ff] rounded-xl border border-[#00236f]/20 space-y-1">
+                <span className="text-[10px] font-bold text-[#00236f] uppercase">MỚI CẬP NHẬT GACC</span>
+                <h4 className="font-bold text-[#131b2e]">Tăng tần suất kiểm tra Cadmium tại cửa khẩu</h4>
+                <p className="text-[11px] text-[#444651]">Hải quan Lạng Sơn &amp; Quảng Tây áp dụng tỷ lệ lấy mẫu 30% đối với sầu riêng tươi.</p>
+                <Link href="/reports/1" className="text-xs font-bold text-[#00236f] hover:underline block pt-1">
+                  Xem hướng dẫn tự rà soát
+                </Link>
+              </div>
+
+              <div className="p-3 bg-[#fef9c3] rounded-xl border border-[#fde047] space-y-1">
+                <span className="text-[10px] font-bold text-[#854d0e] uppercase">LỆNH 248/249</span>
+                <h4 className="font-bold text-[#131b2e]">Kiểm tra tem nhãn Tiếng Trung 100% thùng</h4>
+                <p className="text-[11px] text-[#444651]">Yêu cầu ghi rõ mã số Vùng trồng PUC &amp; PHC tiếng Trung trước khi kẹp chì.</p>
+              </div>
             </div>
-
-            <div className="relative pl-6">
-               <div className="absolute left-0 top-1 w-3 h-3 bg-[#854d0e] rounded-full ring-4 ring-surface"></div>
-               <span className="text-[10px] font-mono font-bold text-[#854d0e] tracking-wider uppercase block mb-1">YÊU CẦU NHÃN PHỤ</span>
-               <h4 className="font-bold text-on-surface text-xs mb-1">Lệnh 248/249: Kiểm tra tem tiếng Trung</h4>
-               <p className="text-xs text-on-surface-variant mb-2">Bắt buộc in bổ sung mã PUC &amp; PHC tiếng Trung trên 100% thùng hàng.</p>
-            </div>
-
           </div>
-        </div>
 
-        <div className="bg-[#00327d] rounded-2xl p-6 text-white relative overflow-hidden space-y-4 shadow-sm">
+          {/* AI Comply Widget Banner */}
+          <div className="bg-[#00236f] rounded-2xl p-6 text-white relative overflow-hidden space-y-3 shadow-2xs">
             <div className="relative z-10 text-center flex flex-col items-center space-y-2">
-                <Settings className="w-8 h-8 text-white/90" />
-                <h3 className="font-serif text-base font-bold">ĐỘNG CƠ AI GACC COMPLY</h3>
-                <p className="text-xs text-white/80 leading-relaxed">Tự động đối soát hồ sơ sầu riêng của bạn với Nghị định thư Hải quan GACC mới nhất.</p>
-                <Button className="w-full bg-white text-[#00327d] hover:bg-[#f7f9fb] font-bold text-xs mt-2">Phân tích hồ sơ ngay</Button>
+              <Settings className="w-8 h-8 text-white/90 animate-spin" />
+              <h3 className="font-serif text-base font-bold">ĐỘNG CƠ AI GACC COMPLY</h3>
+              <p className="text-xs text-white/80 leading-relaxed">Tự động phân tích tác động của văn bản luật GACC mới đến danh mục lô sầu riêng của doanh nghiệp.</p>
+              <Link href="/checks/new">
+                <button className="w-full mt-2 px-4 py-2.5 bg-white hover:bg-[#f2f3ff] text-[#00236f] font-bold text-xs rounded-xl transition-all cursor-pointer">
+                  Khởi chạy Phân tích AI ngay
+                </button>
+              </Link>
             </div>
+          </div>
+
         </div>
 
       </div>
