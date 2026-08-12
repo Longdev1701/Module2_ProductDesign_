@@ -63,10 +63,13 @@ export interface LegalUpdateFeedItem {
   status: ApiLegalUpdateStatus;
   sourceAgency: string;
   sourceUrl: string;
+  hsCodes?: string[];
+  affectedProductCount?: number;
   publishedAt: Date | null;
   effectiveAt: Date | null;
   createdAt: Date;
 }
+
 
 export interface LegalUpdateDetail {
   id: string;

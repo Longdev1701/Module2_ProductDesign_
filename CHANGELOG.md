@@ -9,7 +9,20 @@ Tất cả các thay đổi quan trọng của dự án **Themis LexiGuard** s�
 ## [Unreleased]
 
 ### Added
+- Tối ưu hóa hiệu năng UI & Bổ sung bộ quy tắc Agent (`AGENTS.md`):
+  - Tối ưu tốc độ tải Dashboard 0ms với Synchronous State Hydration từ `localStorage`, khắc phục triệt để lỗi Next.js SSR Hydration Mismatch và hiện tượng nhấp nháy Skeleton khi chuyển route về Dashboard.
+
+  - Nâng cấp `OfficialDocumentsWidget` & `OfficialDocumentsDialog` hỗ trợ phân trang chuẩn, tìm kiếm và tải xuống trực tiếp tất cả tài liệu GACC & Quy định pháp lý PDF.
+  - Mở rộng hỗ trợ 9 thị trường xuất khẩu trọng điểm (Trung Quốc, EU, Hoa Kỳ, Nhật Bản, Hàn Quốc, Úc, Singapore, Anh Quốc, UAE) trên cả Backend Fetcher/Gemini AI và Frontend Selector.
+  - Cập nhật bộ quy tắc `AGENTS.md` (Lessons Learned & Performance Rules) bắt buộc các Agent sau duy trì các chuẩn tối ưu hiệu năng UI và layout.
+- Nâng cấp Phase 2 cho Hệ thống Cảnh báo & Thư viện Quy định Pháp lý:
+  - Backend: Tích hợp Ma trận Tác động Sản phẩm Doanh nghiệp (Product Impact Matrix) tự động đối chiếu mã HS sản phẩm (`Product.hsCode`) với bài tin pháp lý (`LegalUpdate.hsCodes`), bổ sung bộ cào Live Stream RSS Feed cho RASFF & EUR-Lex (`rss-connector.ts`).
+  - Frontend: Đấu nối 100% trang Thư viện Quy định (`/regulations`) với API thực tế `/api/legal-updates/feed` (hỗ trợ lọc 4 thị trường EU/USA/CN/JP, 7 tiêu chuẩn MRL/Phytosanitary/EUDR/Bao bì và ô tìm kiếm), nâng cấp `LegalUpdateList` hiển thị badge tác động cá nhân hóa.
+
+- Tích hợp hệ thống thu thập & cập nhật tin tức pháp lý tự động (Legal Sync Job) chạy ngầm trong Backend Express (Phương án 1): bao gồm bộ cào dữ liệu đa nguồn nông sản xuất khẩu (GACC, EUR-Lex, RASFF, FDA, JPRL), bộ phân tích & dịch thuật tự động bằng AI Gemini (@google/genai) với Zod Schema Validation, tính năng chống cào trùng lặp bằng mã SHA-256 Checksum, lưu vết AuditLog, và mở rộng API Admin trigger cào tin chủ động tại `POST /api/admin/regulations/sync`.
+
 - Wrap the baseline RLS hardening migration in a PostgreSQL transaction, and make malformed URL input fail validation safely instead of throwing from a URL parser.
+
 - Add a fail-fast RLS hardening migration for every baseline business table and Legal Updates. It scopes organization data to active members, keeps global regulations authenticated-only, and keeps audit logs append-only for client roles.
 - Restrict Legal Update source/document URLs to `http` and `https` in the backend contract, frontend response validation, and rendered outbound links. Publishing now requires `publishedAt`, enforced both by the API service and database constraint so a newly approved update remains visible in the newest feed.
 - Prevent the Legal Update detail dialog from retaining a previously loaded title or content while a newly selected update is loading.

@@ -62,10 +62,13 @@ export const legalUpdateFeedItemSchema = z.object({
   status: legalUpdateStatusSchema,
   sourceAgency: z.string().nullable(),
   sourceUrl: httpUrlSchema.nullable(),
+  hsCodes: z.array(z.string()).optional(),
+  affectedProductCount: z.number().int().nonnegative().optional(),
   publishedAt: nullableApiDateTimeSchema,
   effectiveAt: nullableApiDateTimeSchema,
   createdAt: apiDateTimeSchema,
 });
+
 
 const recommendedActionSchema = z.object({
   actionVi: z.string().min(1),

@@ -11,16 +11,23 @@ import {
   type LegalUpdateFeedItem,
 } from "./types";
 
-const LEGAL_UPDATES_ENDPOINT = "/legal-updates/feed?page=1&pageSize=3&sort=publishedAt:desc";
-
 type FeedResult = {
   updates: LegalUpdateFeedItem[];
   error: string | null;
 };
 
-async function requestLegalUpdates(): Promise<FeedResult> {
+async function requestLegalUpdates(market: string = "ALL", pageSize: number = 10): Promise<FeedResult> {
   try {
-    const response = await api.get<unknown>(LEGAL_UPDATES_ENDPOINT);
+    const params = new URLSearchParams({
+      page: "1",
+      pageSize: pageSize.toString(),
+      sort: "publishedAt:desc",
+    });
+    if (market !== "ALL") {
+      params.append("market", market);
+    }
+
+    const response = await api.get<unknown>(`/legal-updates/feed?${params.toString()}`);
     const parsedResponse = legalUpdateFeedResponseSchema.safeParse(response);
 
     if (!parsedResponse.success) {
@@ -39,7 +46,10 @@ async function requestLegalUpdates(): Promise<FeedResult> {
   }
 }
 
-export function useLegalUpdates() {
+export function useLegalUpdates(options?: { market?: string; pageSize?: number }) {
+  const market = options?.market ?? "ALL";
+  const pageSize = options?.pageSize ?? 10;
+
   const [updates, setUpdates] = useState<LegalUpdateFeedItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -63,7 +73,7 @@ export function useLegalUpdates() {
       setIsRefreshing(true);
     }
 
-    const task = requestLegalUpdates()
+    const task = requestLegalUpdates(market, pageSize)
       .then((result) => {
         if (!isMountedRef.current) {
           return;
@@ -91,7 +101,7 @@ export function useLegalUpdates() {
 
     inFlightRefreshRef.current = task;
     return task;
-  }, []);
+  }, [market, pageSize]);
 
   useEffect(() => {
     refreshRef.current = refresh;

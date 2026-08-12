@@ -69,7 +69,16 @@ export function LegalUpdateList({
               <span>{update.market}</span>
               <span aria-hidden="true">•</span>
               <span>{statusLabels[update.status]}</span>
+              {typeof update.affectedProductCount === 'number' && update.affectedProductCount > 0 && (
+                <>
+                  <span aria-hidden="true">•</span>
+                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">
+                    Ảnh hưởng đến {update.affectedProductCount} sản phẩm trong danh mục
+                  </span>
+                </>
+              )}
             </div>
+
 
             <h4 className="mt-2 text-base font-bold leading-snug text-on-surface">{update.title}</h4>
             {update.description && (

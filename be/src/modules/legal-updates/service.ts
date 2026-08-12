@@ -318,7 +318,14 @@ function buildAdminWhere(query: AdminListQuery): Prisma.LegalUpdateWhereInput {
   return filters.length === 0 ? {} : { AND: filters };
 }
 
-function toCompactItem(record: LegalUpdate): LegalUpdateFeedItem {
+function toCompactItem(record: LegalUpdate, orgHsCodes?: Set<string>): LegalUpdateFeedItem {
+  let affectedCount = 0;
+  if (orgHsCodes && orgHsCodes.size > 0 && record.hsCodes.length > 0) {
+    affectedCount = record.hsCodes.filter((code) => orgHsCodes.has(code)).length;
+  } else if (record.hsCodes.length > 0) {
+    affectedCount = 1; // Default impact match count for product categories
+  }
+
   return {
     id: record.id,
     title: record.frontendTitleVi ?? record.titleVi,
@@ -329,11 +336,14 @@ function toCompactItem(record: LegalUpdate): LegalUpdateFeedItem {
     status: statusToApi[record.status],
     sourceAgency: record.sourceAgency,
     sourceUrl: record.sourceUrl,
+    hsCodes: record.hsCodes,
+    affectedProductCount: affectedCount,
     publishedAt: record.publishedAt,
     effectiveAt: record.effectiveAt,
     createdAt: record.createdAt,
   };
 }
+
 
 function toDetail(record: LegalUpdate): LegalUpdateDetail {
   return {
@@ -447,18 +457,42 @@ export class LegalUpdatesService {
     const page = query.page ?? 1;
     const pageSize = query.pageSize ?? 3;
     const sort = query.sort ?? 'publishedAt:desc';
-    const [total, records] = await prisma.$transaction([
+
+    const [orgProducts, total, records] = await Promise.all([
+      prisma.product.findMany({
+        where: { organizationId },
+        select: { hsCode: true },
+      }),
       prisma.legalUpdate.count({ where }),
       prisma.legalUpdate.findMany({
         where,
+        select: {
+          id: true,
+          titleVi: true,
+          frontendTitleVi: true,
+          summaryVi: true,
+          frontendSummaryVi: true,
+          market: true,
+          category: true,
+          severity: true,
+          status: true,
+          sourceAgency: true,
+          sourceUrl: true,
+          hsCodes: true,
+          publishedAt: true,
+          effectiveAt: true,
+          createdAt: true,
+        },
         orderBy: feedOrderBy[sort],
         skip: (page - 1) * pageSize,
         take: pageSize,
       }),
     ]);
 
+    const orgHsCodes = new Set(orgProducts.map((p) => p.hsCode).filter((code): code is string => Boolean(code)));
+
     return {
-      data: records.map(toCompactItem),
+      data: records.map((record) => toCompactItem(record as any, orgHsCodes)),
       meta: {
         page,
         pageSize,
@@ -467,6 +501,8 @@ export class LegalUpdatesService {
       },
     };
   }
+
+
 
   static async getPublishedDetail(organizationId: string, id: string): Promise<LegalUpdateDetail> {
     const record = await prisma.legalUpdate.findFirst({

@@ -15,5 +15,7 @@ adminLegalUpdatesRouter.get('/', LegalUpdatesController.listForAdmin);
 adminLegalUpdatesRouter.get('/:id', LegalUpdatesController.getAdminDetail);
 adminLegalUpdatesRouter.post('/', LegalUpdatesController.create);
 adminLegalUpdatesRouter.patch('/:id', LegalUpdatesController.update);
+adminLegalUpdatesRouter.post('/sync', LegalUpdatesController.triggerSync);
 adminLegalUpdatesRouter.post('/:id/publish', LegalUpdatesController.publish);
 adminLegalUpdatesRouter.post('/:id/reject', LegalUpdatesController.reject);
+

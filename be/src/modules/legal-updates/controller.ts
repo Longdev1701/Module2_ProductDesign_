@@ -11,6 +11,8 @@ import {
   updateLegalUpdateSchema,
 } from './schema';
 import { LegalUpdatesService } from './service';
+import { LegalSyncService } from '../../jobs/legal-sync/service';
+
 
 function sendValidationError(res: Response, requestId: string | undefined, message: string, error: ZodError) {
   return res.status(422).json({
@@ -146,4 +148,15 @@ export class LegalUpdatesController {
       return next(error);
     }
   }
+
+  static async triggerSync(req: Request, res: Response, next: NextFunction) {
+    try {
+      const actorId = requireActor(req);
+      const summary = await LegalSyncService.runSync(actorId, req.ip);
+      return res.status(200).json({ data: summary, meta: { requestId: req.requestId ?? '' } });
+    } catch (error: unknown) {
+      return next(error);
+    }
+  }
 }
+

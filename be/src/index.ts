@@ -37,13 +37,16 @@ import authRouter from './modules/auth/router';
 import orgRouter from './modules/organization/router';
 import adminRouter from './modules/admin/router';
 import { adminLegalUpdatesRouter, legalUpdatesRouter } from './modules/legal-updates/router';
+import { initLegalSyncCron } from './jobs/legal-sync/cron';
 
 // ─── API Routes ─────────────────────────────────────────
 app.use('/api/auth', authRouter);
 app.use('/api/organizations', orgRouter);
 app.use('/api/legal-updates', legalUpdatesRouter);
 app.use('/api/admin/legal-updates', adminLegalUpdatesRouter);
+app.use('/api/admin/regulations/sync', adminLegalUpdatesRouter);
 app.use('/api/admin', adminRouter);
+
 
 app.get('/api', (_req, res) => {
   res.json({
@@ -81,6 +84,8 @@ app.listen(PORT, () => {
   console.log(`🚀 Themis LexiGuard API running on port ${PORT}`);
   console.log(`   Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`   Health: http://localhost:${PORT}/health`);
+  initLegalSyncCron();
 });
+
 
 export default app;
