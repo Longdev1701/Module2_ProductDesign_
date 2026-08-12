@@ -382,6 +382,12 @@ feature is DONE only when ALL are true:
 - Khi đọc cache `localStorage` để tối ưu tải trang, luôn sử dụng mốc `mounted` (`const [mounted, setMounted] = useState(false)` + `useEffect(() => setMounted(true), [])`).
 - Trong pass render đầu tiên, Server và Client đều render `<DashboardSkeleton />`, sau đó Client hydrate dữ liệu từ cache ngay tại Frame 1. Tuyệt đối không đọc `localStorage` trực tiếp trong khởi tạo `useState(() => ...)` vì sẽ làm khác biệt HTML giữa Server SSR và Client.
 
+### 6. Client Route Navigation & In-Memory Data Caching
+- **Zero Duplicate Auth Requests**: Không gọi `/auth/me` lặp đi lặp lại ở từng Component/Widget con (`UserDropdown`, `Sidebar`). Đọc `themis:user_cache` để lấy thông tin vai trò/tổ chức đồng bộ.
+- **In-Memory Feed Caching**: Duy trì bộ nhớ đệm toàn cục (`inMemoryFeedCache`) cho các custom hook lấy dữ liệu danh sách/tin tức. Khi người dùng chuyển đổi giữa các route (`/dashboard` <-> `/regulations` <-> `/history`), hook khởi tạo state tức thì từ bộ nhớ đệm (0ms delay), không gửi lại HTTP request làm chậm UI.
+- **No Blanket Event Dispatching**: Tuyệt đối không phát sự kiện `themis:organization-changed` ở mount phase của các component layout chung (như `UserDropdown`).
+
+
 
 ---
 

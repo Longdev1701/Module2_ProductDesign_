@@ -11,6 +11,8 @@ Tất cả các thay đổi quan trọng của dự án **Themis LexiGuard** s�
 ### Added
 - Tối ưu hóa hiệu năng UI & Bổ sung bộ quy tắc Agent (`AGENTS.md`):
   - Tối ưu tốc độ tải Dashboard 0ms với Synchronous State Hydration từ `localStorage`, khắc phục triệt để lỗi Next.js SSR Hydration Mismatch và hiện tượng nhấp nháy Skeleton khi chuyển route về Dashboard.
+  - Khắc phục triệt để độ trễ khi chuyển đổi giữa các route (`/dashboard` <-> `/regulations` <-> `/history`) bằng bộ nhớ đệm In-Memory (`inMemoryFeedCache`) cho `useLegalUpdates`, loại bỏ các request HTTP `/auth/me` lặp thừa từ layout components và vô hiệu hóa các event re-trigger gây reload UI.
+
 
   - Nâng cấp `OfficialDocumentsWidget` & `OfficialDocumentsDialog` hỗ trợ phân trang chuẩn, tìm kiếm và tải xuống trực tiếp tất cả tài liệu GACC & Quy định pháp lý PDF.
   - Mở rộng hỗ trợ 9 thị trường xuất khẩu trọng điểm (Trung Quốc, EU, Hoa Kỳ, Nhật Bản, Hàn Quốc, Úc, Singapore, Anh Quốc, UAE) trên cả Backend Fetcher/Gemini AI và Frontend Selector.

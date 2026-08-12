@@ -8,61 +8,94 @@ import type { AuthMeResponse, OrganizationSummary, UserProfile } from "@/types/a
 
 export function UserDropdown() {
   const router = useRouter();
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [activeOrg, setActiveOrg] = useState<OrganizationSummary | null>(null);
+
+  const [user, setUser] = useState<UserProfile | null>(() => {
+    if (typeof window === "undefined") return null;
+    const cached = localStorage.getItem("themis:user_cache");
+    if (!cached) return null;
+    try {
+      return JSON.parse(cached);
+    } catch {
+      return null;
+    }
+  });
+
+  const [activeOrg, setActiveOrg] = useState<OrganizationSummary | null>(() => {
+    if (typeof window === "undefined") return null;
+    const cached = localStorage.getItem("themis:org_cache");
+    if (!cached) return null;
+    try {
+      return JSON.parse(cached);
+    } catch {
+      return null;
+    }
+  });
+
   const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     async function loadUserData() {
       try {
-        const res = await api.get<AuthMeResponse>('/auth/me');
+        const res = await api.get<AuthMeResponse>("/auth/me");
         if (res.data) {
-          setUser(res.data.user || res.data.profile || null);
+          const userData = res.data.user || res.data.profile || null;
+          setUser(userData);
+          if (userData) {
+            localStorage.setItem("themis:user_cache", JSON.stringify(userData));
+          }
+
           if (res.data.organizations && res.data.organizations.length > 0) {
             const org = res.data.organizations[0];
             setActiveOrg(org);
-            localStorage.setItem('active_org_id', org.id);
-            window.dispatchEvent(new Event('themis:organization-changed'));
+            localStorage.setItem("themis:org_cache", JSON.stringify(org));
+
+            const prevOrgId = localStorage.getItem("active_org_id");
+            if (prevOrgId !== org.id) {
+              localStorage.setItem("active_org_id", org.id);
+              window.dispatchEvent(new Event("themis:organization-changed"));
+            }
           }
         }
       } catch (err) {
-        console.error('Failed to load user session', err);
+        console.error("Failed to load user session", err);
       }
     }
-    loadUserData();
+    void loadUserData();
   }, []);
 
   const handleLogout = async () => {
     try {
-      await api.post('/auth/logout');
+      await api.post("/auth/logout");
     } catch {}
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('active_org_id');
-    router.push('/login');
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("active_org_id");
+    localStorage.removeItem("themis:user_cache");
+    localStorage.removeItem("themis:org_cache");
+    router.push("/login");
   };
 
   const getInitials = (name?: string) => {
-    if (!name) return 'TL';
-    const parts = name.trim().split(' ');
+    if (!name) return "TL";
+    const parts = name.trim().split(" ");
     if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   };
 
   const roleColors: Record<string, string> = {
-    OWNER: 'bg-amber-100 text-amber-800 border-amber-300',
-    MANAGER: 'bg-blue-100 text-blue-800 border-blue-300',
-    COMPLIANCE: 'bg-emerald-100 text-emerald-800 border-emerald-300',
-    VIEWER: 'bg-slate-100 text-slate-700 border-slate-300',
+    OWNER: "bg-amber-100 text-amber-800 border-amber-300",
+    MANAGER: "bg-blue-100 text-blue-800 border-blue-300",
+    COMPLIANCE: "bg-emerald-100 text-emerald-800 border-emerald-300",
+    VIEWER: "bg-slate-100 text-slate-700 border-slate-300",
   };
 
-  const isAdmin = user?.platformRole === 'SUPER_ADMIN' || user?.platformRole === 'PLATFORM_ADMIN';
+  const isAdmin = user?.platformRole === "SUPER_ADMIN" || user?.platformRole === "PLATFORM_ADMIN";
 
   return (
     <div className="flex items-center gap-4">
       {/* Quick Dashboard Return Button */}
       <Link
         href="/dashboard"
-        className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-[#00327d] text-white hover:bg-[#0047ab] rounded-lg text-xs font-semibold transition-all shadow-sm"
+        className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-[#00327d] text-white hover:bg-[#0047ab] rounded-lg text-xs font-semibold transition-all shadow-xs"
       >
         <span>Quay về Dashboard</span>
       </Link>
@@ -73,15 +106,15 @@ export function UserDropdown() {
           <span className="font-semibold text-primary truncate max-w-[180px]">
             {activeOrg.name}
           </span>
-            <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold border ${activeOrg.role ? roleColors[activeOrg.role] : 'bg-gray-100'}`}>
-            {activeOrg.role || 'VIEWER'}
+          <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold border ${activeOrg.role ? roleColors[activeOrg.role] : "bg-gray-100"}`}>
+            {activeOrg.role || "VIEWER"}
           </span>
         </div>
       )}
 
       {/* Profile & Dropdown */}
       <div className="relative">
-        <button 
+        <button
           onClick={() => setShowDropdown(!showDropdown)}
           className="flex items-center gap-2 p-1.5 hover:bg-[#e6e8ea] rounded-lg transition-all cursor-pointer border border-[#c3c6d5]/40"
         >
@@ -90,10 +123,10 @@ export function UserDropdown() {
           </div>
           <div className="hidden sm:flex flex-col text-left">
             <span className="text-xs font-semibold text-on-surface leading-tight">
-              {user?.fullName || 'Người dùng'}
+              {user?.fullName || "Người dùng"}
             </span>
             <span className="text-[10px] text-on-surface-variant leading-tight">
-              {user?.jobTitle || (isAdmin ? 'Platform Admin' : 'Thành viên Doanh nghiệp')}
+              {user?.jobTitle || (isAdmin ? "Platform Admin" : "Thành viên Doanh nghiệp")}
             </span>
           </div>
           <span className="material-symbols-outlined text-sm text-[#434653]">expand_more</span>
@@ -106,8 +139,8 @@ export function UserDropdown() {
               <p className="text-[11px] text-on-surface-variant truncate">{user?.email}</p>
             </div>
 
-            <Link 
-              href="/dashboard" 
+            <Link
+              href="/dashboard"
               onClick={() => setShowDropdown(false)}
               className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-on-surface hover:bg-surface-container-low"
             >
@@ -116,8 +149,8 @@ export function UserDropdown() {
             </Link>
 
             {isAdmin && (
-              <Link 
-                href="/admin" 
+              <Link
+                href="/admin"
                 onClick={() => setShowDropdown(false)}
                 className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-purple-700 hover:bg-purple-50"
               >
@@ -126,8 +159,8 @@ export function UserDropdown() {
               </Link>
             )}
 
-            <Link 
-              href="/settings" 
+            <Link
+              href="/settings"
               onClick={() => setShowDropdown(false)}
               className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-on-surface hover:bg-surface-container-low"
             >
@@ -137,8 +170,8 @@ export function UserDropdown() {
 
             <div className="border-t border-outline-variant/50 my-1"></div>
 
-            <button 
-              onClick={handleLogout}
+            <button
+              onClick={() => void handleLogout()}
               className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 text-left cursor-pointer"
             >
               <span className="material-symbols-outlined text-sm text-red-600">logout</span>

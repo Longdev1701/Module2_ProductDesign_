@@ -16,6 +16,9 @@ type FeedResult = {
   error: string | null;
 };
 
+// Global in-memory cache to store feed items per market key across route navigations
+const inMemoryFeedCache: Record<string, { updates: LegalUpdateFeedItem[]; timestamp: number }> = {};
+
 async function requestLegalUpdates(market: string = "ALL", pageSize: number = 10): Promise<FeedResult> {
   try {
     const params = new URLSearchParams({
@@ -49,12 +52,20 @@ async function requestLegalUpdates(market: string = "ALL", pageSize: number = 10
 export function useLegalUpdates(options?: { market?: string; pageSize?: number }) {
   const market = options?.market ?? "ALL";
   const pageSize = options?.pageSize ?? 10;
+  const cacheKey = `${market}_${pageSize}`;
 
-  const [updates, setUpdates] = useState<LegalUpdateFeedItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [updates, setUpdates] = useState<LegalUpdateFeedItem[]>(() => {
+    const cached = inMemoryFeedCache[cacheKey];
+    return cached ? cached.updates : [];
+  });
+  const [isLoading, setIsLoading] = useState<boolean>(() => {
+    const cached = inMemoryFeedCache[cacheKey];
+    return !cached;
+  });
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const hasLoadedRef = useRef(false);
+
+  const hasLoadedRef = useRef<boolean>(Boolean(inMemoryFeedCache[cacheKey]));
   const isMountedRef = useRef(true);
   const inFlightRefreshRef = useRef<Promise<void> | null>(null);
   const pendingRefreshRef = useRef(false);
@@ -80,6 +91,7 @@ export function useLegalUpdates(options?: { market?: string; pageSize?: number }
         }
         if (!result.error) {
           setUpdates(result.updates);
+          inMemoryFeedCache[cacheKey] = { updates: result.updates, timestamp: Date.now() };
         } else if (initialLoad) {
           setUpdates([]);
         }
@@ -101,7 +113,7 @@ export function useLegalUpdates(options?: { market?: string; pageSize?: number }
 
     inFlightRefreshRef.current = task;
     return task;
-  }, [market, pageSize]);
+  }, [market, pageSize, cacheKey]);
 
   useEffect(() => {
     refreshRef.current = refresh;
@@ -132,7 +144,10 @@ export function useLegalUpdates(options?: { market?: string; pageSize?: number }
   }, [refresh]);
 
   useEffect(() => {
-    const refreshWhenOrganizationChanges = () => void refresh();
+    const refreshWhenOrganizationChanges = () => {
+      delete inMemoryFeedCache[cacheKey];
+      void refresh();
+    };
     window.addEventListener("storage", refreshWhenOrganizationChanges);
     window.addEventListener("themis:organization-changed", refreshWhenOrganizationChanges);
 
@@ -140,7 +155,7 @@ export function useLegalUpdates(options?: { market?: string; pageSize?: number }
       window.removeEventListener("storage", refreshWhenOrganizationChanges);
       window.removeEventListener("themis:organization-changed", refreshWhenOrganizationChanges);
     };
-  }, [refresh]);
+  }, [refresh, cacheKey]);
 
   return { updates, isLoading, isRefreshing, error, refresh };
 }
