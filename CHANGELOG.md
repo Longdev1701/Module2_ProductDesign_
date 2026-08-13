@@ -9,6 +9,10 @@ Tất cả các thay đổi quan trọng của dự án **Themis LexiGuard** s�
 ## [Unreleased]
 
 ### Added
+- Bổ sung bộ tài nguyên thiết kế UI 1:1 và tập tin Prompt chuẩn cho ứng dụng **Themis LexiGuard Mobile** (Expo SDK 51+):
+  - Khởi tạo thư mục `docs/mobile-prompts/` lưu trữ 3 hình ảnh thiết kế UI mẫu: `tab1_legal_radar.jpg`, `tab2_field_scan.jpg`, `tab3_batch_tracker.jpg`.
+  - Bổ sung `EXPO_MASTER_PROMPT.md` chứa System Prompt chuẩn (Design Tokens, Expo Router structure, API mapping).
+  - Bổ sung các tệp Prompt chi tiết 1:1 cho từng màn hình: `PROMPT_TAB1_LEGAL_RADAR.md`, `PROMPT_TAB2_FIELD_SCAN.md`, `PROMPT_TAB3_BATCH_TRACKER.md` và file tổng hợp `README.md`.
 - Tích hợp Nước sở tại **`📍 VIỆT NAM (NGUỒN)`** và Bộ thu thập tin tức quy định Nông sản đa mặt hàng (Sầu riêng, Cà phê, Thanh long, Xoài, Bưởi, Hạt điều, Hồ tiêu):
   - Bổ sung bộ thu thập tin tức & cảnh báo từ **Cục Bảo vệ Thực vật (ppd.gov.vn)**, **Bộ NN&PTNT**, **Hiệp hội Rau quả Vinafruit**, **Hiệp hội Cà phê Ca cao Vicofa (EUDR)** và **Văn phòng SPS Việt Nam**.
   - Phân tách giao diện bộ lọc thị trường trên `RegulationsPage` và `LegalTrackingWidget` thành 2 nhóm trực quan: **`📍 NƯỚC SỞ TẠI (NGUỒN HÀNG)`** (Việt Nam) và **`🎯 THỊ TRƯỜNG NHẬP KHẨU (ĐÍCH)`** (Trung Quốc, EU, Mỹ, Nhật...).
