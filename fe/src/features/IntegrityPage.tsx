@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import { LegalRiskAlertsWidget } from "@/components/LegalRiskAlertsWidget";
 
 export default function IntegrityPage() {
   const [activeRegion, setActiveRegion] = useState<'EUDR' | 'US MRL' | 'Nội địa'>('EUDR');
@@ -268,39 +269,8 @@ export default function IntegrityPage() {
         {/* Right 1 Column */}
         <div className="space-y-8">
           
-          {/* Risk Alerts */}
-          <div className="bg-white p-6 rounded-xl border border-[#c3c6d5]/60 shadow-sm space-y-4">
-            <div className="flex items-center gap-2 text-[#ba1a1a] mb-2">
-              <span className="material-symbols-outlined fill">report</span>
-              <h3 className="font-serif text-lg font-semibold text-[#191c1e]">Cảnh báo Rủi ro Pháp lý (3)</h3>
-            </div>
-
-            <div className="space-y-3">
-              <div className="p-4 rounded-lg bg-[#f2f4f6] border-l-4 border-[#ba1a1a] space-y-1.5">
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold text-sm text-[#191c1e]">Sửa đổi Luật Đất đai & EUDR 2024</span>
-                  <span className="px-2 py-0.5 bg-[#ba1a1a] text-white font-bold text-[10px] rounded">CAO</span>
-                </div>
-                <p className="text-xs text-[#434653]">Thay đổi định nghĩa quyền sử dụng đất nông nghiệp liên quan đến vùng trồng cà phê xuất khẩu.</p>
-              </div>
-
-              <div className="p-4 rounded-lg bg-[#f2f4f6] border-l-4 border-amber-600 space-y-1.5">
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold text-sm text-[#191c1e]">Cập nhật Danh mục Hóa chất Cấm</span>
-                  <span className="px-2 py-0.5 bg-amber-600 text-white font-bold text-[10px] rounded">TRUNG BÌNH</span>
-                </div>
-                <p className="text-xs text-[#434653]">Bổ sung 15 loại thuốc bảo vệ thực vật mới vào Phụ lục II kiểm soát dư lượng EU MRL.</p>
-              </div>
-
-              <div className="p-4 rounded-lg bg-[#f2f4f6] border-l-4 border-[#00327d] space-y-1.5">
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold text-sm text-[#191c1e]">Quy định Kê khai Minh bạch ESG</span>
-                  <span className="px-2 py-0.5 bg-[#00327d] text-white font-bold text-[10px] rounded">KHUYẾN NGHỊ</span>
-                </div>
-                <p className="text-xs text-[#434653]">Hướng dẫn mới về lập báo cáo minh bạch chuỗi cung ứng nông sản xuất khẩu.</p>
-              </div>
-            </div>
-          </div>
+          {/* Real-time Dynamic Risk Alerts Widget (Executive List View) */}
+          <LegalRiskAlertsWidget title="Cảnh báo Rủi ro Pháp lý" />
 
           {/* PDF Audit Reports Download Widget */}
           <div className="bg-[#d2e0fe]/30 p-6 rounded-xl border border-[#d2e0fe] shadow-sm space-y-4">

@@ -96,13 +96,13 @@ export function OfficialDocumentsWidget() {
       <div className="bg-[#dae2ff] p-6 rounded-2xl border border-[#b1c5ff] shadow-xs flex flex-col justify-between">
         <div>
           {/* Header */}
-          <div className="flex items-center justify-between gap-2 mb-4">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="h-5 w-5 text-[#00327d]" aria-hidden="true" />
-              <h3 className="font-serif text-lg font-bold text-[#191c1e]">Tài liệu GACC & Pháp lý mới</h3>
+          <div className="flex items-center justify-between gap-2 mb-4 min-w-0">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <ShieldCheck className="h-5 w-5 text-[#00327d] shrink-0" aria-hidden="true" />
+              <h3 className="font-serif text-lg font-bold text-[#191c1e] truncate">Tài liệu GACC & Pháp lý mới</h3>
             </div>
             {total > 0 && (
-              <span className="text-xs font-bold text-[#00327d] bg-white/70 px-2 py-0.5 rounded-full">
+              <span className="text-xs font-bold text-[#00327d] bg-white/70 px-2 py-0.5 rounded-full whitespace-nowrap shrink-0">
                 {total} file
               </span>
             )}
@@ -126,7 +126,7 @@ export function OfficialDocumentsWidget() {
                   className="p-3 bg-white hover:bg-white/95 rounded-xl flex items-center justify-between gap-3 shadow-xs border border-transparent hover:border-[#00327d]/30 transition-all cursor-pointer group"
                   title={`Tải về ${doc.name}`}
                 >
-                  <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
                     <FileText className="h-4 w-4 text-[#00327d] shrink-0" aria-hidden="true" />
                     <span className="text-xs font-semibold text-[#191c1e] group-hover:text-[#00327d] transition-colors truncate">
                       {doc.name}
@@ -144,14 +144,13 @@ export function OfficialDocumentsWidget() {
           <button
             type="button"
             onClick={() => setIsDialogOpen(true)}
-            className="inline-flex items-center gap-1.5 font-bold text-[#00327d] hover:underline"
+            className="inline-flex items-center gap-1.5 font-bold text-[#00327d] hover:underline whitespace-nowrap shrink-0"
           >
-            <FolderDown className="h-4 w-4" aria-hidden="true" />
-
+            <FolderDown className="h-4 w-4 shrink-0" aria-hidden="true" />
             Xem tất cả ({total})
           </button>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0 whitespace-nowrap">
             <span className="text-[11px] font-semibold text-[#00327d]">
               {page} / {totalPages}
             </span>

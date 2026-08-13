@@ -104,13 +104,13 @@ export function LegalTrackingWidget({
       onMouseLeave={() => setIsPaused(false)}
     >
       {/* Header */}
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <h3 id="legal-tracking-title" className="font-serif text-2xl font-bold text-on-surface">
+      <div className="flex items-center justify-between gap-3 min-w-0">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          <h3 id="legal-tracking-title" className="font-serif text-xl sm:text-2xl font-bold text-on-surface truncate">
             {title}
           </h3>
           {hasUpdates && (
-            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-bold text-primary">
+            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-bold text-primary whitespace-nowrap shrink-0">
               {updates.length} bản tin
             </span>
           )}
@@ -120,7 +120,7 @@ export function LegalTrackingWidget({
           type="button"
           onClick={() => void refresh()}
           disabled={isLoading || isRefreshing}
-          className="rounded-lg p-1.5 text-on-surface-variant hover:bg-surface-container-low disabled:cursor-not-allowed disabled:opacity-60 transition-colors"
+          className="rounded-lg p-1.5 text-on-surface-variant hover:bg-surface-container-low disabled:cursor-not-allowed disabled:opacity-60 transition-colors shrink-0"
           aria-label="Làm mới cập nhật pháp lý"
           title="Làm mới dữ liệu"
         >
@@ -132,6 +132,7 @@ export function LegalTrackingWidget({
       <div className="mt-3 flex flex-wrap items-center gap-1.5">
         {[
           { code: "ALL", label: "Tất cả", icon: "🌐" },
+          { code: "VIETNAM", label: "Việt Nam (Nguồn)", icon: "🇻🇳" },
           { code: "CHINA", label: "Trung Quốc", icon: "🇨🇳" },
           { code: "EU", label: "EU", icon: "🇪🇺" },
           { code: "USA", label: "Hoa Kỳ", icon: "🇺🇸" },
@@ -149,10 +150,10 @@ export function LegalTrackingWidget({
               setSelectedMarket(tab.code);
               setCurrentIndex(0);
             }}
-            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${
+            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all ${
               selectedMarket === tab.code
-                ? "bg-primary text-white shadow-xs"
-                : "bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high border border-outline-variant/40"
+                ? tab.code === "VIETNAM" ? "bg-emerald-600 text-white shadow-xs" : "bg-primary text-white shadow-xs"
+                : tab.code === "VIETNAM" ? "bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-500/20 border border-emerald-500/30" : "bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high border border-outline-variant/40"
             }`}
           >
             <span>{tab.icon}</span>
@@ -160,8 +161,6 @@ export function LegalTrackingWidget({
           </button>
         ))}
       </div>
-
-
 
       {/* Main Body */}
       <div className="mt-4 flex-1 min-h-[220px]">
@@ -199,20 +198,30 @@ export function LegalTrackingWidget({
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="group relative rounded-xl border border-outline-variant/80 bg-surface p-4 hover:border-primary/50 hover:shadow-xs transition-all cursor-pointer"
+                className={`group relative rounded-xl border p-4 hover:shadow-xs transition-all cursor-pointer overflow-hidden ${
+                  activeUpdate.market === "VIETNAM" ? "border-emerald-500/40 bg-emerald-500/5 hover:border-emerald-500" : "border-outline-variant/80 bg-surface hover:border-primary/50"
+                }`}
                 onClick={() => setSelectedUpdateId(activeUpdate.id)}
               >
                 {/* Meta Bar */}
-                <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-on-surface-variant mb-2">
-                  <div className="flex items-center gap-1.5 font-semibold text-on-surface">
+                <div className="flex items-center justify-between gap-2 text-xs text-on-surface-variant mb-2 min-w-0">
+                  <div className="flex items-center gap-1.5 font-semibold text-on-surface min-w-0 shrink-0">
                     <SeverityIcon severity={activeUpdate.severity} />
-                    <span>{severityLabels[activeUpdate.severity] || activeUpdate.severity}</span>
-                    <span>•</span>
-                    <span className="uppercase text-primary font-bold">{activeUpdate.market}</span>
+                    <span className="shrink-0">{severityLabels[activeUpdate.severity] || activeUpdate.severity}</span>
+                    <span className="shrink-0 opacity-60">•</span>
+                    {activeUpdate.market === "VIETNAM" ? (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 shrink-0 whitespace-nowrap">
+                        VN (Nguồn)
+                      </span>
+                    ) : (
+                      <span className="uppercase font-bold text-primary shrink-0 whitespace-nowrap">
+                        {activeUpdate.market}
+                      </span>
+                    )}
                   </div>
 
                   {activeUpdate.publishedAt && (
-                    <span className="text-[11px] text-on-surface-variant">
+                    <span className="text-[11px] text-on-surface-variant whitespace-nowrap shrink-0 ml-auto">
                       {new Date(activeUpdate.publishedAt).toLocaleDateString("vi-VN")}
                     </span>
                   )}
@@ -232,17 +241,17 @@ export function LegalTrackingWidget({
 
                 {/* Product Impact Badge */}
                 {typeof activeUpdate.affectedProductCount === 'number' && activeUpdate.affectedProductCount > 0 && (
-                  <div className="mt-3 inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary">
-                    <span>Ảnh hưởng đến {activeUpdate.affectedProductCount} sản phẩm trong danh mục</span>
+                  <div className="mt-3 inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary max-w-full">
+                    <span className="truncate">Ảnh hưởng đến {activeUpdate.affectedProductCount} sản phẩm trong danh mục</span>
                   </div>
                 )}
 
                 {/* Footer Link */}
-                <div className="mt-3 pt-2 border-t border-outline-variant/40 flex items-center justify-between text-xs">
-                  <span className="text-on-surface-variant font-medium">Nguồn: {activeUpdate.sourceAgency}</span>
-                  <span className="text-primary font-semibold group-hover:underline inline-flex items-center gap-0.5">
+                <div className="mt-3 pt-2 border-t border-outline-variant/40 flex items-center justify-between gap-2 text-xs">
+                  <span className="text-on-surface-variant font-medium truncate min-w-0">Nguồn: {activeUpdate.sourceAgency}</span>
+                  <span className="text-primary font-semibold group-hover:underline inline-flex items-center gap-0.5 whitespace-nowrap shrink-0">
                     Chi tiết
-                    <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
+                    <ArrowUpRight className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                   </span>
                 </div>
               </motion.div>
@@ -258,14 +267,14 @@ export function LegalTrackingWidget({
           <button
             type="button"
             onClick={() => setIsFeedDialogOpen(true)}
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline whitespace-nowrap shrink-0"
           >
-            <Layers className="h-4 w-4" aria-hidden="true" />
+            <Layers className="h-4 w-4 shrink-0" aria-hidden="true" />
             Xem tất cả tin tức ({updates.length})
           </button>
 
           {/* Carousel Arrows & Index Dots */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0 whitespace-nowrap">
             <span className="text-[11px] font-medium text-on-surface-variant">
               {currentIndex + 1} / {updates.length}
             </span>

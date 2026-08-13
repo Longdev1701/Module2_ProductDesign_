@@ -67,19 +67,19 @@ export function LegalUpdateFeedDialog({
           className="relative w-full max-w-4xl max-h-[90vh] flex flex-col rounded-2xl border border-outline-variant bg-surface p-6 shadow-2xl overflow-hidden"
         >
           {/* Header */}
-          <div className="flex items-center justify-between gap-4 border-b border-outline-variant pb-4">
-            <div>
-              <h2 id="feed-dialog-title" className="font-serif text-2xl font-bold text-on-surface">
+          <div className="flex items-center justify-between gap-4 border-b border-outline-variant pb-4 min-w-0">
+            <div className="min-w-0 flex-1">
+              <h2 id="feed-dialog-title" className="font-serif text-2xl font-bold text-on-surface truncate">
                 Tất cả Cập nhật & Quy định Pháp lý
               </h2>
-              <p className="text-sm text-on-surface-variant">
+              <p className="text-sm text-on-surface-variant whitespace-nowrap">
                 Tổng cộng <span className="font-bold text-primary">{total}</span> văn bản và thông báo cập nhật
               </p>
             </div>
             <button
               type="button"
               onClick={onClose}
-              className="rounded-full p-2 text-on-surface-variant hover:bg-surface-container-low transition-colors"
+              className="rounded-full p-2 text-on-surface-variant hover:bg-surface-container-low transition-colors shrink-0"
               aria-label="Đóng cửa sổ"
             >
               <X className="h-5 w-5" aria-hidden="true" />
@@ -89,7 +89,7 @@ export function LegalUpdateFeedDialog({
           {/* Search & Filters */}
           <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="relative w-full sm:w-72">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-on-surface-variant" aria-hidden="true" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-on-surface-variant shrink-0" aria-hidden="true" />
               <input
                 type="text"
                 value={search}
@@ -122,7 +122,7 @@ export function LegalUpdateFeedDialog({
                     setMarket(m.code);
                     setPage(1);
                   }}
-                  className={`px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${
+                  className={`px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all ${
                     market === m.code
                       ? "bg-primary text-white"
                       : "bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high border border-outline-variant/30"
@@ -159,7 +159,7 @@ export function LegalUpdateFeedDialog({
 
             {!isLoading && error && (
               <div className="rounded-xl border border-outline-variant p-6 text-center text-on-surface">
-                <AlertCircle className="mx-auto h-6 w-6 text-error mb-2" aria-hidden="true" />
+                <AlertCircle className="mx-auto h-6 w-6 text-error mb-2 shrink-0" aria-hidden="true" />
                 <p className="font-semibold">{error}</p>
                 <button type="button" onClick={() => void loadFeed()} className="mt-2 text-sm font-semibold text-primary hover:underline">
                   Thử lại
@@ -169,7 +169,7 @@ export function LegalUpdateFeedDialog({
 
             {!isLoading && !error && items.length === 0 && (
               <div className="rounded-xl border border-outline-variant p-8 text-center text-on-surface-variant">
-                <FileText className="mx-auto h-8 w-8 mb-2 opacity-50" aria-hidden="true" />
+                <FileText className="mx-auto h-8 w-8 mb-2 opacity-50 shrink-0" aria-hidden="true" />
                 <p className="font-semibold text-on-surface">Không tìm thấy bản tin nào</p>
                 <p className="text-xs mt-1">Hãy thử tìm với từ khóa hoặc bộ lọc khác.</p>
               </div>
@@ -177,7 +177,6 @@ export function LegalUpdateFeedDialog({
 
             {!isLoading && !error && items.map((item) => {
               const publishedAt = item.publishedAt ? new Date(item.publishedAt).toLocaleDateString("vi-VN") : null;
-              const sourceUrl = isSafeHttpUrl(item.sourceUrl) ? item.sourceUrl : null;
 
               return (
                 <div
@@ -186,17 +185,17 @@ export function LegalUpdateFeedDialog({
                   className="rounded-xl border border-outline-variant bg-surface p-4 hover:border-primary hover:shadow-xs transition-all cursor-pointer group"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-on-surface-variant mb-1.5">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-primary uppercase">{item.market}</span>
-                      <span>•</span>
-                      <span className="capitalize">{item.category}</span>
+                    <div className="flex items-center gap-2 min-w-0 flex-wrap sm:flex-nowrap">
+                      <span className="font-bold text-primary uppercase whitespace-nowrap shrink-0">{item.market}</span>
+                      <span className="shrink-0">•</span>
+                      <span className="capitalize whitespace-nowrap shrink-0">{item.category}</span>
                       {typeof item.affectedProductCount === 'number' && item.affectedProductCount > 0 && (
-                        <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                        <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary whitespace-nowrap shrink-0">
                           Ảnh hưởng đến {item.affectedProductCount} sản phẩm
                         </span>
                       )}
                     </div>
-                    {publishedAt && <span>{publishedAt}</span>}
+                    {publishedAt && <span className="whitespace-nowrap shrink-0">{publishedAt}</span>}
                   </div>
 
                   <h3 className="font-bold text-base text-on-surface group-hover:text-primary transition-colors">
@@ -209,9 +208,9 @@ export function LegalUpdateFeedDialog({
                     </p>
                   )}
 
-                  <div className="mt-3 flex items-center justify-between text-xs pt-2 border-t border-outline-variant/40">
-                    <span className="text-on-surface-variant">Nguồn: {item.sourceAgency}</span>
-                    <span className="text-primary font-semibold group-hover:underline">Xem chi tiết →</span>
+                  <div className="mt-3 flex items-center justify-between gap-2 text-xs pt-2 border-t border-outline-variant/40">
+                    <span className="text-on-surface-variant truncate min-w-0">Nguồn: {item.sourceAgency}</span>
+                    <span className="text-primary font-semibold group-hover:underline whitespace-nowrap shrink-0">Xem chi tiết →</span>
                   </div>
                 </div>
               );

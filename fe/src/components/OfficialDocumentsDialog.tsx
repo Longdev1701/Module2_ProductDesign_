@@ -98,20 +98,20 @@ export function OfficialDocumentsDialog({
         className="relative w-full max-w-3xl max-h-[85vh] flex flex-col rounded-2xl border border-outline-variant bg-surface p-6 shadow-2xl overflow-hidden"
       >
         {/* Header */}
-        <div className="flex items-center justify-between gap-4 border-b border-outline-variant pb-4">
-          <div>
-            <h2 id="documents-dialog-title" className="font-serif text-2xl font-bold text-on-surface flex items-center gap-2">
-              <FileText className="h-6 w-6 text-primary" aria-hidden="true" />
-              Kho Tài liệu GACC & Quy định Pháp lý
+        <div className="flex items-center justify-between gap-4 border-b border-outline-variant pb-4 min-w-0">
+          <div className="min-w-0 flex-1">
+            <h2 id="documents-dialog-title" className="font-serif text-2xl font-bold text-on-surface flex items-center gap-2 truncate">
+              <FileText className="h-6 w-6 text-primary shrink-0" aria-hidden="true" />
+              <span className="truncate">Kho Tài liệu GACC & Quy định Pháp lý</span>
             </h2>
-            <p className="text-xs text-on-surface-variant mt-1">
+            <p className="text-xs text-on-surface-variant mt-1 whitespace-nowrap">
               Tổng cộng <span className="font-bold text-primary">{total}</span> tài liệu và văn bản hướng dẫn chính thức
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-2 text-on-surface-variant hover:bg-surface-container-low transition-colors"
+            className="rounded-full p-2 text-on-surface-variant hover:bg-surface-container-low transition-colors shrink-0"
             aria-label="Đóng cửa sổ"
           >
             <X className="h-5 w-5" aria-hidden="true" />
@@ -121,7 +121,7 @@ export function OfficialDocumentsDialog({
         {/* Search */}
         <div className="mt-4">
           <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-on-surface-variant" aria-hidden="true" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-on-surface-variant shrink-0" aria-hidden="true" />
             <input
               type="text"
               value={search}
@@ -147,7 +147,7 @@ export function OfficialDocumentsDialog({
 
           {!isLoading && error && (
             <div className="rounded-xl border border-outline-variant p-6 text-center text-on-surface">
-              <AlertCircle className="mx-auto h-6 w-6 text-error mb-2" aria-hidden="true" />
+              <AlertCircle className="mx-auto h-6 w-6 text-error mb-2 shrink-0" aria-hidden="true" />
               <p className="font-semibold text-sm">{error}</p>
               <button type="button" onClick={() => void loadDocuments()} className="mt-2 text-xs font-semibold text-primary hover:underline">
                 Thử lại
@@ -157,7 +157,7 @@ export function OfficialDocumentsDialog({
 
           {!isLoading && !error && documents.length === 0 && (
             <div className="rounded-xl border border-outline-variant p-8 text-center text-on-surface-variant">
-              <FileText className="mx-auto h-8 w-8 mb-2 opacity-50" aria-hidden="true" />
+              <FileText className="mx-auto h-8 w-8 mb-2 opacity-50 shrink-0" aria-hidden="true" />
               <p className="font-semibold text-sm text-on-surface">Không tìm thấy tài liệu phù hợp</p>
             </div>
           )}
@@ -170,31 +170,31 @@ export function OfficialDocumentsDialog({
               rel="noreferrer"
               className="p-3.5 bg-surface hover:bg-surface-container-low rounded-xl flex items-center justify-between gap-3 border border-outline-variant/60 hover:border-primary/40 shadow-2xs transition-all group"
             >
-              <div className="flex items-center gap-3 min-w-0">
+              <div className="flex items-center gap-3 min-w-0 flex-1">
                 <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
                   <FileText className="h-5 w-5" aria-hidden="true" />
                 </div>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <h4 className="text-sm font-bold text-on-surface group-hover:text-primary transition-colors truncate">
                     {doc.name}
                   </h4>
-                  <div className="flex items-center gap-2 text-xs text-on-surface-variant mt-0.5">
-                    <span className="font-semibold text-primary">{doc.agency}</span>
-                    <span>•</span>
-                    <span>Thị trường: {doc.market}</span>
+                  <div className="flex items-center gap-2 text-xs text-on-surface-variant mt-0.5 flex-wrap sm:flex-nowrap">
+                    <span className="font-semibold text-primary whitespace-nowrap shrink-0">{doc.agency}</span>
+                    <span className="shrink-0">•</span>
+                    <span className="whitespace-nowrap shrink-0">Thị trường: {doc.market}</span>
                     {doc.date && (
                       <>
-                        <span>•</span>
-                        <span>{doc.date}</span>
+                        <span className="shrink-0">•</span>
+                        <span className="whitespace-nowrap shrink-0">{doc.date}</span>
                       </>
                     )}
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2 shrink-0 whitespace-nowrap">
                 <span className="text-xs font-semibold text-primary group-hover:underline hidden sm:inline">Tải PDF</span>
-                <Download className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" aria-hidden="true" />
+                <Download className="h-4 w-4 text-primary group-hover:scale-110 transition-transform shrink-0" aria-hidden="true" />
               </div>
             </a>
           ))}

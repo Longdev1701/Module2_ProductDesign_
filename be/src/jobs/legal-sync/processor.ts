@@ -11,6 +11,7 @@ function isGeminiKeyConfigured(): boolean {
 }
 
 function buildFallbackParsedArticle(article: RawLegalArticle): CreateLegalUpdateInput {
+  const isVietnam = article.market === 'VIETNAM';
   const isChina = article.market === 'CHINA';
   const isEU = article.market === 'EU';
   const isUSA = article.market === 'USA';
@@ -20,11 +21,26 @@ function buildFallbackParsedArticle(article: RawLegalArticle): CreateLegalUpdate
   const isUK = article.market === 'UK';
   const isUAE = article.market === 'UAE';
 
-  const defaultCategory = article.categoryHint ?? (isChina ? 'phytosanitary' : isEU || isKorea || isUK ? 'mrl' : isUSA ? 'traceability' : isAustralia ? 'phytosanitary' : isUAE ? 'certificate' : 'packaging');
-  const defaultSeverity = isChina || isKorea || isEU ? 'critical' : isAustralia || isUSA ? 'high' : 'medium';
-  const defaultHsCodes = isChina || isKorea ? ['0810.60.00'] : isEU ? ['0810.60.00', '0901.11.00'] : ['0810.60.00'];
+  const defaultCategory = article.categoryHint ?? (isVietnam ? 'registration' : isChina ? 'phytosanitary' : isEU || isKorea || isUK ? 'mrl' : isUSA ? 'traceability' : isAustralia ? 'phytosanitary' : isUAE ? 'certificate' : 'packaging');
+  const defaultSeverity = isVietnam || isChina || isKorea || isEU ? 'critical' : isAustralia || isUSA ? 'high' : 'medium';
 
-  const frontendTitle = isChina
+  // Multi-commodity HS code mapping based on content keywords
+  let defaultHsCodes = ['0810.60.00'];
+  if (article.rawContent.includes('0901') || article.rawContent.toLowerCase().includes('cà phê') || article.rawContent.toLowerCase().includes('coffee')) {
+    defaultHsCodes = ['0901.11.00', '0901.21.00'];
+  } else if (article.rawContent.includes('0810.90') || article.rawContent.toLowerCase().includes('thanh long')) {
+    defaultHsCodes = ['0810.90.20'];
+  } else if (article.rawContent.includes('0801') || article.rawContent.toLowerCase().includes('hạt điều')) {
+    defaultHsCodes = ['0801.31.00'];
+  } else if (article.rawContent.includes('0904') || article.rawContent.toLowerCase().includes('hồ tiêu')) {
+    defaultHsCodes = ['0904.11.00'];
+  } else if (isEU || isVietnam) {
+    defaultHsCodes = ['0810.60.00', '0901.11.00'];
+  }
+
+  const frontendTitle = isVietnam
+    ? (article.titleOriginal.length > 80 ? article.titleOriginal.slice(0, 78) + '...' : article.titleOriginal)
+    : isChina
     ? 'Trung Quốc cấp mới 45 mã số vùng trồng sầu riêng'
     : isEU
     ? 'EU siết chặt MRL Chlorpyrifos trên trái cây xuất khẩu'
@@ -48,9 +64,9 @@ function buildFallbackParsedArticle(article: RawLegalArticle): CreateLegalUpdate
     sourceUrl: article.sourceUrl,
     documentUrl: article.documentUrl ?? null,
     sourceReference: article.sourceReference ?? null,
-    sourceLanguage: article.sourceLanguage ?? 'en',
+    sourceLanguage: article.sourceLanguage ?? 'vi',
     titleOriginal: article.titleOriginal,
-    titleVi: `[Cập nhật] ${article.titleOriginal}`,
+    titleVi: article.titleOriginal,
     frontendTitleVi: frontendTitle,
     summaryVi: article.rawContent,
     frontendSummaryVi: article.rawContent.slice(0, 180) + '...',
@@ -71,9 +87,9 @@ function buildFallbackParsedArticle(article: RawLegalArticle): CreateLegalUpdate
     ],
     affectedProducts: [
       {
-        nameVi: 'Sầu riêng tươi',
-        nameOriginal: 'Fresh Durian',
-        hsCode: '0810.60.00',
+        nameVi: article.rawContent.toLowerCase().includes('cà phê') ? 'Cà phê nhân' : 'Sầu riêng tươi',
+        nameOriginal: article.rawContent.toLowerCase().includes('cà phê') ? 'Coffee Beans' : 'Fresh Durian',
+        hsCode: defaultHsCodes[0],
         scope: 'specific',
       },
     ],

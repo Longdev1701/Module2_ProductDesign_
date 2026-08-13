@@ -9,19 +9,70 @@ export interface RawLegalArticle {
   sourceLanguage?: string;
   titleOriginal: string;
   rawContent: string;
-  market: 'CHINA' | 'EU' | 'USA' | 'JAPAN' | 'KOREA' | 'AUSTRALIA' | 'SINGAPORE' | 'UK' | 'UAE';
+  market: 'VIETNAM' | 'CHINA' | 'EU' | 'USA' | 'JAPAN' | 'KOREA' | 'AUSTRALIA' | 'SINGAPORE' | 'UK' | 'UAE';
   categoryHint?: string;
   publishedAt?: Date;
 }
 
 /**
  * Thu thập danh sách bài tin thô từ các nguồn quy định nông sản xuất khẩu chính
- * Mở rộng đầy đủ 9 thị trường xuất khẩu trọng điểm của Việt Nam:
- * China (GACC), EU (EUR-Lex/RASFF), USA (FDA/USDA), Japan (MHLW/JPRL),
- * Korea (MFDS), Australia (DAFF), Singapore (SFA), UK (FSA), UAE (ESMA/Halal).
+ * Mở rộng Nước sở tại Việt Nam (Nguồn) & 9 thị trường xuất khẩu trọng điểm:
+ * Vietnam (Cục BVTV / MARD / Vinafruit / Vicofa / SPS), China (GACC), EU (EUR-Lex/RASFF),
+ * USA (FDA/USDA), Japan (MHLW/JPRL), Korea (MFDS), Australia (DAFF), Singapore (SFA), UK (FSA), UAE (ESMA/Halal).
  */
 export async function fetchRawLegalArticles(): Promise<RawLegalArticle[]> {
   const articles: RawLegalArticle[] = [
+    // ─── 0. NƯỚC SỞ TẠI VIỆT NAM (NGUỒN HÀNG - ĐA NÔNG SẢN) ────────
+    {
+      sourceAgency: 'Cục Bảo vệ Thực vật (PPD)',
+      sourceCountry: 'VN',
+      sourceUrl: 'https://ppd.gov.vn/thong-bao/huong-dan-cap-ma-so-vung-trong-msvt-va-co-so-dong-goi-csdg-xuat-khau-2026',
+      documentUrl: 'https://ppd.gov.vn/upload/documents/Quy_dinh_MSVT_CSDG_2026.pdf',
+      sourceReference: 'Quyết định 1088/QĐ-BNN-BVTV',
+      sourceLanguage: 'vi',
+      titleOriginal: 'Hướng dẫn chuẩn hóa quản lý Mã số vùng trồng (MSVT) và Cơ sở đóng gói (CSĐG) nông sản xuất khẩu chính ngạch',
+      rawContent: 'Cục Bảo vệ Thực vật (Bộ NN&PTNT) ban hành hướng dẫn cập nhật quy trình giám sát sinh vật hại (ruồi đục quả, rệp sáp, nấm bệnh) định kỳ tại các vùng trồng sầu riêng (HS 0810.60.00), thanh long (HS 0810.90), xoài, bưởi xuất khẩu. Yêu cầu 100% mã số vùng trồng phải có nhật ký canh tác điện tử và danh mục thuốc BVTV tuân thủ nước nhập khẩu.',
+      market: 'VIETNAM',
+      categoryHint: 'registration',
+      publishedAt: new Date(Date.now() - 1 * 3600 * 1000), // 1 hour ago
+    },
+    {
+      sourceAgency: 'Vicofa & Cục Lâm nghiệp',
+      sourceCountry: 'VN',
+      sourceUrl: 'https://vicofa.org.vn/tin-tuc/huong-dan-dinh-vi-gps-thua-dat-trong-ca-phe-dap-ung-quy-dinh-eudr-2026',
+      sourceReference: 'Hướng dẫn EUDR Vicofa 2026/02',
+      sourceLanguage: 'vi',
+      titleOriginal: 'Hướng dẫn định vị bản đồ ranh giới GPS thửa đất trồng cà phê (HS 0901) đáp ứng Tiêu chuẩn Chống phá rừng EUDR',
+      rawContent: 'Hiệp hội Cà phê - Ca cao Việt Nam (Vicofa) phối hợp Cục Lâm nghiệp ban hành sổ tay hướng dẫn doanh nghiệp trích xuất dữ liệu định vị địa lý GPS cho các thửa đất cà phê Robusta và Arabica xuất khẩu sang Châu Âu, chứng minh không gây mất rừng sau mốc ngày 31/12/2020.',
+      market: 'VIETNAM',
+      categoryHint: 'eudr',
+      publishedAt: new Date(Date.now() - 5 * 3600 * 1000),
+    },
+    {
+      sourceAgency: 'Vinafruit (Hiệp hội Rau quả VN)',
+      sourceCountry: 'VN',
+      sourceUrl: 'http://vinafruit.com/tin-tuc/canh-bao-kiem-soat-du-luong-mrl-va-chat-luong-dong-goi-nong-san-xuat-khau',
+      sourceReference: 'Khuyến cáo Vinafruit 2026-03',
+      sourceLanguage: 'vi',
+      titleOriginal: 'Khuyến cáo khẩn về kiểm soát dư lượng hóa chất MRL và quy chuẩn bao bì đóng gói nông sản tươi xuất khẩu',
+      rawContent: 'Hiệp hội Rau quả Việt Nam (Vinafruit) phát đi khuyến cáo khẩn cấp gửi các doanh nghiệp xuất khẩu trái cây tươi (sầu riêng, thanh long, xoài, bưởi, nhãn, vải) về việc tăng cường tần suất kiểm nghiệm dư lượng hoạt chất cấm (Chlorpyrifos, Tricyclazole) trước khi đóng container thông quan.',
+      market: 'VIETNAM',
+      categoryHint: 'mrl',
+      publishedAt: new Date(Date.now() - 12 * 3600 * 1000),
+    },
+    {
+      sourceAgency: 'Văn phòng SPS Việt Nam',
+      sourceCountry: 'VN',
+      sourceUrl: 'https://spsvietnam.gov.vn/thong-bao-canh-bao-som-an-toan-thuc-pham-dich-hai-nong-san-wto-2026',
+      sourceReference: 'SPS Notification VN-2026-08',
+      sourceLanguage: 'vi',
+      titleOriginal: 'Tổng hợp cảnh báo sớm vệ sinh an toàn thực phẩm & kiểm dịch động thực vật SPS cho các nhóm nông sản hạt điều, hồ tiêu, trái cây',
+      rawContent: 'Văn phòng SPS Việt Nam tổng hợp 15 thông báo cảnh báo sớm từ các thị trường WTO (EU, Hoa Kỳ, Nhật Bản, UAE) về thay đổi ngưỡng MRL dư lượng hóa chất trên hạt điều (HS 0801), hồ tiêu (HS 0904), sầu riêng và rau quả tươi.',
+      market: 'VIETNAM',
+      categoryHint: 'phytosanitary',
+      publishedAt: new Date(Date.now() - 20 * 3600 * 1000),
+    },
+
     // ─── 1. CÁC THỊ TRƯỜNG HIỆN CÓ (CN, EU, US, JP) ─────────────
     {
       sourceAgency: 'GACC',
@@ -180,3 +231,4 @@ export async function fetchRawLegalArticles(): Promise<RawLegalArticle[]> {
   const liveArticles = await fetchLiveRssArticles();
   return [...articles, ...liveArticles];
 }
+

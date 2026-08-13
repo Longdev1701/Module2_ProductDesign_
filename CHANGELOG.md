@@ -9,6 +9,36 @@ Tất cả các thay đổi quan trọng của dự án **Themis LexiGuard** s�
 ## [Unreleased]
 
 ### Added
+- Tích hợp Nước sở tại **`📍 VIỆT NAM (NGUỒN)`** và Bộ thu thập tin tức quy định Nông sản đa mặt hàng (Sầu riêng, Cà phê, Thanh long, Xoài, Bưởi, Hạt điều, Hồ tiêu):
+  - Bổ sung bộ thu thập tin tức & cảnh báo từ **Cục Bảo vệ Thực vật (ppd.gov.vn)**, **Bộ NN&PTNT**, **Hiệp hội Rau quả Vinafruit**, **Hiệp hội Cà phê Ca cao Vicofa (EUDR)** và **Văn phòng SPS Việt Nam**.
+  - Phân tách giao diện bộ lọc thị trường trên `RegulationsPage` và `LegalTrackingWidget` thành 2 nhóm trực quan: **`📍 NƯỚC SỞ TẠI (NGUỒN HÀNG)`** (Việt Nam) và **`🎯 THỊ TRƯỜNG NHẬP KHẨU (ĐÍCH)`** (Trung Quốc, EU, Mỹ, Nhật...).
+  - Định dạng Badge bài tin thể hiện rõ `📍 VIỆT NAM (NGUỒN)` giúp doanh nghiệp xuất khẩu phân biệt 100% giữa quy định sở tại và quy định nước nhập khẩu.
+- Tích hợp Bộ nhớ đệm toàn cục In-Memory (`inMemoryRegulationsCache`) cho Thư viện Quy định Quốc tế (`RegulationsPage`):
+  - Khởi tạo dữ liệu tức thì từ bộ nhớ đệm (0ms delay) khi chuyển đổi giữa các route (`/dashboard` <-> `/regulations` <-> `/history`), loại bỏ hiện tượng nhấp nháy Skeleton hay chờ đợi HTTP request khi quay lại trang.
+- Tích hợp bộ Phân trang chuẩn Server-Side (`page`, `pageSize`, `totalPages`) và Tối ưu hóa trạng thái Tải (`RegulationsSkeleton` + Smooth Transition Overlay) cho trang Thư viện Quy định Quốc tế (`/regulations`):
+  - Hỗ trợ chọn số văn bản mỗi trang (6, 9, 12, 24 file/trang), điều hướng trang trước / trang sau và chọn số trang trực tiếp.
+  - Phân tách 2 cấp độ loading: Khởi tạo Skeleton mô phỏng chính xác khung card thực tế và Lớp phủ làm mờ mượt mà khi chuyển trang không làm nhấp nháy UI.
+- Đấu nối widget **Cảnh báo Rủi ro Pháp lý** trên trang Giám sát Liêm chính (`IntegrityPage.tsx`) với component chuyên biệt `LegalRiskAlertsWidget`:
+  - Thay đổi hoàn toàn ngôn ngữ thiết kế: Loại bỏ các tab bộ lọc tin tức / carousel chuyển trang dạng tin tức, chuyển sang dạng **Thẻ danh sách Cảnh báo Rủi ro Kỹ thuật chuẩn Executive Risk Alerts** với các đường viền đỏ/cam/xanh phân loại mức độ rủi ro (`border-l-4`).
+  - Tự động hiển thị 3-4 bản tin cảnh báo rủi ro cao nhất thời gian thực từ API `/api/legal-updates/feed?severity=high,critical` mà không có dữ liệu mẫu.
+
+### Fixed
+- Khắc phục triệt để lỗi mất chữ `N` cuối trên nhãn `VN (Nguồn)` bằng cách loại bỏ thuộc tính CSS `uppercase` ép biến đổi chữ hoa, đồng thời bổ sung `shrink-0 whitespace-nowrap px-2` và phông chữ chuẩn `font-sans` giúp badge hiển thị tròn trịa, nguyên vẹn 100% chữ `VN (Nguồn)` trên cả Sidebar lẫn Thư viện quy định (`LegalTrackingWidget`, `RegulationsPage`).
+- Thay thế hoàn toàn các ký tự icon cờ bằng chữ chuẩn **`VN (Nguồn)`** bôi xanh nổi bật (`bg-emerald-500/15 text-emerald-700 border border-emerald-500/30`), khắc phục lỗi hiển thị 2 chữ nhỏ `vnVN` trên hệ điều hành Windows (`LegalTrackingWidget`, `RegulationsPage`, `LegalUpdateList`).
+- Tinh chỉnh nhãn hiển thị thị trường Việt Nam ở Frontend về định dạng vừa vặn, tinh tế `VN (Nguồn)` với phông nền xanh nhẹ nổi bật, loại bỏ cảm giác chật chội và không làm đè chữ mốc thời gian trên thẻ bài tin (`LegalTrackingWidget`, `RegulationsPage`, `LegalUpdateList`).
+- Khắc phục sự cố tràn ngày công bố (`13/8/2026`) ra khỏi viền card tại Widget Cảnh báo Pháp lý ở Sidebar (`LegalTrackingWidget`):
+  - Bổ sung `overflow-hidden` cho khung thẻ `motion.div`, thêm `truncate min-w-0 flex-1` cho khối nhãn mức độ rủi ro & tên thị trường, đảm bảo ngày công bố luôn được căn lề phải cố định 100% bên trong khung card mà không bị tràn viền.
+- Khắc phục sự cố tràn chữ và tràn ngày công bố (`12/8/2026`, `11/8/2026`) ra khỏi viền card ở trang Thư viện Quy định (`RegulationsPage`):
+  - Bổ sung `overflow-hidden` cho khung thẻ Card, `truncate` + `max-w-[calc(100%-80px)]` cho Badge tên tiêu chuẩn và `min-w-0` cho hàng tiêu đề header card, đảm bảo ngày công bố luôn nằm gọn gàng 100% bên trong thẻ mà không bị lem tràn sang các cột lân cận.
+- Khắc phục sự cố hiển thị khi tra cứu văn bản ở trang Thư viện Quy định (`RegulationsPage`):
+  - Loại bỏ hoàn toàn lỗi Race Condition bằng cách xử lý duy nhất 1 `useEffect` đồng bộ giữa `page`, `pageSize`, `selectedMarket`, `selectedCategory` và `searchQuery`.
+  - Bổ sung nút xóa từ khóa nhanh (`X`), nhãn phân loại tiếng Việt thân thiện (`categoryLabels`), định dạng ngày an toàn (`formatDate`) và nút Đặt lại bộ lọc khi không tìm thấy kết quả.
+- Khắc phục triệt để lỗi Next.js SSR Hydration Mismatch (`Hydration failed because the server rendered HTML didn't match the client`) ở `UserDropdown` và `Sidebar`:
+  - Chuyển toàn bộ thao tác đọc cache `localStorage` khởi tạo state ban đầu vào `useEffect` (Client Mount Phase) để đảm bảo HTML render từ Server và pass Hydration đầu tiên trên Client khớp 100%.
+- Căn chỉnh giao diện Frontend cho các component theo dõi pháp lý và tài liệu pháp lý (`RegulationsPage`, `LegalTrackingWidget`, `OfficialDocumentsWidget`, `OfficialDocumentsDialog`, `LegalUpdateFeedDialog`, `LegalUpdateList`):
+  - Bổ sung `whitespace-nowrap`, `shrink-0`, `min-w-0` và `truncate` cho tiêu đề, badge số lượng, nút làm mới, nút chọn thị trường, thẻ tiêu chuẩn và các liên kết thao tác để ngăn chặn hoàn toàn hiện tượng vỡ dòng / nhảy xuống dòng không mong muốn.
+
+### Added
 - Tối ưu hóa hiệu năng UI & Bổ sung bộ quy tắc Agent (`AGENTS.md`):
   - Tối ưu tốc độ tải Dashboard 0ms với Synchronous State Hydration từ `localStorage`, khắc phục triệt để lỗi Next.js SSR Hydration Mismatch và hiện tượng nhấp nháy Skeleton khi chuyển route về Dashboard.
   - Khắc phục triệt để độ trễ khi chuyển đổi giữa các route (`/dashboard` <-> `/regulations` <-> `/history`) bằng bộ nhớ đệm In-Memory (`inMemoryFeedCache`) cho `useLegalUpdates`, loại bỏ các request HTTP `/auth/me` lặp thừa từ layout components và vô hiệu hóa các event re-trigger gây reload UI.

@@ -20,23 +20,26 @@ export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const [isAdmin, setIsAdmin] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    const cached = localStorage.getItem("themis:user_cache");
-    if (!cached) return false;
-    try {
-      const u = JSON.parse(cached);
-      return u?.platformRole === "SUPER_ADMIN" || u?.platformRole === "PLATFORM_ADMIN";
-    } catch {
-      return false;
-    }
-  });
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   useEffect(() => {
+    let hasRoleFromCache = false;
+    if (typeof window !== "undefined") {
+      const cached = localStorage.getItem("themis:user_cache");
+      if (cached) {
+        try {
+          const u = JSON.parse(cached);
+          if (u?.platformRole === "SUPER_ADMIN" || u?.platformRole === "PLATFORM_ADMIN") {
+            setIsAdmin(true);
+            hasRoleFromCache = true;
+          }
+        } catch {}
+      }
+    }
+
     async function checkRole() {
       try {
-        const cached = localStorage.getItem("themis:user_cache");
-        if (!cached) {
+        if (!hasRoleFromCache) {
           const res = await api.get<AuthMeResponse>("/auth/me");
           const role = res.data?.user?.platformRole || res.data?.profile?.platformRole;
           if (role === "SUPER_ADMIN" || role === "PLATFORM_ADMIN") {

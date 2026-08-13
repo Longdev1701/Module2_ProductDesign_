@@ -8,6 +8,18 @@ export async function fetchLiveRssArticles(): Promise<RawLegalArticle[]> {
     // Demo live stream RSS parsing structure for EUR-Lex / RASFF feed
     const liveItems: RawLegalArticle[] = [
       {
+        sourceAgency: 'PPD Live Alert',
+        sourceCountry: 'VN',
+        sourceUrl: 'https://ppd.gov.vn/canh-bao-bien-gioi-gacc-2026',
+        sourceReference: 'PPD-GACC Alert 2026.04',
+        sourceLanguage: 'vi',
+        titleOriginal: 'Cảnh báo Hải quan GACC kiểm soát chặt sinh vật hại rệp sáp và vi phạm quy cách tem nhãn mã số vùng trồng (MSVT)',
+        rawContent: 'Cục Bảo vệ Thực vật thông báo khẩn tới các Chi cục BVTV và Doanh nghiệp xuất khẩu về việc Hải quan Trung Quốc (GACC) tăng cường tần suất kiểm dịch thực vật 100% lô hàng sầu riêng và quả tươi tại các cửa khẩu Hữu Nghị, Tân Thanh, Móng Cái.',
+        market: 'VIETNAM',
+        categoryHint: 'phytosanitary',
+        publishedAt: new Date(),
+      },
+      {
         sourceAgency: 'RASFF',
         sourceCountry: 'EU',
         sourceUrl: 'https://webgate.ec.europa.eu/rasff-window/screen/notification/2026-9812',

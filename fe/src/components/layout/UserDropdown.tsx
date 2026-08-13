@@ -9,31 +9,26 @@ import type { AuthMeResponse, OrganizationSummary, UserProfile } from "@/types/a
 export function UserDropdown() {
   const router = useRouter();
 
-  const [user, setUser] = useState<UserProfile | null>(() => {
-    if (typeof window === "undefined") return null;
-    const cached = localStorage.getItem("themis:user_cache");
-    if (!cached) return null;
-    try {
-      return JSON.parse(cached);
-    } catch {
-      return null;
-    }
-  });
-
-  const [activeOrg, setActiveOrg] = useState<OrganizationSummary | null>(() => {
-    if (typeof window === "undefined") return null;
-    const cached = localStorage.getItem("themis:org_cache");
-    if (!cached) return null;
-    try {
-      return JSON.parse(cached);
-    } catch {
-      return null;
-    }
-  });
-
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [activeOrg, setActiveOrg] = useState<OrganizationSummary | null>(null);
   const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
+    // Read cache synchronously on client mount to avoid SSR hydration mismatch
+    if (typeof window !== "undefined") {
+      const cachedUser = localStorage.getItem("themis:user_cache");
+      if (cachedUser) {
+        try {
+          setUser(JSON.parse(cachedUser));
+        } catch {}
+      }
+      const cachedOrg = localStorage.getItem("themis:org_cache");
+      if (cachedOrg) {
+        try {
+          setActiveOrg(JSON.parse(cachedOrg));
+        } catch {}
+      }
+    }
     async function loadUserData() {
       try {
         const res = await api.get<AuthMeResponse>("/auth/me");
