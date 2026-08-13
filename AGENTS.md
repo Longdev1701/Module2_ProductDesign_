@@ -361,6 +361,36 @@ feature is DONE only when ALL are true:
 
 ---
 
+## LESSONS LEARNED & PERFORMANCE RULES (CRITICAL FOR ALL AGENTS)
+
+### 1. Dashboard & Route Navigation (0ms Instant Page Transitions)
+- **Synchronous State Hydration**: Khởi tạo state React (`user`, `org`, `loading`) đồng bộ trong `useState(() => ...)` bằng cách đọc cache `localStorage` ngay tại Frame 0. Tuyệt đối không để `loading` khởi tạo là `true` khi đã có cache vì sẽ gây nhấp nháy Skeleton khi chuyển route quay lại.
+- **No Unconditional Global Events**: Không dispatch các sự kiện toàn cục (như `themis:organization-changed`) khi mount trang trừ khi dữ liệu (như `organizationId`) thực sự thay đổi, để tránh re-trigger không cần thiết làm reload các Widget con.
+
+### 2. UI Layout & Responsive Tabs
+- **Flex Wrap Over Overflow Clipping**: Sử dụng `flex flex-wrap` cho các bộ nút/tab chọn nhiều tùy chọn (như danh sách thị trường, loại tiêu chuẩn) thay vì cuộn ngang `overflow-x-auto` bị giấu viền. Đảm bảo 100% tùy chọn hiển thị đầy đủ trên mọi màn hình.
+- **Pagination Standard for List Widgets**: Các widget hiển thị danh sách (bài tin, tài liệu PDF) phải có bộ nút phân trang thu nhỏ (`<` `>`) ngay trên card và nút "Xem tất cả" mở Modal Dialog với phân trang + tìm kiếm server-side.
+
+### 3. Backend Query & API Performance
+- **Parallel Query Execution**: Sử dụng `Promise.all` để chạy song song các câu lệnh Prisma thay vì `await` nối tiếp làm tăng thời gian chờ.
+- **Selective Field Fetching**: Luôn dùng Prisma `select` để lọc loại bỏ các trường JSON/văn bản lớn (`detailedSummaryVi`, `citations`) ở các endpoint dạng danh sách/feed.
+
+### 4. Skeleton Loading Standard
+- Thiết kế Skeleton UI mô phỏng chính xác hình dáng, tỉ lệ và số dòng của card/thành phần thực tế thay vì dùng spinner quay tròn gây chậm mắt.
+
+### 5. Next.js SSR Hydration Safety (Zero Hydration Mismatch)
+- Khi đọc cache `localStorage` để tối ưu tải trang, luôn sử dụng mốc `mounted` (`const [mounted, setMounted] = useState(false)` + `useEffect(() => setMounted(true), [])`).
+- Trong pass render đầu tiên, Server và Client đều render `<DashboardSkeleton />`, sau đó Client hydrate dữ liệu từ cache ngay tại Frame 1. Tuyệt đối không đọc `localStorage` trực tiếp trong khởi tạo `useState(() => ...)` vì sẽ làm khác biệt HTML giữa Server SSR và Client.
+
+### 6. Client Route Navigation & In-Memory Data Caching
+- **Zero Duplicate Auth Requests**: Không gọi `/auth/me` lặp đi lặp lại ở từng Component/Widget con (`UserDropdown`, `Sidebar`). Đọc `themis:user_cache` để lấy thông tin vai trò/tổ chức đồng bộ.
+- **In-Memory Feed Caching**: Duy trì bộ nhớ đệm toàn cục (`inMemoryFeedCache`) cho các custom hook lấy dữ liệu danh sách/tin tức. Khi người dùng chuyển đổi giữa các route (`/dashboard` <-> `/regulations` <-> `/history`), hook khởi tạo state tức thì từ bộ nhớ đệm (0ms delay), không gửi lại HTTP request làm chậm UI.
+- **No Blanket Event Dispatching**: Tuyệt đối không phát sự kiện `themis:organization-changed` ở mount phase của các component layout chung (như `UserDropdown`).
+
+
+
+---
+
 ## SKILLS (load when relevant)
 frontend       → fe/ components, pages, Next.js routing, Tailwind
 backend        → be/ API endpoints, middleware, Express modules
@@ -370,3 +400,4 @@ security       → auth flows, RBAC, audit log, secrets, file security
 
 skill files: .agents/skills/<name>/SKILL.md
 ref docs:    .agents/ref/01-product.md … 10-done.md
+

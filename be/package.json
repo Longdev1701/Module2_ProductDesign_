@@ -10,6 +10,7 @@
     "db:generate": "npx prisma generate",
     "db:migrate": "npx prisma migrate dev",
     "db:studio": "npx prisma studio",
+    "test:legal-updates": "npm run build && node --test dist/modules/legal-updates/legal-updates.test.js",
     "db:seed": "npx prisma db seed"
   },
   "dependencies": {

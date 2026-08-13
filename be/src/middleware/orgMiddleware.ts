@@ -9,6 +9,7 @@ export function orgMiddleware(paramName: string = 'orgId') {
           error: {
             code: 'UNAUTHORIZED',
             message: 'User authentication required',
+            requestId: req.requestId ?? '',
           },
         });
       }
@@ -25,6 +26,7 @@ export function orgMiddleware(paramName: string = 'orgId') {
           error: {
             code: 'BAD_REQUEST',
             message: 'Organization ID is required in route, header x-organization-id, or query',
+            requestId: req.requestId ?? '',
           },
         });
       }
@@ -43,6 +45,7 @@ export function orgMiddleware(paramName: string = 'orgId') {
           error: {
             code: 'FORBIDDEN',
             message: 'You are not an active member of this organization',
+            requestId: req.requestId ?? '',
           },
         });
       }
@@ -55,11 +58,12 @@ export function orgMiddleware(paramName: string = 'orgId') {
       };
 
       return next();
-    } catch (err: any) {
+    } catch (_error: unknown) {
       return res.status(500).json({
         error: {
           code: 'INTERNAL_ERROR',
           message: 'Failed to verify organization membership',
+          requestId: req.requestId ?? '',
         },
       });
     }

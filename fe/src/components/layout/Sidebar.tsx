@@ -19,22 +19,36 @@ const baseNavItems = [
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const [isAdmin, setIsAdmin] = useState(false);
+
+  const [isAdmin, setIsAdmin] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    const cached = localStorage.getItem("themis:user_cache");
+    if (!cached) return false;
+    try {
+      const u = JSON.parse(cached);
+      return u?.platformRole === "SUPER_ADMIN" || u?.platformRole === "PLATFORM_ADMIN";
+    } catch {
+      return false;
+    }
+  });
 
   useEffect(() => {
     async function checkRole() {
       try {
-        const res = await api.get<AuthMeResponse>('/auth/me');
-        const role = res.data?.user?.platformRole || res.data?.profile?.platformRole;
-        if (role === 'SUPER_ADMIN' || role === 'PLATFORM_ADMIN') {
-          setIsAdmin(true);
+        const cached = localStorage.getItem("themis:user_cache");
+        if (!cached) {
+          const res = await api.get<AuthMeResponse>("/auth/me");
+          const role = res.data?.user?.platformRole || res.data?.profile?.platformRole;
+          if (role === "SUPER_ADMIN" || role === "PLATFORM_ADMIN") {
+            setIsAdmin(true);
+          }
         }
       } catch {}
     }
-    checkRole();
+    void checkRole();
   }, []);
 
-  const navItems = isAdmin 
+  const navItems = isAdmin
     ? [...baseNavItems, { name: "Platform Admin", href: "/admin", icon: "admin_panel_settings" }]
     : baseNavItems;
 
@@ -49,7 +63,7 @@ export function Sidebar() {
               className="h-28 w-auto object-contain rounded-xl drop-shadow-lg transition-transform duration-300 group-hover:scale-[1.02]"
               src="/themis_logo.png"
               onError={(e) => {
-                (e.target as HTMLElement).style.display = 'none';
+                (e.target as HTMLElement).style.display = "none";
               }}
             />
           </div>
@@ -59,10 +73,10 @@ export function Sidebar() {
       {/* Action Button: Tạo Kiểm Tra Tuân Thủ AI Mới */}
       <div className="px-4 mb-6">
         <button
-          onClick={() => router.push('/checks/new')}
+          onClick={() => router.push("/checks/new")}
           className="w-full bg-amber-400 hover:bg-amber-300 text-[#001946] font-bold text-xs py-3 px-4 rounded-xl shadow-md transition-all flex justify-center items-center gap-2 cursor-pointer"
         >
-          <span className="material-symbols-outlined text-base">auto_awesome</span> 
+          <span className="material-symbols-outlined text-base">auto_awesome</span>
           Tạo Kiểm Tra AI GACC
         </button>
       </div>
@@ -70,14 +84,14 @@ export function Sidebar() {
       {/* Navigation Links */}
       <nav className="flex-1 px-3 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
-          const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname?.startsWith(item.href));
+          const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href));
           return (
             <Link
               key={item.name}
               href={item.href}
               className={`flex items-center gap-3 px-4 py-2.5 text-xs font-semibold transition-all ${
                 isActive
-                  ? "bg-[#0047ab] text-white border-l-4 border-amber-400 rounded-r-lg shadow-sm"
+                  ? "bg-[#0047ab] text-white border-l-4 border-amber-400 rounded-r-lg shadow-xs"
                   : "text-[#a5bdff] hover:text-white hover:bg-white/10 rounded-lg"
               }`}
             >

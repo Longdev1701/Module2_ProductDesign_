@@ -5,45 +5,115 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import LegalTrackingWidget from "@/components/LegalTrackingWidget";
+import OfficialDocumentsWidget from "@/components/OfficialDocumentsWidget";
 import type { AuthMeResponse, OrganizationSummary, UserProfile } from "@/types/api";
+
+function DashboardSkeleton() {
+  return (
+    <div className="space-y-8 animate-pulse" aria-label="Đang tải dữ liệu tổng quan">
+      {/* Title skeleton */}
+      <div className="space-y-2">
+        <div className="h-8 w-64 rounded-lg bg-surface-container-high" />
+        <div className="h-4 w-96 rounded-md bg-surface-container-low" />
+      </div>
+
+      {/* Top summary cards skeleton */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="h-32 rounded-xl border border-outline-variant bg-surface p-6 space-y-3">
+            <div className="h-4 w-1/2 rounded bg-surface-container-high" />
+            <div className="h-8 w-1/3 rounded bg-surface-container-high" />
+          </div>
+        ))}
+      </div>
+
+      {/* Main Grid skeleton */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          <div className="h-96 rounded-xl border border-outline-variant bg-surface p-6 space-y-4">
+            <div className="h-6 w-48 rounded bg-surface-container-high" />
+            <div className="h-64 rounded-lg bg-surface-container-low" />
+          </div>
+        </div>
+        <div className="space-y-6">
+          <div className="h-72 rounded-xl border border-outline-variant bg-surface p-6" />
+          <div className="h-48 rounded-xl border border-outline-variant bg-surface p-6" />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function DashboardPage() {
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
   const [user, setUser] = useState<UserProfile | null>(null);
   const [org, setOrg] = useState<OrganizationSummary | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setMounted(true);
+
+    // Client-side instant cache hydration
+    const cachedUser = localStorage.getItem("themis:user_cache");
+    const cachedOrg = localStorage.getItem("themis:org_cache");
+    let hasCache = false;
+    if (cachedUser && cachedOrg) {
+      try {
+        setUser(JSON.parse(cachedUser));
+        setOrg(JSON.parse(cachedOrg));
+        setLoading(false);
+        hasCache = true;
+      } catch {
+        // Ignore cache parse error
+      }
+    }
+
     async function checkAuth() {
       const token = localStorage.getItem("access_token");
-      if (!token) { router.replace("/login"); return; }
+      if (!token) {
+        router.replace("/login");
+        return;
+      }
       try {
         const res = await api.get<AuthMeResponse>("/auth/me");
         const userData = res.data?.user;
         const orgs = res.data?.organizations;
-        if (!userData) { router.replace("/login"); return; }
-        if (userData.platformRole === "SUPER_ADMIN" || userData.platformRole === "PLATFORM_ADMIN") {
-          router.replace("/admin"); return;
+        if (!userData) {
+          router.replace("/login");
+          return;
         }
-        if (!orgs || orgs.length === 0) { router.replace("/pending-access"); return; }
+        if (userData.platformRole === "SUPER_ADMIN" || userData.platformRole === "PLATFORM_ADMIN") {
+          router.replace("/admin");
+          return;
+        }
+        if (!orgs || orgs.length === 0) {
+          router.replace("/pending-access");
+          return;
+        }
         setUser(userData);
         setOrg(orgs[0]);
-        localStorage.setItem("active_org_id", orgs[0].id);
-      } catch { router.replace("/login"); }
-      finally { setLoading(false); }
+        localStorage.setItem("themis:user_cache", JSON.stringify(userData));
+        localStorage.setItem("themis:org_cache", JSON.stringify(orgs[0]));
+
+        const prevOrgId = localStorage.getItem("active_org_id");
+        if (prevOrgId !== orgs[0].id) {
+          localStorage.setItem("active_org_id", orgs[0].id);
+          window.dispatchEvent(new Event("themis:organization-changed"));
+        }
+      } catch {
+        if (!hasCache) {
+          router.replace("/login");
+        }
+      } finally {
+        setLoading(false);
+      }
     }
-    checkAuth();
+    void checkAuth();
   }, [router]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center space-y-3">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-[#00327d] border-t-transparent" />
-          <p className="text-sm text-[#434653]">Đang tải Dashboard...</p>
-        </div>
-      </div>
-    );
+  if (!mounted || loading) {
+    return <DashboardSkeleton />;
   }
 
   return (
@@ -52,14 +122,14 @@ export default function DashboardPage() {
       <div className="mb-6">
         <h2 className="font-serif text-3xl font-bold text-[#191c1e] mb-2">Tổng quan tuân thủ</h2>
         <p className="text-[#434653] text-base font-sans">
-          Xin chào, <strong>{user?.fullName}</strong> — {org?.name} ({org?.role})
+          Xin chào, <strong>{user?.fullName || "Doanh nghiệp"}</strong> — {org?.name || "Hệ thống"} ({org?.role || "Thành viên"})
         </p>
       </div>
 
       {/* Top Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         {/* Card 1 */}
-        <div className="bg-white p-6 rounded-xl border border-[#c3c6d5]/60 shadow-sm relative overflow-hidden">
+        <div className="bg-white p-6 rounded-xl border border-[#c3c6d5]/60 shadow-xs relative overflow-hidden">
           <div className="absolute right-0 top-0 w-24 h-24 bg-[#00327d]/5 rounded-bl-full -mr-4 -mt-4" />
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2 bg-[#0047ab]/20 rounded-lg text-[#00327d]">
@@ -76,7 +146,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Card 2 */}
-        <div className="bg-white p-6 rounded-xl border border-[#c3c6d5]/60 shadow-sm">
+        <div className="bg-white p-6 rounded-xl border border-[#c3c6d5]/60 shadow-xs">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2 bg-[#205833]/20 rounded-lg text-[#01401e]">
               <span className="material-symbols-outlined">verified</span>
@@ -106,7 +176,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Card 4 */}
-        <div className="bg-white p-6 rounded-xl border border-[#c3c6d5]/60 shadow-sm">
+        <div className="bg-white p-6 rounded-xl border border-[#c3c6d5]/60 shadow-xs">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2 bg-[#d2e0fe]/50 text-[#55637d] rounded-lg">
               <span className="material-symbols-outlined">schedule</span>
@@ -130,7 +200,7 @@ export default function DashboardPage() {
               <h3 className="font-serif text-xl font-semibold text-[#191c1e]">Phân tích rủi ro thị trường</h3>
               <div className="flex gap-2">
                 <button className="px-3 py-1 text-sm border border-[#c3c6d5] rounded-full text-[#434653] hover:bg-[#eceef0] transition-colors">US</button>
-                <button className="px-3 py-1 text-sm bg-[#00327d] text-white rounded-full shadow-sm font-semibold">CN</button>
+                <button className="px-3 py-1 text-sm bg-[#00327d] text-white rounded-full shadow-xs font-semibold">CN</button>
               </div>
             </div>
             <div className="flex-1 bg-[#f2f4f6] rounded-lg border border-[#c3c6d5]/50 flex flex-col items-center justify-center relative overflow-hidden p-6">
@@ -205,23 +275,7 @@ export default function DashboardPage() {
         {/* Right Column */}
         <div className="space-y-6">
           <LegalTrackingWidget />
-
-          <div className="bg-[#dae2ff] p-6 rounded-xl border border-[#b1c5ff]">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="material-symbols-outlined text-[#00327d]">policy</span>
-              <h3 className="font-serif text-lg font-semibold text-[#191c1e]">Tài liệu GACC mới</h3>
-            </div>
-            <div className="space-y-3">
-              <div className="p-3 bg-white rounded-lg flex items-center justify-between shadow-xs">
-                <span className="text-xs font-semibold text-[#191c1e]">Nghị định thư sầu riêng GACC 2024.pdf</span>
-                <span className="material-symbols-outlined text-sm text-[#00327d]">download</span>
-              </div>
-              <div className="p-3 bg-white rounded-lg flex items-center justify-between shadow-xs">
-                <span className="text-xs font-semibold text-[#191c1e]">Hướng dẫn đăng ký GACC vườn trồng.pdf</span>
-                <span className="material-symbols-outlined text-sm text-[#00327d]">download</span>
-              </div>
-            </div>
-          </div>
+          <OfficialDocumentsWidget />
         </div>
       </div>
     </div>
