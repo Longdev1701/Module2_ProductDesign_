@@ -23,6 +23,7 @@ Tất cả các thay đổi quan trọng của dự án **Themis LexiGuard** s�
   - Tự động hiển thị 3-4 bản tin cảnh báo rủi ro cao nhất thời gian thực từ API `/api/legal-updates/feed?severity=high,critical` mà không có dữ liệu mẫu.
 
 ### Fixed
+- Sửa lỗi nạp biến môi trường trong kịch bản khởi tạo tài khoản mẫu (`be/scripts/seed-admin-and-demo.ts`): Cấu hình đường dẫn tuyệt đối cho `dotenv` với `path.resolve(__dirname, '../.env')` và bổ sung fallback key Supabase, giúp kịch bản seed chạy ổn định.
 - Khắc phục triệt để lỗi mất chữ `N` cuối trên nhãn `VN (Nguồn)` bằng cách loại bỏ thuộc tính CSS `uppercase` ép biến đổi chữ hoa, đồng thời bổ sung `shrink-0 whitespace-nowrap px-2` và phông chữ chuẩn `font-sans` giúp badge hiển thị tròn trịa, nguyên vẹn 100% chữ `VN (Nguồn)` trên cả Sidebar lẫn Thư viện quy định (`LegalTrackingWidget`, `RegulationsPage`).
 - Thay thế hoàn toàn các ký tự icon cờ bằng chữ chuẩn **`VN (Nguồn)`** bôi xanh nổi bật (`bg-emerald-500/15 text-emerald-700 border border-emerald-500/30`), khắc phục lỗi hiển thị 2 chữ nhỏ `vnVN` trên hệ điều hành Windows (`LegalTrackingWidget`, `RegulationsPage`, `LegalUpdateList`).
 - Tinh chỉnh nhãn hiển thị thị trường Việt Nam ở Frontend về định dạng vừa vặn, tinh tế `VN (Nguồn)` với phông nền xanh nhẹ nổi bật, loại bỏ cảm giác chật chội và không làm đè chữ mốc thời gian trên thẻ bài tin (`LegalTrackingWidget`, `RegulationsPage`, `LegalUpdateList`).
