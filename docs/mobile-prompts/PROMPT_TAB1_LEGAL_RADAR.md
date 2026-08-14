@@ -7,65 +7,55 @@
 ## 📌 Prompt Template (Sao chép đoạn dưới đây gửi cho AI):
 
 ```markdown
-Hãy xây dựng màn hình Tab 1 (Legal Risk Radar) cho ứng dụng React Native / Expo (`app/(tabs)/index.tsx`) dựa trên thiết kế 1:1 tại hình ảnh `docs/mobile-prompts/tab1_legal_radar.jpg`.
+Hãy xây dựng màn hình Tab 1 (Legal Risk Radar) cho ứng dụng React Native / Expo (`app/(tabs)/index.tsx`) dựa trên phong cách Premium Design, hiệu ứng Glassmorphism.
 
-### 1. Yêu cầu Cấu trúc & Layout 1:1
+### 1. Yêu cầu Cấu trúc & Layout Premium Design
 
-#### A. Header Doanh nghiệp & Hệ thống (Top Bar)
-- Phía trên cùng bên trái: Hiển thị tên Doanh nghiệp `CÔNG TY CP NÔNG SẢN VIỆT` (Text bold `#F9FAFB`, text-sm).
-- Ngay bên phải hoặc dòng dưới: Pill badge `🇨🇳 China GACC & 🇪🇺 EU` (Background `#1E293B`, text Emerald `#34D399`, rounded-full, text-xs).
-- Bên phải Header: Icon khiên bảo mật Themis Radar (`ShieldAlert` hoặc `Radar` icon màu xanh `#10B981`).
+#### A. Header Doanh nghiệp & Hệ thống (Top Bar - Glassmorphism)
+- Yêu cầu sử dụng `BlurView` (`expo-blur`) hoặc nền trắng mờ (translucent `bg-white/80 backdrop-blur-xl`) để tạo cảm giác kính mờ trượt lên nội dung phía dưới.
+- Phía trên cùng bên trái: Tên Doanh nghiệp `CÔNG TY CP NÔNG SẢN VIỆT` (Font Inter/Outfit bold `#131b2e`, text-sm).
+- Ngay bên phải hoặc dòng dưới: Pill badge `🇨🇳 China GACC & 🇪🇺 EU` (Background `#f2f3ff`, text Themis Blue `#00236f`, rounded-full, text-xs).
+- Bên phải Header: Icon khiên bảo mật Themis Radar (`ShieldAlert` hoặc `Radar` icon màu xanh `#00236f` có đổ bóng nhẹ).
 
 #### B. Bộ lọc Thị trường & Mặt hàng (Filter Chips Bar)
 - Thanh cuộn ngang `ScrollView horizontal showsHorizontalScrollIndicator={false}` chứa các chip bấm:
-  - Chip 1 (Active): `Tất cả` (Background Emerald `#10B981`, Text trắng, font-medium, rounded-full).
-  - Chip 2: `🇨🇳 Trung Quốc GACC` (Background `#1F2937`, Text xám `#9CA3AF`, rounded-full).
-  - Chip 3: `🇪🇺 EU` (Background `#1F2937`, Text xám `#9CA3AF`).
-  - Chip 4: `📦 Sầu riêng` (Background `#1F2937`, Text xám `#9CA3AF`).
-  - Chip 5: `☕ Cà phê` (Background `#1F2937`, Text xám `#9CA3AF`).
-- Thao tác: Bấm chuyển chip chủ động lọc danh sách bài tin theo thị trường/sản phẩm.
+- Mặc định các chip có nền trơn, nhưng khi Active sẽ có dải màu `LinearGradient` từ Xanh Themis (`#00236f`) sang xanh nhạt hơn, tạo sự nổi bật. Thêm viền nhẹ (soft border) và bóng đổ (shadow-sm).
+  - Chip 1 (Active): `Tất cả` (Gradient Themis Blue, Text trắng, font-medium, rounded-full).
+  - Chip 2: `🇨🇳 Trung Quốc GACC` (Background `#ffffff`, Text xám `#444651`, rounded-full, shadow-sm).
+  - Chip 3: `🇪🇺 EU` (Background `#ffffff`, Text xám `#444651`, shadow-sm).
 
 #### C. Widget Thống kê Rủi ro Xuất khẩu (KPI Risk Summary Widget)
-- Khung lưới 2 cột chứa 2 Thẻ chỉ số tổng quan:
+- Khung lưới 2 cột chứa 2 Thẻ chỉ số tổng quan với hiệu ứng Elevated:
   - Thẻ 1 (Cảnh báo MRL):
-    - Border trái viền đỏ `#EF4444` (border-l-4), background `#111827`.
-    - Số liệu: `02` (Font-bold 2xl text-red-400).
-    - Tiêu đề: `Cảnh báo MRL Cadmium` (text-xs text-gray-400).
-    - Badge phụ: `TÁC ĐỘNG CAO` (bg-red-950 text-red-400 px-2 py-0.5 rounded text-[10px]).
+    - Background `#ffffff`, bo góc tròn trịa (rounded-2xl), đổ bóng mềm `shadow-[0_8px_30px_rgb(0,0,0,0.04)]`.
+    - Viền góc trái hoặc dải màu đỏ mờ (Gradient).
+    - Số liệu: `02` (Font-bold 2xl text-red-600).
+    - Tiêu đề: `Cảnh báo MRL Cadmium` (text-xs text-gray-500).
+    - Badge phụ: `TÁC ĐỘNG CAO` (bg-red-50 text-red-600 px-2 py-0.5 rounded text-[10px]).
   - Thẻ 2 (Thay đổi Quy định):
-    - Border trái viền vàng `#F59E0B` (border-l-4), background `#111827`.
-    - Số liệu: `01` (Font-bold 2xl text-amber-400).
-    - Tiêu đề: `Cập nhật Lệnh 248/249` (text-xs text-gray-400).
-    - Badge phụ: `CẦN RÀ SOÁT` (bg-amber-950 text-amber-400 px-2 py-0.5 rounded text-[10px]).
+    - Tương tự nhưng sử dụng dải màu/shadow vàng cho `Cập nhật Lệnh 248/249`, text amber-600, badge vàng.
 
 #### D. Danh sách Thẻ Bài tin Cảnh báo (Legal Risk Alert Cards)
-Danh sách cuộn đứng (`FlatList`) hiển thị các thẻ bài tin với cấu trúc chính xác:
+Danh sách cuộn đứng (`FlatList`) áp dụng hiệu ứng chuyển động vi mô (Micro-animations - ví dụ Scale down nhẹ khi nhấn vào bằng `Pressable` + Reanimated):
 
 - **Thẻ 1 (Ví dụ MRL Cadmium Sầu riêng)**:
-  - Background: `#111827`, border `#1F2937`, rounded-2xl, p-4, margin-bottom 12px.
-  - Header bài tin: Flex row justify-between. Phía trái: Flag `🇨🇳 GACC Trung Quốc` (text-emerald-400 text-xs font-semibold). Phía phải: Ngày `13/08/2026` (text-gray-500 text-xs).
-  - Tiêu đề: `"Siết chặt mức giới hạn MRL Cadmium đối với Sầu riêng tươi Việt Nam xuất khẩu"` (Text white font-bold text-base leading-snug my-2).
-  - Thông tin trích dẫn: Badge `Lệnh 248 GACC / QĐ 1802` (bg-slate-800 text-slate-300 text-xs px-2 py-1 rounded).
-  - Tag mức độ nghiêm trọng: Badge Đỏ `TÁC ĐỘNG CAO` (bg-red-500/20 text-red-400 text-xs font-bold px-2 py-1 rounded).
-  - Nút hành động chính: Button Emerald `Rà soát mẫu test phòng lab` (bg-emerald-600 active:bg-emerald-700 text-white text-xs font-bold py-2 px-3 rounded-xl flex-row items-center justify-center).
+  - Background: `#ffffff`, bo góc lớn `rounded-3xl`, viền siêu mỏng `border border-gray-100`, shadow mềm mại.
+  - Header bài tin: Cờ `🇨🇳 GACC Trung Quốc` (text-blue-800 text-xs font-semibold) • Ngày `13/08/2026`.
+  - Tiêu đề: `"Siết chặt mức giới hạn MRL Cadmium đối với Sầu riêng tươi Việt Nam xuất khẩu"` (Text dark `#131b2e` font-bold text-base leading-snug my-2).
+  - Tag mức độ nghiêm trọng: Cảnh báo `TÁC ĐỘNG CAO` (bg-red-50 text-red-600 viền đỏ nhạt, text-xs font-bold px-2 py-1 rounded).
+  - Nút hành động chính: Có dải màu gradient `#00236f` sang `#003299`, bo góc `rounded-2xl`, chữ trắng `Rà soát mẫu test phòng lab`, có hiệu ứng Glow (phát sáng nhạt xung quanh).
 
-- **Thẻ 2 (Ví dụ Kiểm dịch thực vật EU)**:
-  - Background: `#111827`, border `#1F2937`, rounded-2xl, p-4, margin-bottom 12px.
-  - Header bài tin: Flag `🇪🇺 Liên minh Châu Âu` • Ngày `10/08/2026`.
-  - Tiêu đề: `"Bổ sung tần suất kiểm tra chứng thư Phytosanitary tại cảng nhập khẩu EU"`.
-  - Thông tin trích dẫn: `EU Reg 2026/912`.
-  - Tag mức độ nghiêm trọng: Badge Vàng `TRUNG BÌNH` (bg-amber-500/20 text-amber-400 text-xs font-bold).
-  - Nút hành động chính: Button Slate `Xem hướng dẫn kiểm dịch` (bg-slate-800 text-slate-200 text-xs font-medium py-2 px-3 rounded-xl).
-
-#### E. Navigation Bar Bottom (Thanh điều hướng dưới)
-- Tab 1 (`Radar`): Icon Radar/Shield màu Xanh `#10B981`, Text `#10B981` Font-bold (Active).
-- Tab 2 (`Quét Hồ Sơ`): Icon Camera màu Xám `#6B7280`, Text `#6B7280`.
-- Tab 3 (`Lô Hàng`): Icon Package/Boxes màu Xám `#6B7280`, Text `#6B7280`.
+#### E. Navigation Bar Bottom (Thanh điều hướng dưới 4 Tabs)
+Sử dụng Bottom Tab Navigation bar bo góc mượt, có đổ bóng nổi phía trên:
+- Tab 1 (`Radar`): Icon Shield màu Blue `#00236f`, Text `#00236f` (Active).
+- Tab 2 (`Scan`): Icon Camera màu Xám `#757682`, Text `#757682`.
+- Tab 3 (`Lô Hàng`): Icon Package/Boxes màu Xám `#757682`, Text `#757682`.
+- Tab 4 (`Cá nhân`): Icon User màu Xám `#757682`, Text `#757682`.
 
 ---
 
 ### 2. Tích hợp API Backend Express
 - Gọi API `GET http://<BACKEND_URL>/api/legal-updates`
 - Lọc theo `market` (CHINA, EU) và `status` (PUBLISHED).
-- Mapping dữ liệu response `{ data: [ { id, title, summary, market, severity, citation, createdAt } ] }`.
+- Thêm loading state (Skeleton loader mượt mà).
 ```

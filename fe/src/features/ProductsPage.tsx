@@ -11,46 +11,46 @@ export default function ProductsPage() {
   const products = [
     { 
       id: "PRD-001", 
-      batchId: "COFFEE-2024-889",
-      name: "Cà phê Robusta (Sơ chế ướt)", 
-      category: "Cà phê nhân", 
-      origin: "Đắk Lắk, Việt Nam",
-      markets: ["EU (Đức)", "Nhật Bản"], 
+      batchId: "DURIAN-2024-889",
+      name: "Sầu riêng Ri6 Tươi (Loại A)", 
+      category: "Sầu riêng tươi (HS 0810.60.00)", 
+      origin: "Đắk Lắk (Mã PUC: VN-DLOR-0128)",
+      markets: ["Trung Quốc (GACC)"], 
       lastChecked: "28/10/2024", 
       status: "Sẵn sàng xuất khẩu",
       statusType: "success" 
     },
     { 
       id: "PRD-002", 
-      batchId: "COFFEE-2024-912",
-      name: "Cà phê Arabica Cầu Đất Special", 
-      category: "Cà phê đặc sản", 
-      origin: "Lâm Đồng, Việt Nam",
-      markets: ["Mỹ (FDA)", "EU"], 
+      batchId: "DURIAN-2024-912",
+      name: "Sầu riêng Monthong Dona (Cơm vàng)", 
+      category: "Sầu riêng tươi (HS 0810.60.00)", 
+      origin: "Tiền Giang (Mã PUC: VN-TGOR-0095)",
+      markets: ["Trung Quốc (GACC)"], 
       lastChecked: "26/10/2024", 
-      status: "Cần rà soát MRL",
+      status: "Cần rà soát Cadmium",
       statusType: "error" 
     },
     { 
       id: "PRD-003", 
-      batchId: "RICE-2024-301",
-      name: "Gạo ST25 Hữu cơ Xuất khẩu", 
-      category: "Nông sản hữu cơ", 
-      origin: "Sóc Trăng, Việt Nam",
-      markets: ["EU"], 
+      batchId: "DURIAN-2024-301",
+      name: "Sầu riêng Ri6 Cắt Già", 
+      category: "Sầu riêng tươi (HS 0810.60.00)", 
+      origin: "Bến Tre (Mã PUC: VN-BTOR-0042)",
+      markets: ["Trung Quốc (GACC)"], 
       lastChecked: "25/10/2024", 
       status: "Sẵn sàng xuất khẩu",
       statusType: "success" 
     },
     { 
       id: "PRD-004", 
-      batchId: "PEPPER-2024-104",
-      name: "Hạt tiêu đen Chư Sê Nguyên hạt", 
-      category: "Gia vị", 
-      origin: "Gia Lai, Việt Nam",
-      markets: ["Trung Quốc", "Mỹ"], 
+      batchId: "DURIAN-2024-104",
+      name: "Sầu riêng Musang King Việt Nam", 
+      category: "Sầu riêng đặc sản", 
+      origin: "Lâm Đồng (Mã PUC: VN-LDOR-0019)",
+      markets: ["Trung Quốc (GACC)"], 
       lastChecked: "20/10/2024", 
-      status: "Đang kiểm tra AI",
+      status: "Đang thẩm định AI",
       statusType: "warning" 
     },
   ];
@@ -91,7 +91,7 @@ export default function ProductsPage() {
           <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#434653] text-base">search</span>
           <input 
             type="text" 
-            placeholder="Tìm kiếm sản phẩm, mã Lô hàng (vd: COFFEE-2024-889)..." 
+            placeholder="Tìm kiếm sản phẩm, mã Lô hàng (vd: DURIAN-2024-889)..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-9 pr-4 py-2 bg-[#f7f9fb] border border-[#c3c6d5] rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#00327d] text-[#191c1e]"

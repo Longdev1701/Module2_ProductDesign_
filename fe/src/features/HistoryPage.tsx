@@ -11,10 +11,10 @@ export default function HistoryPage() {
   type BadgeVariant = "default" | "destructive" | "secondary";
 
   const tableData = [
-    { id: "#LOT-VN-2023-001", product: "Gạo ST25 (Xuất khẩu)", market: "Liên minh Châu Âu", date: "12/10/2023 09:45", status: "ĐẠT", statusType: "default", iconColor: "bg-primary" },
-    { id: "#LOT-VN-2023-004", product: "Cà phê Robusta", market: "Hoa Kỳ (FDA)", date: "11/10/2023 14:20", status: "KHÔNG ĐẠT", statusType: "destructive", iconColor: "bg-secondary-container" },
-    { id: "#LOT-VN-2023-009", product: "Thanh Long Ruột Đỏ", market: "Nhật Bản (JAS)", date: "10/10/2023 11:30", status: "ĐANG CHỜ", statusType: "secondary", iconColor: "bg-surface-container-high" },
-    { id: "#LOT-VN-2023-012", product: "Gạo Nàng Hoa", market: "Liên minh Châu Âu", date: "09/10/2023 16:05", status: "ĐẠT", statusType: "default", iconColor: "bg-primary" },
+    { id: "#LOT-VN-2024-001", product: "Sầu riêng Ri6 Tươi (Loại A)", market: "Trung Quốc (GACC)", date: "24/10/2024 09:45", status: "ĐẠT", statusType: "default", iconColor: "bg-primary" },
+    { id: "#LOT-VN-2024-004", product: "Sầu riêng Monthong Dona", market: "Trung Quốc (GACC)", date: "21/10/2024 14:20", status: "KHÔNG ĐẠT", statusType: "destructive", iconColor: "bg-secondary-container" },
+    { id: "#LOT-VN-2024-009", product: "Sầu riêng Ri6 Cắt Già", market: "Trung Quốc (GACC)", date: "18/10/2024 11:30", status: "ĐANG CHỜ", statusType: "secondary", iconColor: "bg-surface-container-high" },
+    { id: "#LOT-VN-2024-012", product: "Sầu riêng Musang King VN", market: "Trung Quốc (GACC)", date: "15/10/2024 16:05", status: "ĐẠT", statusType: "default", iconColor: "bg-primary" },
   ];
 
   return (
@@ -137,7 +137,7 @@ export default function HistoryPage() {
           <div className="relative z-10">
             <h2 className="font-serif text-2xl font-semibold mb-4">Tóm tắt hiệu suất tuân thủ</h2>
             <p className="text-on-primary-container text-lg max-w-xl mb-12">
-              Trong tháng này, tỉ lệ tuân thủ của bạn đã tăng 12% so với tháng trước. 85% lô hàng đạt chuẩn EU và 92% đạt chuẩn FDA Hoa Kỳ.
+              Trong tháng này, tỉ lệ tuân thủ của bạn đạt 94.2%. 96% lô hàng sầu riêng tươi đạt chuẩn kiểm soát Cadmium GB 2762 và kiểm dịch thực vật GACC.
             </p>
             <div className="flex items-end gap-4">
               <div className="text-6xl font-serif font-bold tracking-tight">94.2%</div>
@@ -156,15 +156,15 @@ export default function HistoryPage() {
             <div className="flex gap-4 rounded bg-error-container p-4 border border-red-200">
               <AlertCircle className="h-5 w-5 text-error shrink-0" />
               <div>
-                <h4 className="font-semibold text-error mb-1 text-sm">Quy định EU mới</h4>
-                <p className="text-sm text-on-error-container">Thay đổi giới hạn thuốc trừ sâu cho Gạo ST25.</p>
+                <h4 className="font-semibold text-error mb-1 text-sm">Cảnh báo GACC Trung Quốc</h4>
+                <p className="text-sm text-on-error-container">Siết chặt kiểm tra chỉ tiêu Cadmium (≤ 0.05 mg/kg) tại cửa khẩu Hữu Nghị &amp; Tân Thanh.</p>
               </div>
             </div>
             <div className="flex gap-4 rounded bg-surface-container-high p-4 border border-outline-variant">
               <RefreshCw className="h-5 w-5 text-primary shrink-0" />
               <div>
-                <h4 className="font-semibold text-primary mb-1 text-sm">Cập nhật hồ sơ</h4>
-                <p className="text-sm text-on-surface-variant">Chứng chỉ JAS Nhật Bản sẽ hết hạn sau 15 ngày.</p>
+                <h4 className="font-semibold text-primary mb-1 text-sm">Gia hạn Mã số Vùng trồng (PUC)</h4>
+                <p className="text-sm text-on-surface-variant">Mã PUC VN-DLOR-0128 cần nộp hồ sơ giám sát định kỳ trước 15 ngày.</p>
               </div>
             </div>
           </CardContent>

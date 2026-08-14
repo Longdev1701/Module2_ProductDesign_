@@ -14,10 +14,10 @@ export default function ProductDetailPage() {
   // Mock data for the specific product
   const product = {
     id: id?.toUpperCase() || "PRD-001",
-    name: "Cà phê Robusta (Sơ chế ướt)",
-    category: "Cà phê",
-    markets: ["EU", "Nhật Bản", "USA"],
-    description: "Cà phê nhân xanh Robusta, chế biến ướt, độ ẩm tối đa 12.5%. Trồng tại Đắk Lắk.",
+    name: "Sầu riêng Ri6 Tươi (Xuất khẩu Loại A)",
+    category: "Sầu riêng tươi",
+    markets: ["Trung Quốc (GACC)"],
+    description: "Sầu riêng Ri6 tươi loại A xuất khẩu chính ngạch sang Trung Quốc, quy cách thùng 15kg, truy xuất nguồn gốc mã PUC & PHC được Hải quan Trung Quốc GACC cấp phép.",
     status: "Sẵn sàng",
   };
 
@@ -62,8 +62,8 @@ export default function ProductDetailPage() {
                 <p className="font-semibold text-on-surface">{product.category}</p>
               </div>
               <div>
-                <p className="text-xs font-mono text-outline uppercase mb-1">HS Code (Đề xuất)</p>
-                <p className="font-semibold text-on-surface">0901.11.10</p>
+                <p className="text-xs font-mono text-outline uppercase mb-1">HS Code (Chính thức)</p>
+                <p className="font-semibold text-on-surface">0810.60.00</p>
               </div>
               <div>
                 <p className="text-xs font-mono text-outline uppercase mb-1">Trạng thái hồ sơ</p>
@@ -87,38 +87,42 @@ export default function ProductDetailPage() {
               <div className="divide-y divide-outline-variant">
                 <div className="p-6 flex flex-col md:flex-row gap-6 hover:bg-surface-container-lowest transition-colors">
                   <div className="md:w-1/3">
-                    <h4 className="font-bold text-on-surface mb-1">Dư lượng MRL (EU)</h4>
-                    <p className="text-xs text-on-surface-variant">Quy định (EC) 396/2005</p>
+                    <h4 className="font-bold text-on-surface mb-1">Chỉ tiêu Kim loại nặng (GACC)</h4>
+                    <p className="text-xs text-on-surface-variant">Tiêu chuẩn GB 2762-2022</p>
                   </div>
                   <div className="md:w-2/3 space-y-3">
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-on-surface-variant">Chlorpyrifos</span>
-                      <span className="font-mono font-semibold">≤ 0.01 mg/kg</span>
+                      <span className="text-on-surface-variant">Cadmium (Cd) trong sầu riêng</span>
+                      <span className="font-mono font-semibold text-emerald-600">≤ 0.05 mg/kg</span>
                     </div>
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-on-surface-variant">Glyphosate</span>
+                      <span className="text-on-surface-variant">Chì (Lead - Pb)</span>
                       <span className="font-mono font-semibold">≤ 0.1 mg/kg</span>
                     </div>
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-on-surface-variant">Ochratoxin A (OTA)</span>
-                      <span className="font-mono font-semibold">≤ 5.0 µg/kg</span>
+                      <span className="text-on-surface-variant">Chlorpyrifos (Dư lượng BVTV)</span>
+                      <span className="font-mono font-semibold">≤ 0.01 mg/kg</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="p-6 flex flex-col md:flex-row gap-6 hover:bg-surface-container-lowest transition-colors">
                   <div className="md:w-1/3">
-                    <h4 className="font-bold text-on-surface mb-1">Bao bì & Nhãn (FDA)</h4>
-                    <p className="text-xs text-on-surface-variant">FSMA & 21 CFR 101</p>
+                    <h4 className="font-bold text-on-surface mb-1">Mã định danh &amp; Chứng thư</h4>
+                    <p className="text-xs text-on-surface-variant">Nghị định thư GACC 2022</p>
                   </div>
                   <div className="md:w-2/3 space-y-3">
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-on-surface-variant">Bảng thông tin dinh dưỡng</span>
-                      <Badge variant="outline" className="text-[10px]">Bắt buộc</Badge>
+                      <span className="text-on-surface-variant">Mã số vùng trồng (PUC)</span>
+                      <Badge variant="outline" className="text-[10px]">Bắt buộc (GACC cấp)</Badge>
                     </div>
                     <div className="flex justify-between items-center text-sm">
-                      <span className="text-on-surface-variant">Cảnh báo dị ứng (Allergen)</span>
-                      <Badge variant="outline" className="text-[10px]">Bắt buộc</Badge>
+                      <span className="text-on-surface-variant">Mã cơ sở đóng gói (PHC)</span>
+                      <Badge variant="outline" className="text-[10px]">Bắt buộc (GACC cấp)</Badge>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-on-surface-variant">Chứng thư kiểm dịch TV (Phyto)</span>
+                      <Badge variant="outline" className="text-[10px]">Bắt buộc (Cục BVTV)</Badge>
                     </div>
                   </div>
                 </div>

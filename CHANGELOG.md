@@ -9,6 +9,15 @@ Tất cả các thay đổi quan trọng của dự án **Themis LexiGuard** s�
 ## [Unreleased]
 
 ### Added
+- **Chuẩn hóa toàn diện 100% phạm vi MVP sang Sầu riêng tươi xuất khẩu Trung Quốc (Hải quan GACC — Mã HS: 0810.60.00)**:
+  - Cập nhật toàn bộ giao diện Frontend (`fe/src/features/ProductsPage.tsx`, `ProductDetailPage.tsx`, `NewCheckPage.tsx`, `ReportPage.tsx`, `HistoryPage.tsx`):
+    - Đổi tất cả danh mục, mã lô sản phẩm sang Sầu riêng Ri6, Sầu riêng Monthong Dona, Sầu riêng Chín Hóa, Musang King (`DURIAN-2024-889`, `DURIAN-2024-912`, v.v.).
+    - Chuẩn hóa bộ tiêu chuẩn kỹ thuật: Chỉ tiêu kim loại nặng Cadmium GB 2762-2022 (ngưỡng tối đa $\le 0.05\text{ mg/kg}$), Mã số vùng trồng (PUC), Mã cơ sở đóng gói (PHC) phê duyệt bởi GACC và Chứng thư kiểm dịch thực vật (Phytosanitary).
+  - Cập nhật tài liệu kỹ thuật & System Prompt di động (`README.md`, `docs/mobile-prompts/EXPO_MASTER_PROMPT.md`) tập trung duy nhất vào bài toán Sầu riêng tươi xuất khẩu Trung Quốc.
+- Hoàn thành thiết kế lại (Redesign) toàn bộ hệ thống file prompt cho Themis LexiGuard Mobile (`docs/mobile-prompts/`):
+  - Áp dụng phong cách Premium Design: Glassmorphism, Linear Gradients, Soft Shadows và Micro-animations.
+  - Bổ sung cấu trúc 4 Tabs Bottom Navigation, bao gồm tính năng Quản lý Cá nhân (`PROMPT_TAB4_ACCOUNT.md`).
+  - Cập nhật System Prompt (`EXPO_MASTER_PROMPT.md`) tích hợp đầy đủ Design Tokens mới.
 - Bổ sung bộ tài nguyên thiết kế UI 1:1 và tập tin Prompt chuẩn cho ứng dụng **Themis LexiGuard Mobile** (Expo SDK 51+):
   - Khởi tạo thư mục `docs/mobile-prompts/` lưu trữ 3 hình ảnh thiết kế UI mẫu: `tab1_legal_radar.jpg`, `tab2_field_scan.jpg`, `tab3_batch_tracker.jpg`.
   - Bổ sung `EXPO_MASTER_PROMPT.md` chứa System Prompt chuẩn (Design Tokens, Expo Router structure, API mapping).

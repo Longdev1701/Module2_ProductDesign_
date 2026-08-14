@@ -9,19 +9,20 @@
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38BDF8?logo=tailwind-css)
 
 > **"Biến rào cản pháp lý thành lợi thế cạnh tranh xuất khẩu"**  
-> **Themis LexiGuard** là nền tảng AI hỗ trợ doanh nghiệp xuất khẩu nông sản (MVP: Cà phê xuất khẩu sang thị trường Liên minh Châu Âu - EU) tự động hóa quá trình kiểm tra tuân thủ pháp lý, thẩm định chứng từ, phát hiện rủi ro sớm và trích dẫn điều khoản luật có căn cứ.
+> **Themis LexiGuard** là nền tảng AI hỗ trợ doanh nghiệp xuất khẩu nông sản (MVP: **Sầu riêng tươi xuất khẩu sang thị trường Trung Quốc theo Nghị định thư Hải quan GACC — Mã HS: 0810.60.00**) tự động hóa quá trình kiểm tra tuân thủ pháp lý, thẩm định chứng từ, phát hiện rủi ro sớm và trích dẫn điều khoản luật có căn cứ.
 
 ---
 
 ## 📖 Câu Chuyện & Bối Cảnh Dự Án (Our Story)
 
-Việt Nam tự hào là một trong những quốc gia xuất khẩu nông sản hàng đầu thế giới, trong đó **Cà phê** là mặt hàng chiến lược đóng góp hàng tỷ USD cho kim ngạch xuất khẩu quốc gia. Tuy nhiên, khi muốn vươn ra và bám trụ bền vững tại thị trường tiêu chuẩn cao như **Liên minh Châu Âu (EU)**, các doanh nghiệp xuất khẩu Việt Nam phải đối mặt với một "trận đồ" quy định pháp lý vô cùng phức tạp, khắt khe và biến động liên tục:
+Việt Nam tự hào là một trong những quốc gia xuất khẩu nông sản hàng đầu thế giới, trong đó **Sầu riêng tươi** là mặt hàng trái cây "tỷ đô" tăng trưởng bùng nổ, đóng góp lớn cho kim ngạch xuất khẩu quốc gia sang thị trường **Trung Quốc (Tổng cục Hải quan GACC)**. Tuy nhiên, để xuất khẩu chính ngạch và thông quan thuận lợi, các doanh nghiệp xuất khẩu Việt Nam phải đối mặt với một loạt quy định pháp lý và tiêu chuẩn an toàn thực phẩm khắt khe:
 
-- 🌲 **Quy định chống mất rừng (EUDR - Regulation (EU) 2023/1115):** Yêu cầu doanh nghiệp cung cấp dữ liệu định vị địa lý GPS từng định thửa vùng trồng, chứng minh cà phê không sản xuất trên đất phá rừng sau mốc 31/12/2020.
-- 🧪 **Giới hạn dư lượng tối đa (EU MRL):** Kiểm soát gắt gao hàng trăm hoạt chất bảo vệ thực vật (pesticides), độc tố vi nấm (Ochratoxin A), kim loại nặng với ngưỡng Cho phép (Threshold Limits) siêu nhỏ.
-- 📄 **Hồ sơ & Chứng từ truy xuất:** Chứng nhận kiểm dịch thực vật (Phyto), Chứng nhận xuất xứ (CO/CQ), tiêu chuẩn vật liệu tiếp xúc thực phẩm và quy định ghi nhãn sản phẩm của EU.
+- 🧪 **Giới hạn Kim loại nặng Cadmium (GB 2762-2022) & Dư lượng BVTV (GB 2763-2021):** Kiểm soát nghiêm ngặt hàm lượng Cadmium trong quả sầu riêng không vượt quá ngưỡng tối đa cho phép **0.05 mg/kg**.
+- 🏷️ **Mã số Vùng trồng (PUC) & Cơ sở Đóng gói (PHC):** 100% lô hàng bắt buộc phải xuất phát từ các vùng trồng và xưởng đóng gói được Hải quan Trung Quốc (GACC) phê duyệt mã định danh và còn hiệu lực.
+- 📄 **Giấy chứng nhận Kiểm dịch thực vật (Phytosanitary Certificate):** Cấp bởi Cục Bảo vệ Thực vật Việt Nam, xác nhận lô hàng không nhiễm các đối tượng sinh vật gây hại (ruồi đục quả, rệp sáp, sâu đục cuống) thuộc diện kiểm dịch của phía Trung Quốc.
+- 📦 **Quy chuẩn ghi nhãn & Bao bì thùng carton (15kg):** In đầy đủ thông tin song ngữ (hoặc tiếng Trung), tên loại sầu riêng, mã PUC, mã PHC theo đúng Điều 7 Nghị định thư.
 
-Một sai sót nhỏ trong hồ sơ chứng từ hoặc một chỉ tiêu MRL vượt ngưỡng Cho phép có thể dẫn đến hậu quả thảm khốc: **Toàn bộ lô hàng cà phê bị trả về, tịch thu hoặc tiêu hủy tại cảng EU, chịu phạt hợp đồng nặng nề và làm tổn hại nghiêm trọng đến uy tín thương hiệu nông sản Việt Nam.**
+Một sai sót nhỏ trong hồ sơ chứng từ hoặc một chỉ tiêu Cadmium vượt ngưỡng có thể dẫn đến hậu quả nghiêm trọng: **Toàn bộ container sầu riêng bị tạm giữ tại cửa khẩu, bị trả về, tiêu hủy hoặc bị thu hồi mã vùng trồng, gây thiệt hại tài chính hàng trăm triệu đến hàng tỷ đồng mỗi lô hàng.**
 
 ---
 

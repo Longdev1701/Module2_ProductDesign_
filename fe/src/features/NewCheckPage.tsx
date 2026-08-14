@@ -63,13 +63,13 @@ export default function NewCheckPage() {
         text: 'Tôi đã phân tích xong hợp đồng. Dưới đây là kết quả đánh giá rủi ro pháp lý chi tiết:',
         time: '10:32 AM',
         report: {
-          title: 'Báo cáo Rủi ro Phân phối - Nghị định EUDR & Thương mại 2024',
+          title: 'Báo cáo Thẩm định Tuân thủ Sầu riêng — GACC Trung Quốc',
           items: [
-            { status: 'error', text: 'Điều khoản bồi thường (Mục 4.2) không tuân thủ Nghị định mới về giới hạn trách nhiệm.' },
-            { status: 'success', text: 'Quy định về giải quyết tranh chấp trọng tài hợp lệ.' },
-            { status: 'warning', text: 'Cần bổ sung phụ lục kê khai minh bạch nguồn gốc vùng trồng cà phê.' }
+            { status: 'error', text: 'Chỉ tiêu Cadmium (0.07 mg/kg) vượt mức tối đa GB 2762-2022 của GACC (≤ 0.05 mg/kg).' },
+            { status: 'success', text: 'Mã số vùng trồng (PUC: VN-DLOR-0128) hợp lệ trong danh mục GACC phê duyệt.' },
+            { status: 'warning', text: 'Cần bổ sung Giấy chứng nhận kiểm dịch thực vật (Phytosanitary) của Cục BVTV.' }
           ],
-          pdfName: 'Bao_cao_danh_gia_rui_ro_hop_dong.pdf'
+          pdfName: 'Bao_cao_tham_dinh_sau_rieng_GACC.pdf'
         }
       }
     ];
@@ -264,18 +264,18 @@ export default function NewCheckPage() {
                 }}
                 className="px-3 py-1.5 bg-[#d2e0fe]/50 border border-[#00327d]/30 text-[#00327d] font-bold rounded-lg focus:outline-none cursor-pointer"
               >
-                <option value="">📦 Chọn Lô hàng để phân tích...</option>
-                <option value="Cà phê Robusta (Lô COFFEE-2024-889)">☕ Cà phê Robusta (Lô COFFEE-2024-889)</option>
-                <option value="Cà phê Arabica Cầu Đất (Lô COFFEE-2024-912)">☕ Cà phê Arabica Cầu Đất (Lô COFFEE-2024-912)</option>
-                <option value="Gạo ST25 Hữu cơ (Lô RICE-2024-301)">🌾 Gạo ST25 Hữu cơ (Lô RICE-2024-301)</option>
-                <option value="Hạt tiêu đen Chư Sê (Lô PEPPER-2024-104)">🌱 Hạt tiêu đen Chư Sê (Lô PEPPER-2024-104)</option>
+                <option value="">📦 Chọn Lô Sầu riêng để phân tích...</option>
+                <option value="Sầu riêng Ri6 (Lô DURIAN-2024-889)">🍈 Sầu riêng Ri6 (Lô DURIAN-2024-889)</option>
+                <option value="Sầu riêng Monthong Dona (Lô DURIAN-2024-912)">🍈 Sầu riêng Monthong Dona (Lô DURIAN-2024-912)</option>
+                <option value="Sầu riêng Ri6 Cắt Già (Lô DURIAN-2024-301)">🍈 Sầu riêng Ri6 Cắt Già (Lô DURIAN-2024-301)</option>
+                <option value="Sầu riêng Musang King (Lô DURIAN-2024-104)">🍈 Sầu riêng Musang King (Lô DURIAN-2024-104)</option>
               </select>
 
               <button 
-                onClick={() => handleSendMessage('Kiểm tra tuân thủ tiêu chuẩn EUDR mới nhất')}
+                onClick={() => handleSendMessage('Kiểm tra tuân thủ tiêu chuẩn GACC & mức Cadmium mới nhất')}
                 className="px-3 py-1.5 bg-[#eceef0] hover:bg-[#e6e8ea] text-[#191c1e] font-semibold rounded-lg border border-[#c3c6d5]/60 transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
               >
-                <span className="material-symbols-outlined text-sm text-[#00327d]">fact_check</span> Check EUDR
+                <span className="material-symbols-outlined text-sm text-[#00327d]">fact_check</span> Check GACC
               </button>
               <button 
                 onClick={() => handleSendMessage('So sánh điều khoản hợp đồng phân phối mẫu A & B')}
