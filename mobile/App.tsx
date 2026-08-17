@@ -2,10 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { StyleSheet, View, SafeAreaView, StatusBar } from 'react-native';
 import { AppHeader } from './src/components/Header';
 import { TabBar } from './src/components/TabBar';
-import { LegalRadarTab } from './src/screens/LegalRadarTab';
-import { FieldScanTab } from './src/screens/FieldScanTab';
-import { BatchTrackerTab } from './src/screens/BatchTrackerTab';
-import { AiAssistantTab } from './src/screens/AiAssistantTab';
+import { WebDashboardView } from './src/components/WebDashboardView';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<'radar' | 'scan' | 'tracker' | 'ai'>('radar');
@@ -14,19 +11,31 @@ export default function App() {
     setActiveTab(tab);
   }, []);
 
+  const getRoutePath = (tab: 'radar' | 'scan' | 'tracker' | 'ai') => {
+    switch (tab) {
+      case 'radar':
+        return '/dashboard';
+      case 'scan':
+        return '/vault';
+      case 'tracker':
+        return '/batches';
+      case 'ai':
+        return '/regulations';
+      default:
+        return '/dashboard';
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#00236f" />
+      <StatusBar barStyle="light-content" backgroundColor="#00143B" />
 
       {/* App Header */}
       <AppHeader />
 
-      {/* Main Content Body */}
+      {/* Main Content Body — 100% Direct Web App Integration */}
       <View style={styles.body}>
-        {activeTab === 'radar' && <LegalRadarTab />}
-        {activeTab === 'scan' && <FieldScanTab />}
-        {activeTab === 'tracker' && <BatchTrackerTab />}
-        {activeTab === 'ai' && <AiAssistantTab />}
+        <WebDashboardView routePath={getRoutePath(activeTab)} />
       </View>
 
       {/* Bottom Navigation Bar */}
@@ -38,10 +47,10 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#00236f',
+    backgroundColor: '#00143B',
   },
   body: {
     flex: 1,
-    backgroundColor: '#f7f9fb',
+    backgroundColor: '#FAF8FF',
   },
 });
