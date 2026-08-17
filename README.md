@@ -185,16 +185,11 @@ Hệ thống phân quyền nghiêm ngặt theo mô hình Organization:
 
 ```text
 Module2_ProductDesign_/
-├── fe/                         # Frontend Application (Next.js 15 App Router - Modular SRP Structure)
+├── fe/                         # Frontend Web App (Next.js 15 App Router)
 │   ├── src/
 │   │   ├── app/                # Next.js App Router (Next 15)
-│   │   │   ├── (auth)/         # Auth routes (/login, /reset-password)
-│   │   │   └── (dashboard)/    # Protected routes (/dashboard, /admin, /pending-access)
 │   │   ├── components/         # Shared UI Primitives (Button, Input, Layout)
-│   │   ├── features/           # Modular Feature Orchestrators (auth, admin, settings, etc.)
-│   │   │   ├── auth/           # Auth Feature (AuthBrandingPanel, LoginView, RegisterView, PendingAccessView)
-│   │   │   ├── settings/       # Settings Feature (ProfileSettingsTab, MemberSettingsTab, SecuritySettingsTab)
-│   │   │   └── products/       # Products & Batches feature modules
+│   │   ├── features/           # Modular Feature Orchestrators (dashboard, products, integrity, etc.)
 │   │   ├── lib/api.ts          # Central API Client with JWT Auth headers
 │   │   └── types/              # Shared TypeScript definitions & Zod schemas
 │   ├── public/                 # Static assets
@@ -210,15 +205,40 @@ Module2_ProductDesign_/
 │   │   └── index.ts            # Server Entry point
 │   └── package.json
 │
-├── docs/                       # Tài liệu thiết kế hệ thống
-│   ├── usecases/               # Phân rã chi tiết Use Cases (UC-00 tới UC-10)
-│   └── uml/                    # Sơ đồ PlantUML hệ thống (.uml)
+├── mobile/                     # Mobile Native App (React Native + Expo SDK 54)
+│   ├── src/
+│   │   ├── screens/            # 5 Screens (Dashboard, Products, Checks, Integrity, Settings)
+│   │   ├── components/         # Reusable UI Primitives (Card, KeyBadge, StatusBadge, Skeleton)
+│   │   └── lib/                # API Client (SecureStore, Bearer Token), Design Tokens Theme
+│   ├── docs/                   # Business & Technical Specifications (business.md, bug.md, technical.md)
+│   ├── App.tsx                 # Root React Navigation v7 Gate & Bottom Tabs
+│   └── app.json
+│
+├── docs/                       # Tài liệu thiết kế hệ thống & Screenshots
+│   ├── assets/screenshots/     # Ảnh chụp thực tế giao diện ứng dụng di động
+│   ├── keywords-glossary.md    # Từ điển thuật ngữ pháp lý GACC & 4 Khóa
+│   └── templates/              # Mẫu đặc tả nghiệp vụ & quản lý bug
 ├── .agents/                    # Master Agent Rules & Reference Docs
-│   └── ref/                    # Reference Documents (01-product.md -> 10-done.md)
 ├── AGENTS.md                   # Bộ Quy tắc Quản trị Hệ thống (Master System Rules)
 ├── CHANGELOG.md                # Lịch sử ghi vết thay đổi hệ thống
 └── README.md                   # Tài liệu hướng dẫn & Giới thiệu dự án (File này)
 ```
+
+---
+
+## 📱 Giao Diện Ứng Dụng Di Động Thực Tế (Mobile App Screenshots)
+
+| 1. Ra-da & Điều Hành | 2. Thêm Sản Phẩm & PUC | 3. Trợ Lý AI Navigator |
+| :---: | :---: | :---: |
+| <img src="docs/assets/screenshots/mobile_01_dashboard.jpg" width="250" alt="Ra-da & Dieu Hanh" /> | <img src="docs/assets/screenshots/mobile_02_add_product.jpg" width="250" alt="Them San Pham" /> | <img src="docs/assets/screenshots/mobile_03_ai_chat.jpg" width="250" alt="Tro Ly AI Navigator" /> |
+| **Ra-da Pháp Lý & Cảnh Báo Cadmium**<br>Ngưỡng GB 2762 $\le 0.05\text{ mg/kg}$, Hạn Phyto 14 ngày & Lưới KPI 2x2 | **Quản Lý Danh Mục Sản Phẩm**<br>Thêm sản phẩm, Mã HS GACC `0810.60.00`, Vùng trồng PUC | **Trợ Lý AI Thực Địa**<br>Hỏi đáp quy chuẩn GACC 2024, Lệnh 248/249, Cadmium GB 2762 |
+
+<br/>
+
+| 4. Giám Sát Liêm Chính SHA-256 | 5. Cài Đặt & Phân Quyền RBAC |
+| :---: | :---: |
+| <img src="docs/assets/screenshots/mobile_04_integrity.jpg" width="250" alt="Giam Sat Liem Chinh" /> | <img src="docs/assets/screenshots/mobile_05_settings.jpg" width="250" alt="Cai Dat & RBAC" /> |
+| **Bảo Vệ Toàn Vẹn 100% SHA-256**<br>Công cụ Verify mã băm tức thì & Dòng thời gian Audit Trail | **Hồ Sơ & Doanh Nghiệp**<br>Thông tin Doanh nghiệp XNK, Mã số thuế & Phân quyền Chủ sở hữu |
 
 ---
 
