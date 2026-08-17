@@ -38,7 +38,7 @@ export const AppHeader = React.memo(function AppHeader() {
     <View style={styles.headerContainer}>
       <View style={styles.leftGroup}>
         <View style={styles.logoBadge}>
-          <Text style={styles.logoSymbol}>⚖️</Text>
+          <Text style={styles.logoSymbol}>T</Text>
         </View>
         <View style={styles.titleColumn}>
           <View style={styles.pillBadge}>
@@ -89,9 +89,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   logoBadge: {
-    width: 42,
-    height: 42,
-    borderRadius: 14,
+    width: 40,
+    height: 40,
+    borderRadius: 12,
     backgroundColor: '#FFB800',
     borderWidth: 1.5,
     borderColor: '#FCD34D',
@@ -101,6 +101,8 @@ const styles = StyleSheet.create({
   },
   logoSymbol: {
     fontSize: 22,
+    fontWeight: 'bold',
+    color: '#00143B',
   },
   titleColumn: {
     flex: 1,
