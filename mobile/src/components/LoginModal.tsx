@@ -9,8 +9,8 @@ interface LoginModalProps {
 }
 
 export function LoginModal({ visible, onClose, onLoginSuccess }: LoginModalProps) {
-  const [email, setEmail] = useState('rochthi2006@gmail.com');
-  const [password, setPassword] = useState('Admin123@');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -31,7 +31,7 @@ export function LoginModal({ visible, onClose, onLoginSuccess }: LoginModalProps
       onClose();
     } catch (err: any) {
       setLoading(false);
-      setErrorMsg(err.message || 'Đăng nhập thất bại. Kiểm tra kết nối mạng.');
+      setErrorMsg(err.message || 'Đăng nhập thất bại. Kiểm tra lại thông tin.');
     }
   };
 
@@ -59,7 +59,8 @@ export function LoginModal({ visible, onClose, onLoginSuccess }: LoginModalProps
               style={styles.input}
               value={email}
               onChangeText={setEmail}
-              placeholder="VD: user@company.com"
+              placeholder="Nhập email tài khoản (VD: user@company.com)"
+              placeholderTextColor="#94A3B8"
               keyboardType="email-address"
               autoCapitalize="none"
             />
@@ -71,7 +72,8 @@ export function LoginModal({ visible, onClose, onLoginSuccess }: LoginModalProps
               style={styles.input}
               value={password}
               onChangeText={setPassword}
-              placeholder="••••••••"
+              placeholder="Nhập mật khẩu"
+              placeholderTextColor="#94A3B8"
               secureTextEntry={true}
             />
           </View>
