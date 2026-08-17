@@ -1,10 +1,7 @@
 /**
  * Themis LexiGuard Mobile — Production-Real Auth Manager
  * 100% Real Authentication with Supabase JWT & Express Backend
- * ZERO Hardcoded Presets or Fakes
  */
-
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001/api';
 const AUTH_KEY = 'themis_mobile_auth_session';
@@ -17,6 +14,31 @@ export interface MobileUserSession {
   role: string;
   organizationId: string;
   organizationName: string;
+}
+
+let inMemoryStorage: Record<string, string> = {};
+
+async function storageGet(key: string): Promise<string | null> {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    return window.localStorage.getItem(key);
+  }
+  return inMemoryStorage[key] || null;
+}
+
+async function storageSet(key: string, value: string): Promise<void> {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    window.localStorage.setItem(key, value);
+  } else {
+    inMemoryStorage[key] = value;
+  }
+}
+
+async function storageRemove(key: string): Promise<void> {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    window.localStorage.removeItem(key);
+  } else {
+    delete inMemoryStorage[key];
+  }
 }
 
 export async function loginWithBackend(email: string, password: string): Promise<MobileUserSession> {
@@ -51,28 +73,28 @@ export async function loginWithBackend(email: string, password: string): Promise
 
 export async function getMobileSession(): Promise<MobileUserSession | null> {
   try {
-    const raw = await AsyncStorage.getItem(AUTH_KEY);
+    const raw = await storageGet(AUTH_KEY);
     if (raw) {
       return JSON.parse(raw);
     }
   } catch (err) {
-    console.warn('Failed to read AsyncStorage auth session:', err);
+    console.warn('Failed to read auth session:', err);
   }
   return null;
 }
 
 export async function setMobileSession(session: MobileUserSession): Promise<void> {
   try {
-    await AsyncStorage.setItem(AUTH_KEY, JSON.stringify(session));
+    await storageSet(AUTH_KEY, JSON.stringify(session));
   } catch (err) {
-    console.error('Failed to save AsyncStorage auth session:', err);
+    console.error('Failed to save auth session:', err);
   }
 }
 
 export async function clearMobileSession(): Promise<void> {
   try {
-    await AsyncStorage.removeItem(AUTH_KEY);
+    await storageRemove(AUTH_KEY);
   } catch (err) {
-    console.error('Failed to clear AsyncStorage auth session:', err);
+    console.error('Failed to clear auth session:', err);
   }
 }
