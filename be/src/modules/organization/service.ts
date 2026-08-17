@@ -2,6 +2,7 @@ import { prisma } from '../../lib/prisma';
 import { CreateOrganizationInput, UpdateOrganizationInput, InviteMemberInput, JoinOrganizationInput } from './schema';
 import { OrganizationRole } from '@prisma/client';
 import { createAuditLog } from '../../services/auditLogService';
+import { ApiError } from '../../lib/api-error';
 import crypto from 'crypto';
 
 export class OrganizationService {
@@ -219,4 +220,96 @@ export class OrganizationService {
 
     return member;
   }
+
+  static async updateMemberRole(
+    orgId: string,
+    operatorUserId: string,
+    memberId: string,
+    newRole: OrganizationRole,
+    ipAddress?: string
+  ) {
+    const member = await prisma.organizationMember.findFirst({
+      where: { id: memberId, organizationId: orgId },
+    });
+
+    if (!member) {
+      throw new ApiError(404, 'NOT_FOUND', 'Không tìm thấy thành viên trong tổ chức');
+    }
+
+    if (member.role === OrganizationRole.OWNER && newRole !== OrganizationRole.OWNER) {
+      const ownerCount = await prisma.organizationMember.count({
+        where: { organizationId: orgId, role: OrganizationRole.OWNER, status: 'ACTIVE' },
+      });
+      if (ownerCount <= 1) {
+        throw new ApiError(400, 'BAD_REQUEST', 'Không thể hạ quyền Chủ sở hữu duy nhất của tổ chức');
+      }
+    }
+
+    const updated = await prisma.organizationMember.update({
+      where: { id: memberId },
+      data: { role: newRole },
+      include: {
+        profile: {
+          select: {
+            id: true,
+            fullName: true,
+            email: true,
+            jobTitle: true,
+            avatarUrl: true,
+          },
+        },
+      },
+    });
+
+    await createAuditLog({
+      userId: operatorUserId,
+      action: 'org.member_role_changed',
+      entity: 'OrganizationMember',
+      entityId: memberId,
+      metadata: { targetUserId: member.userId, oldRole: member.role, newRole, orgId },
+      ipAddress,
+    });
+
+    return updated;
+  }
+
+  static async removeMember(
+    orgId: string,
+    operatorUserId: string,
+    memberId: string,
+    ipAddress?: string
+  ) {
+    const member = await prisma.organizationMember.findFirst({
+      where: { id: memberId, organizationId: orgId },
+    });
+
+    if (!member) {
+      throw new ApiError(404, 'NOT_FOUND', 'Không tìm thấy thành viên trong tổ chức');
+    }
+
+    if (member.role === OrganizationRole.OWNER) {
+      const ownerCount = await prisma.organizationMember.count({
+        where: { organizationId: orgId, role: OrganizationRole.OWNER, status: 'ACTIVE' },
+      });
+      if (ownerCount <= 1) {
+        throw new ApiError(400, 'BAD_REQUEST', 'Không thể xóa Chủ sở hữu (Owner) duy nhất của tổ chức');
+      }
+    }
+
+    await prisma.organizationMember.delete({
+      where: { id: memberId },
+    });
+
+    await createAuditLog({
+      userId: operatorUserId,
+      action: 'org.member_removed',
+      entity: 'OrganizationMember',
+      entityId: memberId,
+      metadata: { removedUserId: member.userId, orgId },
+      ipAddress,
+    });
+
+    return { success: true, removedMemberId: memberId };
+  }
 }
+
