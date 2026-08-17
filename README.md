@@ -73,13 +73,14 @@ Qua khảo sát thực tế, quy trình kiểm tra và quản lý tuân thủ th
 
 ```mermaid
 graph TD
-    subgraph Client Layer ["Client Layer (Frontend)"]
+    subgraph ClientLayer ["Client Layer (Frontend & Mobile)"]
         UI["Next.js 15 App Router (fe/)"]
+        MOB["Expo React Native (mobile/)"]
         Form["React Hook Form + Zod"]
         State["Server State API Client"]
     end
 
-    subgraph Service Layer ["Service Layer (Backend API & Middleware)"]
+    subgraph ServiceLayer ["Service Layer (Backend API & Middleware)"]
         API["Express.js Server (be/)"]
         AuthM["Supabase JWT Auth Middleware"]
         RBACM["Organization RBAC Middleware"]
@@ -87,19 +88,19 @@ graph TD
         Ctrl["Domain Controllers"]
     end
 
-    subgraph Intelligence Engine ["Intelligence Engine"]
+    subgraph IntelligenceEngine ["Intelligence Engine"]
         RE["Deterministic Rule Engine\n(MRL limits, Doc expiry, Code match)"]
         RAG["RAG Engine (pgvector)"]
         AI["Google Gemini 2.4 API"]
     end
 
-    subgraph Data & Storage ["Data & Storage Layer"]
+    subgraph DataStorage ["Data & Storage Layer"]
         DB[(Supabase PostgreSQL)]
         Prisma["Prisma ORM"]
         Audit["Append-Only Audit Log"]
     end
 
-    subgraph Background Workers ["Background Workers (be/src/jobs/)"]
+    subgraph WorkerLayer ["Background Workers (be/src/jobs/)"]
         J1["Legal Sync Worker"]
         J2["Doc Extraction Worker"]
         J3["AI Compliance Worker"]
@@ -107,12 +108,14 @@ graph TD
     end
 
     UI -->|HTTPS / REST API| API
+    MOB -->|HTTPS / REST API| API
     API --> AuthM --> RBACM --> ValM --> Ctrl
-    Ctrl --> RE & RAG
+    Ctrl --> RE
+    Ctrl --> RAG
     RAG --> AI
     Ctrl --> Prisma --> DB
     Ctrl --> Audit
-    Background Workers --> DB
+    J1 & J2 & J3 & J4 --> DB
 ```
 
 ---
