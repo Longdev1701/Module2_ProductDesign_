@@ -1,27 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
-import { getMobileSession, setMobileSession, PRESET_ACCOUNTS, MobileUserSession } from '../auth/authManager';
+import { getMobileSession, clearMobileSession, MobileUserSession } from '../auth/authManager';
+import { LoginModal } from './LoginModal';
 
 export const AppHeader = React.memo(function AppHeader() {
   const [session, setSession] = useState<MobileUserSession | null>(null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
     getMobileSession().then(setSession);
   }, []);
 
-  const handleAccountSwitch = () => {
-    Alert.alert(
-      'Chuyển Đổi Tài Khoản Thực Địa',
-      `Tài khoản hiện tại: ${session?.fullName || 'Cán bộ KCS'}\n\nChọn vai trò làm việc:`,
-      PRESET_ACCOUNTS.map((acc) => ({
-        text: `👤 ${acc.fullName}`,
-        onPress: async () => {
-          await setMobileSession(acc);
-          setSession(acc);
-          Alert.alert('Thành công', `Đã chuyển sang tài khoản: ${acc.fullName}`);
-        },
-      })).concat([{ text: 'Hủy', style: 'cancel' }])
-    );
+  const handleAccountPress = () => {
+    if (session) {
+      Alert.alert(
+        'Tài Khoản Doanh Nghiệp',
+        `Xin chào: ${session.fullName}\nEmail: ${session.email}\nVai trò: ${session.role}`,
+        [
+          {
+            text: 'Đăng xuất',
+            style: 'destructive',
+            onPress: async () => {
+              await clearMobileSession();
+              setSession(null);
+              Alert.alert('Thông báo', 'Đã đăng xuất tài khoản.');
+            },
+          },
+          { text: 'Đóng', style: 'cancel' },
+        ]
+      );
+    } else {
+      setShowLoginModal(true);
+    }
   };
 
   return (
@@ -40,15 +50,21 @@ export const AppHeader = React.memo(function AppHeader() {
 
       <TouchableOpacity
         style={styles.userBadge}
-        onPress={handleAccountSwitch}
+        onPress={handleAccountPress}
         activeOpacity={0.8}
         hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
       >
         <Text style={styles.userIcon}>👤</Text>
         <Text style={styles.userRoleText} numberOfLines={1}>
-          {session?.role === 'OWNER' ? 'Giám Đốc' : session?.role === 'COMPLIANCE' ? 'Cán Bộ KCS' : 'Tài Xế'}
+          {session ? session.fullName.split(' ')[0] : 'Đăng nhập'}
         </Text>
       </TouchableOpacity>
+
+      <LoginModal
+        visible={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        onLoginSuccess={(newSession) => setSession(newSession)}
+      />
     </View>
   );
 });
