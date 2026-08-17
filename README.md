@@ -13,6 +13,19 @@
 
 ---
 
+## 👥 Đội Ngũ Thực Hiện Dự Án (Team Members)
+
+| STT | Họ và Tên | Vai trò |
+| :---: | :--- | :--- |
+| 1 | **Phạm Thành Long** | 👑 **Nhóm trưởng** |
+| 2 | Đàm Công Tú | Thành viên |
+| 3 | Chăm Rốch Thi | Thành viên |
+| 4 | Huỳnh Hoàng Quân | Thành viên |
+| 5 | Nguyễn Tiến Thành | Thành viên |
+| 6 | Hà Anh Tuấn | Thành viên |
+
+---
+
 ## 📖 Câu Chuyện & Bối Cảnh Dự Án (Our Story)
 
 Việt Nam tự hào là một trong những quốc gia xuất khẩu nông sản hàng đầu thế giới, trong đó **Sầu riêng tươi** là mặt hàng trái cây "tỷ đô" tăng trưởng bùng nổ, đóng góp lớn cho kim ngạch xuất khẩu quốc gia sang thị trường **Trung Quốc (Tổng cục Hải quan GACC)**. Tuy nhiên, để xuất khẩu chính ngạch và thông quan thuận lợi, các doanh nghiệp xuất khẩu Việt Nam phải đối mặt với một loạt quy định pháp lý và tiêu chuẩn an toàn thực phẩm khắt khe:
@@ -269,6 +282,28 @@ cd fe
 npm install
 npm run dev            # Web app chạy ở http://localhost:3000
 ```
+
+### 3️⃣ Chạy Ứng Dụng Di Động Mobile Expo (`mobile/`)
+```bash
+cd mobile
+npm install
+npm start              # Khởi chạy ứng dụng di động trên Expo Go
+```
+
+---
+
+## 📱 Ứng Dụng Di Động Mobile Expo (Themis LexiGuard Mobile)
+
+Ứng dụng di động **Themis LexiGuard Mobile** được thiết kế tinh gọn trên nền tảng **Expo React Native**, kết nối 100% với Express Backend API sẵn có:
+
+- 📡 **Tab 1: Ra-da Quy Định GACC & Cadmium (`Legal Risk Radar`)**: Cảnh báo rủi ro tiệm cận ngưỡng Cadmium $\le 0.05\text{ mg/kg}$ và đếm ngược hạn Phyto 14 ngày.
+- 📷 **Tab 2: Kiểm Định Thực Địa 4 Khóa (`Field Compliance Scan`)**: Hỗ trợ cán bộ QA/QC nạp chứng thư và đánh giá % hoàn thiện hồ sơ.
+- 🚛 **Tab 3: Quản Lý Lô Hàng Sầu Riêng (`Export Batch Tracker`)**: Tra cứu sản lượng, định giá cont lạnh và mã băm SHA-256 niêm phong.
+
+### 🖼️ Hình Ảnh Giao Diện Thực Tế Ứng Dụng Mobile:
+| Tab 1: Ra-da Quy Định GACC | Tab 2: Quét Hồ Sơ 4 Khóa | Tab 3: Tra Cứu Lô Hàng |
+| :---: | :---: | :---: |
+| ![Tab 1 Legal Radar](docs/mobile-prompts/tab1_legal_radar.jpg) | ![Tab 2 Field Scan](docs/mobile-prompts/tab2_field_scan.jpg) | ![Tab 3 Batch Tracker](docs/mobile-prompts/tab3_batch_tracker.jpg) |
 
 ---
 
