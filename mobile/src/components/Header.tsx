@@ -41,9 +41,11 @@ export const AppHeader = React.memo(function AppHeader() {
           <Text style={styles.logoSymbol}>⚖️</Text>
         </View>
         <View style={styles.titleColumn}>
-          <Text style={styles.brandSub}>THEMIS LEXIGUARD — GACC DURIAN</Text>
+          <View style={styles.pillBadge}>
+            <Text style={styles.pillText}>GACC COMPLIANCE NAVIGATOR</Text>
+          </View>
           <Text style={styles.brandTitle} numberOfLines={1}>
-            Điều Hướng Pháp Lý Thực Địa
+            Themis LexiGuard Mobile
           </Text>
         </View>
       </View>
@@ -75,10 +77,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingTop: 16,
+    paddingBottom: 14,
     backgroundColor: '#00143B',
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 184, 0, 0.25)',
+    borderBottomColor: 'rgba(255, 184, 0, 0.3)',
   },
   leftGroup: {
     flexDirection: 'row',
@@ -86,51 +89,58 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   logoBadge: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
-    backgroundColor: 'linear-gradient(135deg, #FFB800 0%, #D97706 100%)',
-    borderWidth: 1,
+    width: 42,
+    height: 42,
+    borderRadius: 14,
+    backgroundColor: '#FFB800',
+    borderWidth: 1.5,
     borderColor: '#FCD34D',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 10,
-    shadowColor: '#FFB800',
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
+    marginRight: 12,
   },
   logoSymbol: {
-    fontSize: 20,
+    fontSize: 22,
   },
   titleColumn: {
     flex: 1,
+    gap: 2,
   },
-  brandSub: {
-    fontSize: 9,
+  pillBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: 'rgba(255, 184, 0, 0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 184, 0, 0.4)',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  pillText: {
+    fontSize: 8,
     fontWeight: '800',
     color: '#FFB800',
-    letterSpacing: 1.2,
+    letterSpacing: 1,
   },
   brandTitle: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: 'bold',
     color: '#FFFFFF',
-    letterSpacing: 0.2,
+    letterSpacing: 0.3,
   },
   profileChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: 'rgba(255, 255, 255, 0.12)',
     borderWidth: 1,
-    borderColor: 'rgba(255, 184, 0, 0.4)',
+    borderColor: '#FFB800',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
     gap: 6,
   },
   liveDot: {
-    width: 7,
-    height: 7,
+    width: 8,
+    height: 8,
     borderRadius: 4,
     backgroundColor: '#10B981',
   },

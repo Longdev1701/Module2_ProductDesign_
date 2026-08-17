@@ -14,7 +14,7 @@ export const TabBar = React.memo(function TabBar({ activeTab, onSelectTab }: Tab
         onPress={() => onSelectTab('radar')}
         activeOpacity={0.8}
       >
-        <Text style={styles.tabIcon}>📡</Text>
+        <Text style={[styles.tabIcon, activeTab === 'radar' && styles.tabIconActive]}>📡</Text>
         <Text style={[styles.tabLabel, activeTab === 'radar' && styles.tabLabelActive]}>
           Ra-da
         </Text>
@@ -26,7 +26,7 @@ export const TabBar = React.memo(function TabBar({ activeTab, onSelectTab }: Tab
         onPress={() => onSelectTab('scan')}
         activeOpacity={0.8}
       >
-        <Text style={styles.tabIcon}>📷</Text>
+        <Text style={[styles.tabIcon, activeTab === 'scan' && styles.tabIconActive]}>📷</Text>
         <Text style={[styles.tabLabel, activeTab === 'scan' && styles.tabLabelActive]}>
           Quét KCS
         </Text>
@@ -38,7 +38,7 @@ export const TabBar = React.memo(function TabBar({ activeTab, onSelectTab }: Tab
         onPress={() => onSelectTab('tracker')}
         activeOpacity={0.8}
       >
-        <Text style={styles.tabIcon}>🚛</Text>
+        <Text style={[styles.tabIcon, activeTab === 'tracker' && styles.tabIconActive]}>🚛</Text>
         <Text style={[styles.tabLabel, activeTab === 'tracker' && styles.tabLabelActive]}>
           Lô Hàng
         </Text>
@@ -50,7 +50,7 @@ export const TabBar = React.memo(function TabBar({ activeTab, onSelectTab }: Tab
         onPress={() => onSelectTab('ai')}
         activeOpacity={0.8}
       >
-        <Text style={styles.tabIcon}>🤖</Text>
+        <Text style={[styles.tabIcon, activeTab === 'ai' && styles.tabIconActive]}>🤖</Text>
         <Text style={[styles.tabLabel, activeTab === 'ai' && styles.tabLabelActive]}>
           Trợ Lý AI
         </Text>
@@ -65,21 +65,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#00143B',
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 184, 0, 0.25)',
-    paddingVertical: 8,
+    borderTopColor: 'rgba(255, 184, 0, 0.3)',
+    paddingVertical: 6,
     height: 64,
   },
   tabItem: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 2,
+    paddingVertical: 4,
     position: 'relative',
   },
   tabItemActive: {},
   tabIcon: {
     fontSize: 18,
     marginBottom: 2,
+    opacity: 0.6,
+  },
+  tabIconActive: {
+    opacity: 1,
   },
   tabLabel: {
     fontSize: 11,
@@ -93,7 +97,7 @@ const styles = StyleSheet.create({
   activeIndicator: {
     position: 'absolute',
     top: 0,
-    width: 32,
+    width: 36,
     height: 3,
     backgroundColor: '#FFB800',
     borderRadius: 2,
