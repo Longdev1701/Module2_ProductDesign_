@@ -2,9 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Mail, Lock, EyeOff, Eye, AlertCircle, HelpCircle } from 'lucide-react';
-import { Input } from '../../components/Input';
-import { Button } from '../../components/Button';
+import { Mail, Lock, EyeOff, Eye, AlertCircle, HelpCircle, ArrowRight } from 'lucide-react';
 import { api } from '../../lib/api';
 import type { LoginResponse } from "@/types/api";
 import { getErrorMessage } from "@/types/api";
@@ -56,7 +54,7 @@ export function LoginView({ onSwitchView, onSwitchToForgot }: LoginViewProps) {
       const msg = getErrorMessage(err, 'Đăng nhập thất bại.');
       setErrorMsg(msg);
       if (msg.toLowerCase().includes('invalid login credentials') || msg.toLowerCase().includes('sai')) {
-        setFixSuggestion('Email hoặc mật khẩu không chính xác. Nếu bạn quên mật khẩu, bấm nút "Quên mật khẩu?" phía trên.');
+        setFixSuggestion('Email hoặc mật khẩu không chính xác. Bạn có thể bấm nút "Quên mật khẩu?" để khôi phục.');
       } else if (msg.toLowerCase().includes('rate limit') || msg.toLowerCase().includes('nhiều lần')) {
         setFixSuggestion('Bạn đã nhập sai quá nhiều lần. Vui lòng chờ 1 phút trước khi thử lại.');
       } else {
@@ -68,85 +66,136 @@ export function LoginView({ onSwitchView, onSwitchToForgot }: LoginViewProps) {
   };
 
   return (
-    <div className="bg-white border border-outline-variant rounded-lg p-8 shadow-sm">
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-serif text-primary font-bold mb-2">Đăng nhập</h2>
-        <p className="text-on-surface-variant text-sm">Truy cập hệ thống quản lý tuân thủ</p>
+    <div className="bg-white border border-outline-variant/70 rounded-3xl p-7 sm:p-9 shadow-xl space-y-6 relative overflow-hidden">
+      {/* Top Gold Accent Bar */}
+      <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-400 via-primary to-emerald-500" />
+
+      {/* Header */}
+      <div className="space-y-1.5">
+        <div className="flex items-center gap-2">
+          <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-mono font-bold uppercase">
+            DOANH NGHIỆP XUẤT KHẨU
+          </span>
+        </div>
+        <h2 className="text-2xl sm:text-3xl font-serif text-on-surface font-bold tracking-tight">
+          Đăng Nhập
+        </h2>
+        <p className="text-xs sm:text-sm text-on-surface-variant">
+          Không gian làm việc tuân thủ pháp lý &amp; điều hành hồ sơ xuất khẩu
+        </p>
       </div>
 
+      {/* Error / Suggestion Alert */}
       {errorMsg && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-800 text-xs rounded-lg space-y-2 shadow-sm">
-          <div className="flex items-center gap-2 font-bold text-red-900 text-sm">
-            <AlertCircle className="w-5 h-5 flex-shrink-0 text-red-600" />
+        <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-800 text-xs rounded-2xl space-y-1.5 animate-fadeIn">
+          <div className="flex items-center gap-2 font-bold text-rose-900">
+            <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-600" />
             <span>{errorMsg}</span>
           </div>
           {fixSuggestion && (
-            <div className="mt-2 pt-2 border-t border-red-200/80 flex items-start gap-1.5 text-red-900 font-medium">
-              <HelpCircle className="w-4 h-4 flex-shrink-0 text-amber-600 mt-0.5" />
-              <span><strong className="text-amber-800">Cách khắc phục:</strong> {fixSuggestion}</span>
+            <div className="pt-1.5 border-t border-rose-200/70 flex items-start gap-1.5 text-rose-900 font-medium text-[11px]">
+              <HelpCircle className="w-3.5 h-3.5 flex-shrink-0 text-amber-600 mt-0.5" />
+              <span>
+                <strong className="text-amber-800">Gợi ý:</strong> {fixSuggestion}
+              </span>
             </div>
           )}
         </div>
       )}
 
-      <form className="space-y-6" onSubmit={handleLoginSubmit}>
-        <Input 
-          label="EMAIL" 
-          placeholder="Nhập địa chỉ email" 
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          icon={<Mail className="w-4 h-4" />}
-        />
-        
-        <div className="space-y-1">
+      {/* Form */}
+      <form className="space-y-4" onSubmit={handleLoginSubmit}>
+        {/* Email */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold text-on-surface uppercase tracking-wider">
+            Email Doanh Nghiệp
+          </label>
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <Mail className="w-4 h-4" />
+            </div>
+            <input
+              type="email"
+              required
+              placeholder="nhanvien.kcs@themisexport.vn"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 bg-slate-50/50 border border-outline-variant/60 rounded-xl text-xs sm:text-sm text-on-surface focus:outline-hidden focus:border-primary focus:bg-white transition-colors"
+            />
+          </div>
+        </div>
+
+        {/* Password */}
+        <div className="space-y-1.5">
           <div className="flex justify-between items-center">
-            <label className="text-xs font-mono font-medium text-on-surface-variant uppercase tracking-wider">
-              MẬT KHẨU
+            <label className="text-xs font-bold text-on-surface uppercase tracking-wider">
+              Mật Khẩu
             </label>
-            <button 
-              type="button" 
-              onClick={onSwitchToForgot}
-              className="text-xs font-mono text-on-surface-variant hover:text-primary transition-colors cursor-pointer focus:outline-none"
+            {onSwitchToForgot && (
+              <button
+                type="button"
+                onClick={onSwitchToForgot}
+                className="text-xs font-semibold text-primary hover:underline cursor-pointer"
+              >
+                Quên mật khẩu?
+              </button>
+            )}
+          </div>
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <Lock className="w-4 h-4" />
+            </div>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              required
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full pl-10 pr-11 py-2.5 bg-slate-50/50 border border-outline-variant/60 rounded-xl text-xs sm:text-sm text-on-surface focus:outline-hidden focus:border-primary focus:bg-white transition-colors font-mono"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
             >
-              Quên mật khẩu?
+              {showPassword ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
             </button>
           </div>
-          <Input 
-            placeholder="Nhập mật khẩu" 
-            type={showPassword ? 'text' : 'password'}
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            icon={<Lock className="w-4 h-4" />}
-            rightIcon={
-              <button 
-                type="button" 
-                onClick={() => setShowPassword(!showPassword)}
-                className="focus:outline-none text-outline hover:text-primary cursor-pointer"
-              >
-                {showPassword ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-              </button>
-            }
-          />
         </div>
 
-        <Button fullWidth type="submit" disabled={loading}>
-          {loading ? 'Đang xử lý...' : 'Đăng nhập'}
-        </Button>
-
-        <div className="text-center text-sm text-on-surface-variant pt-2">
-          Nếu chưa có tài khoản?{' '}
-          <button 
-            type="button" 
-            onClick={onSwitchView}
-            className="font-medium text-primary hover:underline focus:outline-none cursor-pointer"
-          >
-            Đăng Ký
-          </button>
-        </div>
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={loading || !email || !password}
+          className="w-full h-11 bg-primary hover:bg-primary/90 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+        >
+          {loading ? (
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span>Đang xác thực...</span>
+            </div>
+          ) : (
+            <>
+              <span>Đăng Nhập Vào Hệ Thống</span>
+              <ArrowRight className="w-4 h-4" />
+            </>
+          )}
+        </button>
       </form>
+
+      {/* Switch to Register */}
+      <div className="text-center pt-2 border-t border-outline-variant/40">
+        <p className="text-xs text-on-surface-variant">
+          Doanh nghiệp của bạn chưa có tài khoản?{' '}
+          <button
+            type="button"
+            onClick={onSwitchView}
+            className="font-bold text-primary hover:underline cursor-pointer ml-1"
+          >
+            Đăng Ký Ngay
+          </button>
+        </p>
+      </div>
     </div>
   );
 }
