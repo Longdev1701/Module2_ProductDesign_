@@ -9,7 +9,7 @@ export const createOrganizationSchema = z.object({
   contactEmail: z.string().email('Email liên hệ không đúng định dạng').optional().or(z.literal('')),
   contactPhone: z.string().optional(),
   primaryProduct: z.string().min(1, 'Vui lòng chọn hoặc nhập sản phẩm chiến lược'),
-  exportMarkets: z.array(z.string()).min(1, 'Vui lòng chọn ít nhất 1 thị trường xuất khẩu mục tiêu'),
+  exportMarkets: z.union([z.array(z.string()), z.record(z.any())]).optional(),
   exportForm: z.string().optional(),
   exportScale: z.string().optional(),
   jobTitle: z.string().min(2, 'Vui lòng nhập chức danh công việc của bạn').optional(),
@@ -22,6 +22,10 @@ export const inviteMemberSchema = z.object({
   role: z.nativeEnum(OrganizationRole).default(OrganizationRole.COMPLIANCE),
 });
 
+export const updateMemberSchema = z.object({
+  role: z.nativeEnum(OrganizationRole).optional(),
+});
+
 export const joinOrganizationSchema = z.object({
   token: z.string().min(1, 'Mã lời mời không được để trống'),
 });
@@ -29,4 +33,5 @@ export const joinOrganizationSchema = z.object({
 export type CreateOrganizationInput = z.infer<typeof createOrganizationSchema>;
 export type UpdateOrganizationInput = z.infer<typeof updateOrganizationSchema>;
 export type InviteMemberInput = z.infer<typeof inviteMemberSchema>;
+export type UpdateMemberInput = z.infer<typeof updateMemberSchema>;
 export type JoinOrganizationInput = z.infer<typeof joinOrganizationSchema>;

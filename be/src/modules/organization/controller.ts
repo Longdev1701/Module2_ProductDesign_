@@ -192,4 +192,61 @@ export class OrganizationController {
       return next(err);
     }
   }
+
+  static async updateMemberRole(req: Request, res: Response, next: NextFunction) {
+    try {
+      const orgId = req.params.id;
+      const memberId = req.params.memberId;
+      const { role } = req.body;
+
+      if (!role) {
+        return res.status(422).json({
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Vui lòng cung cấp vai trò mới (role)',
+          },
+        });
+      }
+
+      const result = await OrganizationService.updateMemberRole(
+        orgId,
+        req.user!.id,
+        memberId,
+        role,
+        req.ip
+      );
+
+      return res.status(200).json({
+        data: result,
+        meta: {
+          requestId: req.requestId || '',
+        },
+      });
+    } catch (err: any) {
+      return next(err);
+    }
+  }
+
+  static async removeMember(req: Request, res: Response, next: NextFunction) {
+    try {
+      const orgId = req.params.id;
+      const memberId = req.params.memberId;
+
+      const result = await OrganizationService.removeMember(
+        orgId,
+        req.user!.id,
+        memberId,
+        req.ip
+      );
+
+      return res.status(200).json({
+        data: result,
+        meta: {
+          requestId: req.requestId || '',
+        },
+      });
+    } catch (err: any) {
+      return next(err);
+    }
+  }
 }

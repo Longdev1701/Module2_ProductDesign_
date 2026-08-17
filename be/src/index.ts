@@ -26,7 +26,7 @@ app.use(cors({
   credentials: true,
 }));
 app.use(morgan('dev'));
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '20mb' }));
 
 // ─── Health Check ───────────────────────────────────────
 app.get('/health', (_req, res) => {
@@ -76,40 +76,28 @@ app.get('/api', (_req, res) => {
       endpoints: {
         auth: '/api/auth',
         organizations: '/api/organizations',
-        admin: '/api/admin',
-        legalUpdates: '/api/legal-updates',
         products: '/api/products',
         batches: '/api/batches',
         documents: '/api/documents',
         reports: '/api/reports',
         integrity: '/api/integrity',
         dashboard: '/api/dashboard',
+        admin: '/api/admin',
+        legalUpdates: '/api/legal-updates',
       },
     },
     meta: { requestId: _req.requestId ?? '' },
   });
 });
 
-// ─── 404 Handler ────────────────────────────────────────
-app.use((req, res) => {
-  res.status(404).json({
-    error: {
-      code: 'NOT_FOUND',
-      message: 'Route not found',
-      requestId: req.requestId ?? '',
-    },
-  });
-});
+// Init cron job in production/development
+initLegalSyncCron();
 
-// ─── Error Handler ──────────────────────────────────────
+// ─── Global Error Handler ──────────────────────────────
 app.use(errorHandler);
 
-// ─── Start Server ───────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`🚀 Themis LexiGuard API running on port ${PORT}`);
-  console.log(`   Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`   Health: http://localhost:${PORT}/health`);
-  initLegalSyncCron();
+  console.log(`🚀 Themis LexiGuard API Server running on port ${PORT}`);
 });
 
 export default app;

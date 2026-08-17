@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Building, Users, ShieldCheck, Bell, CheckCircle2, AlertCircle } from "lucide-react";
+import { Building, Users, Sliders, ShieldCheck, CheckCircle2, AlertCircle } from "lucide-react";
 import { api } from "@/lib/api";
 import { ProfileSettingsTab } from "./ProfileSettingsTab";
 import { MemberSettingsTab } from "./MemberSettingsTab";
@@ -15,6 +15,7 @@ export default function SettingsFeature() {
   const [activeTab, setActiveTab] = useState("profile");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [savingProfile, setSavingProfile] = useState(false);
   const [msg, setMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Profile State
@@ -30,8 +31,21 @@ export default function SettingsFeature() {
   const [legalRepresentative, setLegalRepresentative] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [contactPhone, setContactPhone] = useState("");
-  const [primaryProduct, setPrimaryProduct] = useState("");
+  const [primaryProduct, setPrimaryProduct] = useState("Sầu riêng tươi (Monthong & Ri6)");
   const [userRole, setUserRole] = useState<OrganizationRole>("VIEWER");
+
+  // GACC CIFER Profile State
+  const [ciferCode, setCiferCode] = useState("CVNM2401240001");
+  const [defaultPhcCode, setDefaultPhcCode] = useState("VN-TGPH-0012");
+  const [defaultPucCode, setDefaultPucCode] = useState("VN-TGOR-0095");
+  const [defaultExportPort, setDefaultExportPort] = useState("Cửa khẩu Quốc tế Hữu Nghị (Lạng Sơn)");
+
+  // Compliance Thresholds State
+  const [cadmiumThreshold, setCadmiumThreshold] = useState(0.040);
+  const [phytoBufferDays, setPhytoBufferDays] = useState(3);
+  const [urgentGaccAlerts, setUrgentGaccAlerts] = useState(true);
+  const [cadmiumAlerts, setCadmiumAlerts] = useState(true);
+  const [phytoAlerts, setPhytoAlerts] = useState(true);
 
   // Invite Member State
   const [inviteEmail, setInviteEmail] = useState("");
@@ -42,7 +56,7 @@ export default function SettingsFeature() {
     setLoading(true);
     setMsg(null);
     try {
-      const meRes = await api.get<AuthMeResponse>('/auth/me');
+      const meRes = await api.get<AuthMeResponse>('/api/auth/me');
       if (meRes.data) {
         const profile = meRes.data.user || meRes.data.profile;
         if (!profile) return;
@@ -54,7 +68,7 @@ export default function SettingsFeature() {
           const userOrg = meRes.data.organizations[0];
           setUserRole(userOrg.role || "VIEWER");
 
-          const orgRes = await api.get<OrganizationSummary>(`/organizations/${userOrg.id}`);
+          const orgRes = await api.get<OrganizationSummary>(`/api/organizations/${userOrg.id}`);
           if (orgRes.data) {
             const o = orgRes.data;
             setOrg(o);
@@ -64,7 +78,22 @@ export default function SettingsFeature() {
             setLegalRepresentative(o.legalRepresentative || "");
             setContactEmail(o.contactEmail || "");
             setContactPhone(o.contactPhone || "");
-            setPrimaryProduct(o.primaryProduct || "");
+            setPrimaryProduct(o.primaryProduct || "Sầu riêng tươi (Monthong & Ri6)");
+
+            // Nạp cấu hình GACC CIFER & Ngưỡng từ JSON exportMarkets nếu có
+            const exportConfig = typeof o.exportMarkets === 'object' && o.exportMarkets !== null && !Array.isArray(o.exportMarkets)
+              ? (o.exportMarkets as any)
+              : {};
+
+            if (exportConfig.ciferCode) setCiferCode(exportConfig.ciferCode);
+            if (exportConfig.defaultPhcCode) setDefaultPhcCode(exportConfig.defaultPhcCode);
+            if (exportConfig.defaultPucCode) setDefaultPucCode(exportConfig.defaultPucCode);
+            if (exportConfig.defaultExportPort) setDefaultExportPort(exportConfig.defaultExportPort);
+            if (exportConfig.cadmiumThreshold !== undefined) setCadmiumThreshold(exportConfig.cadmiumThreshold);
+            if (exportConfig.phytoBufferDays !== undefined) setPhytoBufferDays(exportConfig.phytoBufferDays);
+            if (exportConfig.urgentGaccAlerts !== undefined) setUrgentGaccAlerts(exportConfig.urgentGaccAlerts);
+            if (exportConfig.cadmiumAlerts !== undefined) setCadmiumAlerts(exportConfig.cadmiumAlerts);
+            if (exportConfig.phytoAlerts !== undefined) setPhytoAlerts(exportConfig.phytoAlerts);
           }
         }
       }
@@ -79,6 +108,7 @@ export default function SettingsFeature() {
     void Promise.resolve().then(fetchInitialData);
   }, [fetchInitialData]);
 
+  // 1. Lưu Hồ sơ Doanh nghiệp & GACC CIFER
   const handleSaveOrganization = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!org?.id) return;
@@ -86,7 +116,20 @@ export default function SettingsFeature() {
     setMsg(null);
 
     try {
-      await api.patch(`/organizations/${org.id}`, {
+      const currentConfig = typeof org.exportMarkets === 'object' && org.exportMarkets !== null && !Array.isArray(org.exportMarkets)
+        ? (org.exportMarkets as any)
+        : {};
+
+      const updatedExportMarkets = {
+        ...currentConfig,
+        markets: ['CHINA'],
+        ciferCode,
+        defaultPhcCode,
+        defaultPucCode,
+        defaultExportPort,
+      };
+
+      await api.patch(`/api/organizations/${org.id}`, {
         name: orgName,
         taxCode,
         address,
@@ -94,9 +137,10 @@ export default function SettingsFeature() {
         contactEmail,
         contactPhone,
         primaryProduct,
+        exportMarkets: updatedExportMarkets,
       });
 
-      setMsg({ type: 'success', text: 'Cập nhật thông tin Doanh nghiệp xuất khẩu thành công!' });
+      setMsg({ type: 'success', text: 'Cập nhật Hồ sơ Doanh nghiệp & Mã Pháp lý GACC CIFER thành công!' });
       await fetchInitialData();
     } catch (err: unknown) {
       setMsg({ type: 'error', text: getErrorMessage(err, 'Cập nhật thông tin doanh nghiệp thất bại.') });
@@ -105,6 +149,58 @@ export default function SettingsFeature() {
     }
   };
 
+  // 2. Lưu Cấu hình Ngưỡng An toàn & Cảnh báo
+  const handleSaveThresholds = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!org?.id) return;
+    setSaving(true);
+    setMsg(null);
+
+    try {
+      const currentConfig = typeof org.exportMarkets === 'object' && org.exportMarkets !== null && !Array.isArray(org.exportMarkets)
+        ? (org.exportMarkets as any)
+        : {};
+
+      const updatedExportMarkets = {
+        ...currentConfig,
+        cadmiumThreshold,
+        phytoBufferDays,
+        urgentGaccAlerts,
+        cadmiumAlerts,
+        phytoAlerts,
+      };
+
+      await api.patch(`/api/organizations/${org.id}`, {
+        exportMarkets: updatedExportMarkets,
+      });
+
+      setMsg({ type: 'success', text: 'Cập nhật Cấu hình Ngưỡng An Toàn & Kênh Cảnh Báo thành công!' });
+      await fetchInitialData();
+    } catch (err: unknown) {
+      setMsg({ type: 'error', text: getErrorMessage(err, 'Lưu cấu hình ngưỡng thất bại.') });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // 3. Cập nhật Chức danh cá nhân
+  const handleSaveProfile = async () => {
+    setSavingProfile(true);
+    setMsg(null);
+    try {
+      await api.patch('/api/auth/profile', {
+        jobTitle,
+      });
+      setMsg({ type: 'success', text: 'Cập nhật chức danh cá nhân thành công!' });
+      await fetchInitialData();
+    } catch (err: unknown) {
+      setMsg({ type: 'error', text: getErrorMessage(err, 'Cập nhật chức danh thất bại.') });
+    } finally {
+      setSavingProfile(false);
+    }
+  };
+
+  // 4. Mời thành viên mới
   const handleInviteMember = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!org?.id || !inviteEmail) return;
@@ -112,7 +208,7 @@ export default function SettingsFeature() {
     setMsg(null);
 
     try {
-      await api.post(`/organizations/${org.id}/invitations`, {
+      await api.post(`/api/organizations/${org.id}/invitations`, {
         email: inviteEmail,
         role: inviteRole,
       });
@@ -127,18 +223,46 @@ export default function SettingsFeature() {
     }
   };
 
+  // 5. Cập nhật phân quyền thành viên
+  const handleUpdateMemberRole = async (memberId: string, newRole: OrganizationRole) => {
+    if (!org?.id) return;
+    setMsg(null);
+    try {
+      await api.patch(`/api/organizations/${org.id}/members/${memberId}`, {
+        role: newRole,
+      });
+      setMsg({ type: 'success', text: 'Cập nhật vai trò nhân sự thành công!' });
+      await fetchInitialData();
+    } catch (err: unknown) {
+      setMsg({ type: 'error', text: getErrorMessage(err, 'Cập nhật vai trò thất bại.') });
+    }
+  };
+
+  // 6. Xóa thành viên khỏi tổ chức
+  const handleRemoveMember = async (memberId: string) => {
+    if (!org?.id) return;
+    setMsg(null);
+    try {
+      await api.delete(`/api/organizations/${org.id}/members/${memberId}`);
+      setMsg({ type: 'success', text: 'Đã thu hồi quyền thành viên thành công!' });
+      await fetchInitialData();
+    } catch (err: unknown) {
+      setMsg({ type: 'error', text: getErrorMessage(err, 'Xóa thành viên thất bại.') });
+    }
+  };
+
   const tabs = [
-    { id: "profile", name: "Cá nhân & Doanh nghiệp", icon: Building },
-    { id: "members", name: "Thành viên & Phân quyền", icon: Users },
-    { id: "security", name: "Phân quyền 2 Tầng", icon: ShieldCheck },
-    { id: "notifications", name: "Thông báo", icon: Bell },
+    { id: "profile", name: "Hồ sơ Doanh nghiệp & GACC CIFER", icon: Building },
+    { id: "members", name: "Đội ngũ & Phân quyền RBAC", icon: Users },
+    { id: "thresholds", name: "Ngưỡng An Toàn & Cảnh Báo", icon: Sliders },
+    { id: "security", name: "Bảo mật & Tài khoản Cá nhân", icon: ShieldCheck },
   ];
 
   if (loading) {
     return (
       <div className="p-12 text-center">
         <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-primary border-t-transparent mb-4"></div>
-        <p className="text-sm text-on-surface-variant">Đang tải dữ liệu cài đặt & phân quyền...</p>
+        <p className="text-xs text-on-surface-variant">Đang tải dữ liệu cấu hình &amp; phân quyền doanh nghiệp...</p>
       </div>
     );
   }
@@ -146,104 +270,77 @@ export default function SettingsFeature() {
   const isOwnerOrManager = userRole === 'OWNER' || userRole === 'MANAGER';
 
   return (
-    <div className="space-y-6">
-      {/* Top Navbar Header */}
-      <div className="bg-[#001946] text-white p-4 rounded-xl flex items-center justify-between shadow-md">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-amber-400 rounded-lg flex items-center justify-center font-bold text-[#001946] text-sm">
-            T
-          </div>
-          <div>
-            <p className="text-xs text-[#a5bdff]">Themis LexiGuard</p>
-            <p className="text-sm font-semibold">{org?.name || 'Cài đặt Doanh nghiệp'}</p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <a
-            href="/dashboard"
-            className="text-xs bg-white/10 hover:bg-white/20 border border-white/20 text-white px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer flex items-center gap-1.5"
-          >
-            <span>🏠 Quay về Dashboard</span>
-          </a>
-
-          {(userProfile?.platformRole === 'SUPER_ADMIN' || userProfile?.platformRole === 'PLATFORM_ADMIN') && (
-            <a
-              href="/admin"
-              className="text-xs bg-purple-500/20 hover:bg-purple-500/30 border border-purple-400/40 text-purple-200 px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer flex items-center gap-1.5"
-            >
-              <span>🏛️ Admin Portal</span>
-            </a>
-          )}
-
-          <button
-            onClick={async () => {
-              try { await api.post('/auth/logout'); } catch {}
-              localStorage.removeItem("access_token");
-              localStorage.removeItem("active_org_id");
-              window.location.href = "/login";
-            }}
-            className="text-xs bg-red-500/20 hover:bg-red-500/30 border border-red-400/30 text-red-200 px-3 py-1.5 rounded-lg font-semibold transition-colors cursor-pointer"
-          >
-            Đăng xuất
-          </button>
-        </div>
-      </div>
-
-      <div className="mb-4 flex justify-between items-end">
+    <div className="space-y-6 max-w-6xl mx-auto pb-12 animate-fadeIn">
+      {/* Top Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-serif font-bold text-on-surface mb-2">Cài đặt & Phân quyền</h1>
-          <p className="text-on-surface-variant text-sm">
-            Quản lý hồ sơ doanh nghiệp xuất khẩu, danh sách nhân sự và ma trận phân quyền RBAC.
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-[10px] font-bold font-mono uppercase tracking-widest px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+              CẤU HÌNH TỔ CHỨC &amp; QUẢN TRỊ
+            </span>
+          </div>
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-on-surface tracking-tight">
+            Cài Đặt &amp; Phân Quyền Doanh Nghiệp
+          </h1>
+          <p className="text-xs sm:text-sm text-on-surface-variant mt-1">
+            Quản lý hồ sơ pháp lý GACC CIFER, đội ngũ chứng từ xuất khẩu và cấu hình ngưỡng an toàn độc tố
           </p>
         </div>
+
         {userRole && (
-          <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg border border-outline-variant shadow-sm">
-            <span className="text-xs font-medium text-on-surface-variant">Quyền hạn của bạn:</span>
-            <Badge variant={userRole === 'OWNER' ? 'default' : 'secondary'} className="font-mono text-xs font-bold">
+          <div className="flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-xl border border-outline-variant/60 shadow-2xs self-start sm:self-auto">
+            <span className="text-xs text-on-surface-variant font-medium">Quyền hạn của bạn:</span>
+            <Badge className="font-mono text-xs font-bold bg-primary text-white">
               {userRole}
             </Badge>
           </div>
         )}
       </div>
 
+      {/* Message Toast / Alert */}
       {msg && (
-        <div className={`p-4 rounded-lg flex items-center gap-3 text-sm ${
-          msg.type === 'success' ? 'bg-emerald-50 border border-emerald-200 text-emerald-800' : 'bg-red-50 border border-red-200 text-red-800'
-        }`}>
-          {msg.type === 'success' ? <CheckCircle2 className="w-5 h-5 flex-shrink-0" /> : <AlertCircle className="w-5 h-5 flex-shrink-0" />}
+        <div
+          className={`p-3.5 rounded-xl flex items-center gap-2.5 text-xs font-medium animate-fadeIn ${
+            msg.type === 'success'
+              ? 'bg-emerald-50 border border-emerald-200 text-emerald-900'
+              : 'bg-rose-50 border border-rose-200 text-rose-900'
+          }`}
+        >
+          {msg.type === 'success' ? (
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+          ) : (
+            <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0" />
+          )}
           <span>{msg.text}</span>
         </div>
       )}
 
-      <div className="flex flex-col lg:flex-row gap-8">
-        {/* Sidebar Nav */}
-        <div className="w-full lg:w-64 space-y-1">
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Navigation Sidebar Tabs */}
+        <div className="w-full lg:w-64 space-y-1.5 flex-shrink-0">
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => { setActiveTab(tab.id); setMsg(null); }}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded text-sm font-medium transition-colors cursor-pointer ${
+              onClick={() => {
+                setActiveTab(tab.id);
+                setMsg(null);
+              }}
+              className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer text-left ${
                 activeTab === tab.id
-                  ? "bg-primary text-on-primary font-bold shadow-sm"
-                  : "text-on-surface hover:bg-surface-container-low"
+                  ? "bg-primary text-white shadow-xs font-bold"
+                  : "text-on-surface hover:bg-slate-100/80 bg-white border border-outline-variant/60"
               }`}
             >
-              <tab.icon className="w-5 h-5" />
-              {tab.name}
+              <tab.icon className="w-4 h-4 flex-shrink-0" />
+              <span className="truncate">{tab.name}</span>
             </button>
           ))}
         </div>
 
-        {/* Main Content Area */}
-        <div className="flex-1 space-y-6">
+        {/* Tab Content Panels */}
+        <div className="flex-1 min-w-0">
           {activeTab === "profile" && (
             <ProfileSettingsTab
-              fullName={fullName}
-              userEmail={userProfile?.email || ""}
-              jobTitle={jobTitle}
-              setJobTitle={setJobTitle}
-              platformRole={userProfile?.platformRole || "USER"}
               orgName={orgName}
               setOrgName={setOrgName}
               taxCode={taxCode}
@@ -254,8 +351,18 @@ export default function SettingsFeature() {
               setLegalRepresentative={setLegalRepresentative}
               contactEmail={contactEmail}
               setContactEmail={setContactEmail}
+              contactPhone={contactPhone}
+              setContactPhone={setContactPhone}
               primaryProduct={primaryProduct}
               setPrimaryProduct={setPrimaryProduct}
+              ciferCode={ciferCode}
+              setCiferCode={setCiferCode}
+              defaultPhcCode={defaultPhcCode}
+              setDefaultPhcCode={setDefaultPhcCode}
+              defaultPucCode={defaultPucCode}
+              setDefaultPucCode={setDefaultPucCode}
+              defaultExportPort={defaultExportPort}
+              setDefaultExportPort={setDefaultExportPort}
               isOwnerOrManager={isOwnerOrManager}
               saving={saving}
               onSave={handleSaveOrganization}
@@ -272,18 +379,40 @@ export default function SettingsFeature() {
               inviting={inviting}
               onInvite={handleInviteMember}
               isOwnerOrManager={isOwnerOrManager}
+              onUpdateRole={handleUpdateMemberRole}
+              onRemoveMember={handleRemoveMember}
+            />
+          )}
+
+          {activeTab === "thresholds" && (
+            <NotificationSettingsTab
+              cadmiumThreshold={cadmiumThreshold}
+              setCadmiumThreshold={setCadmiumThreshold}
+              phytoBufferDays={phytoBufferDays}
+              setPhytoBufferDays={setPhytoBufferDays}
+              urgentGaccAlerts={urgentGaccAlerts}
+              setUrgentGaccAlerts={setUrgentGaccAlerts}
+              cadmiumAlerts={cadmiumAlerts}
+              setCadmiumAlerts={setCadmiumAlerts}
+              phytoAlerts={phytoAlerts}
+              setPhytoAlerts={setPhytoAlerts}
+              isOwnerOrManager={isOwnerOrManager}
+              saving={saving}
+              onSave={handleSaveThresholds}
             />
           )}
 
           {activeTab === "security" && (
             <SecuritySettingsTab
+              fullName={fullName}
+              userEmail={userProfile?.email || ""}
+              jobTitle={jobTitle}
+              setJobTitle={setJobTitle}
               platformRole={userProfile?.platformRole}
               userRole={userRole}
+              onSaveProfile={handleSaveProfile}
+              savingProfile={savingProfile}
             />
-          )}
-
-          {activeTab === "notifications" && (
-            <NotificationSettingsTab />
           )}
         </div>
       </div>

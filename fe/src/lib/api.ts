@@ -30,7 +30,15 @@ class ApiClient {
       headers['x-organization-id'] = activeOrgId;
     }
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const cleanEndpoint = endpoint.startsWith('/api/')
+      ? endpoint.slice(4)
+      : endpoint === '/api'
+      ? ''
+      : endpoint.startsWith('/')
+      ? endpoint
+      : `/${endpoint}`;
+
+    const response = await fetch(`${API_BASE_URL}${cleanEndpoint}`, {
       ...options,
       headers,
     });

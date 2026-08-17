@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { NextFunction, Request, Response } from 'express';
+import { ZodError } from 'zod';
 import { ApiError } from '../lib/api-error';
 
 export function errorHandler(
@@ -9,6 +10,17 @@ export function errorHandler(
   _next: NextFunction,
 ) {
   const requestId = req.requestId ?? '';
+
+  if (error instanceof ZodError) {
+    return res.status(422).json({
+      error: {
+        code: 'VALIDATION_ERROR',
+        message: error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', '),
+        details: error.flatten().fieldErrors,
+        requestId,
+      },
+    });
+  }
 
   if (error instanceof ApiError) {
     return res.status(error.status).json({
