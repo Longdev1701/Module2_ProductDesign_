@@ -56,59 +56,57 @@ export function Sidebar() {
     : baseNavItems;
 
   return (
-    <aside className="w-[280px] h-screen fixed left-0 top-0 bg-[#001946] border-r border-[#c3c6d5]/30 flex flex-col py-6 z-50">
+    <aside className="hidden lg:flex w-[280px] h-screen fixed left-0 top-0 bg-[#001946] border-r border-[#c3c6d5]/30 flex-col py-6 z-50">
       {/* Brand Logo */}
-      <div className="px-4 mb-6 flex flex-col items-center">
-        <Link href="/dashboard" className="w-full flex flex-col items-center group">
-          <div className="w-full max-w-[220px] p-2 rounded-2xl bg-gradient-to-b from-amber-400/25 via-amber-400/10 to-transparent border border-amber-400/40 group-hover:border-amber-400/70 transition-all shadow-lg flex justify-center">
-            <img
-              alt="Themis LexiGuard Logo"
-              className="h-28 w-auto object-contain rounded-xl drop-shadow-lg transition-transform duration-300 group-hover:scale-[1.02]"
-              src="/themis_logo.png"
-              onError={(e) => {
-                (e.target as HTMLElement).style.display = "none";
-              }}
-            />
+      <div className="px-6 mb-8 flex items-center justify-between">
+        <Link href="/dashboard" className="flex items-center gap-3 group">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00236f] to-[#00143B] border border-[#FFB800]/40 flex items-center justify-center text-[#FFB800] font-bold text-xl shadow-lg shadow-[#00143B]/50 group-hover:border-[#FFB800] transition-colors">
+            T
+          </div>
+          <div>
+            <h1 className="font-bold text-lg text-white tracking-wide leading-none">
+              Themis LexiGuard
+            </h1>
+            <p className="text-[10px] text-[#FFB800] font-semibold tracking-wider uppercase mt-1">
+              GACC Compliance Navigator
+            </p>
           </div>
         </Link>
       </div>
 
-      {/* Action Button: Tạo Kiểm Tra Tuân Thủ AI Mới */}
-      <div className="px-4 mb-6">
-        <button
-          onClick={() => router.push("/checks/new")}
-          className="w-full bg-amber-400 hover:bg-amber-300 text-[#001946] font-bold text-xs py-3 px-4 rounded-xl shadow-md transition-all flex justify-center items-center gap-2 cursor-pointer"
-        >
-          <span className="material-symbols-outlined text-base">auto_awesome</span>
-          Tạo Kiểm Tra AI GACC
-        </button>
-      </div>
-
-      {/* Navigation Links */}
-      <nav className="flex-1 px-3 space-y-1 overflow-y-auto">
+      {/* Navigation Items */}
+      <nav className="flex-1 px-4 space-y-1.5 overflow-y-auto">
         {navItems.map((item) => {
-          const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href));
+          const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
+
           return (
             <Link
-              key={item.name}
+              key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-4 py-2.5 text-xs font-semibold transition-all ${
+              className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                 isActive
-                  ? "bg-[#0047ab] text-white border-l-4 border-amber-400 rounded-r-lg shadow-xs"
-                  : "text-[#a5bdff] hover:text-white hover:bg-white/10 rounded-lg"
+                  ? "bg-gradient-to-r from-[#FFB800] to-[#E6A600] text-[#00143B] font-bold shadow-md shadow-[#FFB800]/20"
+                  : "text-[#c3c6d5] hover:bg-white/5 hover:text-white"
               }`}
             >
-              <span className="material-symbols-outlined text-base">{item.icon}</span>
+              <span className={`material-symbols-outlined text-[20px] ${isActive ? "text-[#00143B]" : "text-[#c3c6d5]"}`}>
+                {item.icon}
+              </span>
               <span>{item.name}</span>
             </Link>
           );
         })}
       </nav>
 
-      {/* Footer Info */}
-      <div className="px-4 pt-4 border-t border-white/10 text-center">
-        <p className="text-[11px] text-[#a5bdff]/70">Themis LexiGuard v0.1.0</p>
-        <p className="text-[10px] text-[#a5bdff]/50">Sầu riêng × Trung Quốc (GACC)</p>
+      {/* Organization Badge Footer */}
+      <div className="px-4 pt-4 border-t border-white/10 mx-4">
+        <div className="bg-white/5 rounded-xl p-3 border border-white/10">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-xs text-slate-300 font-medium truncate">Đã kết nối Hệ thống</span>
+          </div>
+          <p className="text-[11px] text-[#FFB800] mt-1 font-mono truncate">Mã HS: 0810.60.00</p>
+        </div>
       </div>
     </aside>
   );
