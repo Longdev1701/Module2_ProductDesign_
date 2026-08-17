@@ -2,8 +2,8 @@ import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 interface TabBarProps {
-  activeTab: 'radar' | 'scan' | 'tracker';
-  onSelectTab: (tab: 'radar' | 'scan' | 'tracker') => void;
+  activeTab: 'radar' | 'scan' | 'tracker' | 'ai';
+  onSelectTab: (tab: 'radar' | 'scan' | 'tracker' | 'ai') => void;
 }
 
 export const TabBar = React.memo(function TabBar({ activeTab, onSelectTab }: TabBarProps) {
@@ -17,7 +17,7 @@ export const TabBar = React.memo(function TabBar({ activeTab, onSelectTab }: Tab
       >
         <Text style={styles.navIcon}>📡</Text>
         <Text style={[styles.navText, activeTab === 'radar' && styles.navTextActive]}>
-          Ra-da Quy Định
+          Ra-da
         </Text>
       </TouchableOpacity>
 
@@ -29,7 +29,7 @@ export const TabBar = React.memo(function TabBar({ activeTab, onSelectTab }: Tab
       >
         <Text style={styles.navIcon}>📷</Text>
         <Text style={[styles.navText, activeTab === 'scan' && styles.navTextActive]}>
-          Quét Thực Địa
+          Quét KCS
         </Text>
       </TouchableOpacity>
 
@@ -41,7 +41,19 @@ export const TabBar = React.memo(function TabBar({ activeTab, onSelectTab }: Tab
       >
         <Text style={styles.navIcon}>🚛</Text>
         <Text style={[styles.navText, activeTab === 'tracker' && styles.navTextActive]}>
-          Lô Hàng Xuất
+          Lô Hàng
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.navItem, activeTab === 'ai' && styles.navItemActive]}
+        onPress={() => onSelectTab('ai')}
+        activeOpacity={0.7}
+        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+      >
+        <Text style={styles.navIcon}>🤖</Text>
+        <Text style={[styles.navText, activeTab === 'ai' && styles.navTextActive]}>
+          Trợ lý AI
         </Text>
       </TouchableOpacity>
     </View>
