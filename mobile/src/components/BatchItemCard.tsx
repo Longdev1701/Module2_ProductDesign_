@@ -1,93 +1,214 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { MobileBatchItem } from '../types';
+import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
+import { MobileBatchItem } from '../api/client';
 
 interface BatchItemCardProps {
   item: MobileBatchItem;
 }
 
 export const BatchItemCard = React.memo(function BatchItemCard({ item }: BatchItemCardProps) {
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'READY_FOR_CHECK':
+        return { bg: '#ECFDF5', text: '#059669', border: '#A7F3D0', label: '✅ SẴN SÀNG KIỂM TRA' };
+      case 'COLLECTING_DOCUMENTS':
+        return { bg: '#EFF6FF', text: '#2563EB', border: '#BFDBFE', label: '📄 THU THẬP HỒ SƠ' };
+      case 'CHECKING':
+        return { bg: '#FEF3C7', text: '#D97706', border: '#FDE68A', label: '⚙️ ĐANG ĐỐI SOÁT AI' };
+      case 'ACTION_REQUIRED':
+        return { bg: '#FEF2F2', text: '#DC2626', border: '#FECACA', label: '⚠️ CẦN XỬ LÝ GẮP' };
+      default:
+        return { bg: '#F1F5F9', text: '#475569', border: '#CBD5E1', label: status };
+    }
+  };
+
+  const statusStyle = getStatusColor(item.status);
+
   return (
-    <View style={styles.batchCard}>
-      <View style={styles.batchHeader}>
-        <Text style={styles.batchCode}>{item.batchCode}</Text>
-        <Text style={styles.batchBadge}>
-          {item.status === 'READY_FOR_CHECK' ? 'AN TOÀN' : 'ĐANG CHỜ HỒ SƠ'}
-        </Text>
+    <View style={styles.card}>
+      {/* Top Batch Header */}
+      <View style={styles.headerRow}>
+        <View style={styles.badgeCode}>
+          <Text style={styles.badgeCodeText}>📦 {item.batchCode}</Text>
+        </View>
+
+        <View style={[styles.statusPill, { backgroundColor: statusStyle.bg, borderColor: statusStyle.border }]}>
+          <Text style={[styles.statusText, { color: statusStyle.text }]}>{statusStyle.label}</Text>
+        </View>
       </View>
 
-      <Text style={styles.batchName} numberOfLines={1} ellipsizeMode="tail">
+      {/* Product Name */}
+      <Text style={styles.productTitle} numberOfLines={1} ellipsizeMode="tail">
         {item.productName}
       </Text>
 
-      <View style={styles.batchDetails}>
-        <Text style={styles.batchDetailText}>
-          📦 Khối lượng: <Text style={{ fontWeight: 'bold' }}>{item.quantity} tấn</Text> (~{(item.quantity * 0.12).toFixed(1)} Tỷ VNĐ)
-        </Text>
-        <Text style={styles.batchDetailText} numberOfLines={1} ellipsizeMode="tail">
-          🏬 CIFER: {item.ciferCode} | PUC: {item.pucCode} | PHC: {item.phcCode}
-        </Text>
-        {item.sealCode && (
-          <Text style={styles.batchDetailText}>
-            🔒 Kẹp Chì Seal: <Text style={{ color: '#059669', fontWeight: 'bold' }}>{item.sealCode}</Text>
-          </Text>
-        )}
-        {item.sha256Hash && (
-          <Text style={styles.batchDetailText} numberOfLines={1} ellipsizeMode="middle">
-            🛡️ Hash SHA-256: {item.sha256Hash}
-          </Text>
-        )}
+      {/* Financial & Volume Metrics */}
+      <View style={styles.metricsBox}>
+        <View style={styles.metricItem}>
+          <Text style={styles.metricLabel}>SẢN LƯỢNG THỰC</Text>
+          <Text style={styles.metricValue}>{item.quantity} {item.unit}</Text>
+        </View>
+
+        <View style={styles.divider} />
+
+        <View style={styles.metricItem}>
+          <Text style={styles.metricLabel}>ƯỚC TÍNH XE CONT</Text>
+          <Text style={styles.metricValue}>~{(item.quantity / 20).toFixed(1)} Container</Text>
+        </View>
+
+        <View style={styles.divider} />
+
+        <View style={styles.metricItem}>
+          <Text style={styles.metricLabel}>GIÁ TRỊ XUẤT KHẨU</Text>
+          <Text style={[styles.metricValue, { color: '#D97706' }]}>~{(item.quantity * 0.12).toFixed(2)} Tỷ VNĐ</Text>
+        </View>
       </View>
+
+      {/* GACC Codes Row */}
+      <View style={styles.codesRow}>
+        <Text style={styles.codeItem}>CIFER: <Text style={styles.codeVal}>{item.ciferCode || 'CVNM2401240001'}</Text></Text>
+        <Text style={styles.codeItem}>PHC: <Text style={styles.codeVal}>{item.phcCode || 'VN-TGPH-0012'}</Text></Text>
+        <Text style={styles.codeItem}>PUC: <Text style={styles.codeVal}>{item.pucCode || 'VN-TGOR-0095'}</Text></Text>
+      </View>
+
+      {/* Cryptographic Seal & SHA-256 Hash */}
+      {item.sealCode && (
+        <View style={styles.cryptoBox}>
+          <View style={styles.cryptoRow}>
+            <Text style={styles.cryptoLabel}>🔒 MÃ KẸP CHÌ SEAL:</Text>
+            <Text style={styles.cryptoVal}>{item.sealCode}</Text>
+          </View>
+          {item.sha256Hash && (
+            <View style={styles.cryptoRow}>
+              <Text style={styles.cryptoLabel}>🔑 BĂM CHỐNG GIẢ (SHA-256):</Text>
+              <Text style={styles.hashVal}>{item.sha256Hash}</Text>
+            </View>
+          )}
+        </View>
+      )}
     </View>
   );
 });
 
 const styles = StyleSheet.create({
-  batchCard: {
+  card: {
     backgroundColor: '#FFFFFF',
+    borderRadius: 16,
     padding: 16,
-    borderRadius: 24,
+    marginBottom: 14,
     borderWidth: 1,
-    borderColor: '#c5c5d3',
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.04,
-    shadowRadius: 10,
-    elevation: 2,
+    borderColor: '#E2E8F0',
+    gap: 10,
+    shadowColor: '#00236f',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    elevation: 3,
   },
-  batchHeader: {
+  headerRow: {
+    flexDirection: 'row',
+    justify.content: 'space-between',
+    alignItems: 'center',
+  },
+  badgeCode: {
+    backgroundColor: '#00143B',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  badgeCodeText: {
+    color: '#FFB800',
+    fontWeight: 'bold',
+    fontSize: 12,
+  },
+  statusPill: {
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  statusText: {
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
+  productTitle: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#0F172A',
+  },
+  metricsBox: {
+    flexDirection: 'row',
+    backgroundColor: '#F8FAFC',
+    borderRadius: 12,
+    padding: 10,
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: '#F1F5F9',
+  },
+  metricItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  divider: {
+    width: 1,
+    backgroundColor: '#E2E8F0',
+  },
+  metricLabel: {
+    fontSize: 8,
+    fontWeight: 'bold',
+    color: '#64748B',
+    marginBottom: 2,
+  },
+  metricValue: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#0F172A',
+  },
+  codesRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFFBEB',
+    borderWidth: 1,
+    borderColor: '#FDE68A',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  codeItem: {
+    fontSize: 10,
+    color: '#78350F',
+    fontWeight: 'bold',
+  },
+  codeVal: {
+    color: '#B45309',
+    fontFamily: 'monospace',
+  },
+  cryptoBox: {
+    backgroundColor: '#F0FDF4',
+    borderWidth: 1,
+    borderColor: '#BBF7D0',
+    padding: 10,
+    borderRadius: 10,
+    gap: 4,
+  },
+  cryptoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  batchCode: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: '#00236f',
-  },
-  batchBadge: {
-    backgroundColor: '#D1FAE5',
-    color: '#065F46',
+  cryptoLabel: {
     fontSize: 10,
     fontWeight: 'bold',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
+    color: '#166534',
   },
-  batchName: {
-    fontSize: 13,
-    color: '#334155',
-    fontWeight: '500',
-    marginVertical: 4,
-  },
-  batchDetails: {
-    gap: 4,
-    paddingTop: 8,
-    borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
-  },
-  batchDetailText: {
+  cryptoVal: {
     fontSize: 11,
-    color: '#64748B',
+    fontWeight: 'bold',
+    color: '#15803D',
+  },
+  hashVal: {
+    fontSize: 10,
+    fontFamily: 'monospace',
+    color: '#166534',
   },
 });

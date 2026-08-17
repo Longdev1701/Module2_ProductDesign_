@@ -15,7 +15,7 @@ export const AppHeader = React.memo(function AppHeader() {
     if (session) {
       Alert.alert(
         'Tài Khoản Doanh Nghiệp',
-        `Xin chào: ${session.fullName}\nEmail: ${session.email}\nVai trò: ${session.role}`,
+        `Họ tên: ${session.fullName}\nEmail: ${session.email}\nVai trò: ${session.role}`,
         [
           {
             text: 'Đăng xuất',
@@ -35,27 +35,27 @@ export const AppHeader = React.memo(function AppHeader() {
   };
 
   return (
-    <View style={styles.header}>
-      <View style={styles.leftRow}>
+    <View style={styles.headerContainer}>
+      <View style={styles.leftGroup}>
         <View style={styles.logoBadge}>
-          <Text style={styles.logoText}>T</Text>
+          <Text style={styles.logoSymbol}>⚖️</Text>
         </View>
-        <View style={styles.titleContainer}>
-          <Text style={styles.headerSub}>AI COMPLIANCE NAVIGATOR</Text>
-          <Text style={styles.headerTitle} numberOfLines={1} ellipsizeMode="tail">
-            Themis LexiGuard Mobile
+        <View style={styles.titleColumn}>
+          <Text style={styles.brandSub}>THEMIS LEXIGUARD — GACC DURIAN</Text>
+          <Text style={styles.brandTitle} numberOfLines={1}>
+            Điều Hướng Pháp Lý Thực Địa
           </Text>
         </View>
       </View>
 
       <TouchableOpacity
-        style={styles.userBadge}
+        style={styles.profileChip}
         onPress={handleAccountPress}
         activeOpacity={0.8}
         hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
       >
-        <Text style={styles.userIcon}>👤</Text>
-        <Text style={styles.userRoleText} numberOfLines={1}>
+        <View style={styles.liveDot} />
+        <Text style={styles.profileText} numberOfLines={1}>
           {session ? session.fullName.split(' ')[0] : 'Đăng nhập'}
         </Text>
       </TouchableOpacity>
@@ -70,64 +70,72 @@ export const AppHeader = React.memo(function AppHeader() {
 });
 
 const styles = StyleSheet.create({
-  header: {
+  headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#00236f',
+    paddingVertical: 14,
+    backgroundColor: '#00143B',
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.15)',
+    borderBottomColor: 'rgba(255, 184, 0, 0.25)',
   },
-  leftRow: {
+  leftGroup: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
   },
   logoBadge: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    backgroundColor: '#FFB800',
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    backgroundColor: 'linear-gradient(135deg, #FFB800 0%, #D97706 100%)',
+    borderWidth: 1,
+    borderColor: '#FCD34D',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
+    shadowColor: '#FFB800',
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
   },
-  logoText: {
-    fontWeight: 'bold',
-    fontSize: 18,
-    color: '#00236f',
+  logoSymbol: {
+    fontSize: 20,
   },
-  titleContainer: {
+  titleColumn: {
     flex: 1,
   },
-  headerSub: {
-    fontSize: 8,
-    fontFamily: 'monospace',
-    color: '#FCD34D',
-    letterSpacing: 1,
+  brandSub: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#FFB800',
+    letterSpacing: 1.2,
   },
-  headerTitle: {
+  brandTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#FFFFFF',
+    letterSpacing: 0.2,
   },
-  userBadge: {
+  profileChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    paddingHorizontal: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 184, 0, 0.4)',
+    paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 16,
-    gap: 4,
-    minHeight: 36,
+    borderRadius: 20,
+    gap: 6,
   },
-  userIcon: {
-    fontSize: 14,
+  liveDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: '#10B981',
   },
-  userRoleText: {
-    fontSize: 11,
+  profileText: {
+    fontSize: 12,
     fontWeight: 'bold',
     color: '#FFB800',
   },
