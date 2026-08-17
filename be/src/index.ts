@@ -37,6 +37,12 @@ import authRouter from './modules/auth/router';
 import orgRouter from './modules/organization/router';
 import adminRouter from './modules/admin/router';
 import { adminLegalUpdatesRouter, legalUpdatesRouter } from './modules/legal-updates/router';
+import productRouter from './modules/products/router';
+import batchRouter from './modules/batches/router';
+import documentRouter from './modules/documents/router';
+import reportRouter from './modules/reports/router';
+import integrityRouter from './modules/integrity/router';
+import dashboardRouter from './modules/dashboard/router';
 import { initLegalSyncCron } from './jobs/legal-sync/cron';
 
 // ─── API Routes ─────────────────────────────────────────
@@ -47,6 +53,13 @@ app.use('/api/admin/legal-updates', adminLegalUpdatesRouter);
 app.use('/api/admin/regulations/sync', adminLegalUpdatesRouter);
 app.use('/api/admin', adminRouter);
 
+// ─── Domain Modules (Senior Backend SRP Architecture) ───
+app.use('/api/products', productRouter);
+app.use('/api/batches', batchRouter);
+app.use('/api/documents', documentRouter);
+app.use('/api/reports', reportRouter);
+app.use('/api/integrity', integrityRouter);
+app.use('/api/dashboard', dashboardRouter);
 
 app.get('/api', (_req, res) => {
   res.json({
@@ -58,7 +71,12 @@ app.get('/api', (_req, res) => {
         organizations: '/api/organizations',
         admin: '/api/admin',
         legalUpdates: '/api/legal-updates',
-        adminLegalUpdates: '/api/admin/legal-updates',
+        products: '/api/products',
+        batches: '/api/batches',
+        documents: '/api/documents',
+        reports: '/api/reports',
+        integrity: '/api/integrity',
+        dashboard: '/api/dashboard',
       },
     },
     meta: { requestId: _req.requestId ?? '' },
@@ -86,6 +104,5 @@ app.listen(PORT, () => {
   console.log(`   Health: http://localhost:${PORT}/health`);
   initLegalSyncCron();
 });
-
 
 export default app;
