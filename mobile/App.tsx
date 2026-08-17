@@ -15,7 +15,6 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<'radar' | 'scan' | 'tracker'>('radar');
   const [summary, setSummary] = useState<MobileKpiSummary | null>(null);
   const [batches, setBatches] = useState<MobileBatchItem[]>([]);
-  const [selectedBatchId, setSelectedBatchId] = useState<string>('1');
 
   // Documents state for Tab 2
   const [docState, setDocState] = useState({
@@ -44,7 +43,7 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#001946" />
+      <StatusBar barStyle="light-content" backgroundColor="#00236f" />
 
       {/* App Header */}
       <View style={styles.header}>
@@ -64,7 +63,7 @@ export default function App() {
           <View style={styles.tabContent}>
             <View style={styles.protocolBadge}>
               <Text style={styles.protocolBadgeText}>
-                🎯 GACC Trung Quốc — Sầu riêng (HS: 0810.60.00)
+                🎯 Hải quan Trung Quốc (GACC) — Sầu riêng (HS: 0810.60.00)
               </Text>
             </View>
 
@@ -93,18 +92,18 @@ export default function App() {
 
             {/* Blind Spot Alert Banner */}
             <View style={styles.alertBox}>
-              <Text style={styles.alertTitle}>⚠️ CHỈ TIÊU CADMIUM (GB 2762-2022)</Text>
+              <Text style={styles.alertTitle}>⚠️ LÁ CHẮN CADMIUM (GB 2762-2022)</Text>
               <Text style={styles.alertDesc}>
-                Lô DURIAN-2024-889 ghi nhận mức Cadmium <Text style={{ fontWeight: 'bold', color: '#B45309' }}>0.042 mg/kg</Text> (tiệm cận ngưỡng tối đa 0.05 mg/kg). Khuyến nghị đối soát kỹ phiếu Lab trước khi lăn bánh.
+                Lô DURIAN-2024-889 ghi nhận hàm lượng Cadmium <Text style={{ fontWeight: 'bold', color: '#B45309' }}>0.042 mg/kg</Text> (tiệm cận ngưỡng tối đa 0.05 mg/kg). Khuyến nghị đối soát phiếu Lab trước khi lăn bánh.
               </Text>
             </View>
 
             {/* Regulations Feed */}
             <Text style={styles.sectionTitle}>BẢNG TIN QUY ĐỊNH HẢI QUAN GACC</Text>
             <View style={styles.regCard}>
-              <Text style={styles.regTitle}>Lệnh 248 & 249 GACC Trung Quốc</Text>
+              <Text style={styles.regTitle}>Lệnh 248 & 249 GACC Trung Quốc (CIFER)</Text>
               <Text style={styles.regDesc}>
-                Bắt buộc mã số CIFER vùng trồng (PUC) và mã cơ sở đóng gói (PHC) trên nhãn carton song ngữ Việt - Trung.
+                Bắt buộc mã số vùng trồng (PUC) và mã cơ sở đóng gói (PHC) trên nhãn carton song ngữ Việt - Trung.
               </Text>
             </View>
             <View style={styles.regCard}>
@@ -124,7 +123,7 @@ export default function App() {
             {/* Completion Progress Bar */}
             <View style={styles.progressCard}>
               <View style={styles.progressHeader}>
-                <Text style={styles.progressTitle}>ĐỘ HOÀN THIỆN HỒ SƠ</Text>
+                <Text style={styles.progressTitle}>ĐỘ HOÀN THIỆN HỒ SƠ THÔNG QUAN</Text>
                 <Text style={styles.progressPct}>{completionPct}%</Text>
               </View>
               <View style={styles.progressBarBg}>
@@ -200,7 +199,7 @@ export default function App() {
                     📦 Khối lượng: <Text style={{ fontWeight: 'bold' }}>{item.quantity} tấn</Text> (~{(item.quantity * 0.12).toFixed(1)} Tỷ VNĐ)
                   </Text>
                   <Text style={styles.batchDetailText}>
-                    🏬 Mã CIFER: {item.ciferCode} | PUC: {item.pucCode}
+                    🏬 Mã CIFER: {item.ciferCode} | PUC: {item.pucCode} | PHC: {item.phcCode}
                   </Text>
                   {item.sealCode && (
                     <Text style={styles.batchDetailText}>
@@ -258,7 +257,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#001946',
+    backgroundColor: '#00236f',
   },
   header: {
     flexDirection: 'row',
@@ -280,7 +279,7 @@ const styles = StyleSheet.create({
   logoText: {
     fontWeight: 'bold',
     fontSize: 20,
-    color: '#001946',
+    color: '#00236f',
   },
   headerSub: {
     fontSize: 9,
@@ -295,7 +294,7 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#f7f9fb',
   },
   bodyContent: {
     padding: 16,
@@ -325,13 +324,13 @@ const styles = StyleSheet.create({
   kpiCard: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    padding: 14,
-    borderRadius: 16,
+    padding: 16,
+    borderRadius: 24,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#c5c5d3',
     shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
+    shadowOpacity: 0.04,
+    shadowRadius: 10,
     elevation: 2,
   },
   kpiCardWarning: {
@@ -351,7 +350,7 @@ const styles = StyleSheet.create({
   kpiValue: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#001946',
+    color: '#00236f',
     marginVertical: 4,
   },
   kpiValueWarning: {
@@ -372,8 +371,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FEF2F2',
     borderWidth: 1,
     borderColor: '#FECACA',
-    padding: 14,
-    borderRadius: 16,
+    padding: 16,
+    borderRadius: 24,
     gap: 4,
   },
   alertTitle: {
@@ -389,16 +388,16 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 13,
     fontWeight: 'bold',
-    color: '#001946',
+    color: '#00236f',
     marginTop: 8,
     letterSpacing: 0.5,
   },
   regCard: {
     backgroundColor: '#FFFFFF',
-    padding: 14,
-    borderRadius: 16,
+    padding: 16,
+    borderRadius: 24,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#c5c5d3',
     gap: 4,
   },
   regTitle: {
@@ -414,9 +413,9 @@ const styles = StyleSheet.create({
   progressCard: {
     backgroundColor: '#FFFFFF',
     padding: 16,
-    borderRadius: 16,
+    borderRadius: 24,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#c5c5d3',
     gap: 8,
   },
   progressHeader: {
@@ -426,7 +425,7 @@ const styles = StyleSheet.create({
   progressTitle: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#001946',
+    color: '#00236f',
   },
   progressPct: {
     fontSize: 14,
@@ -447,10 +446,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    padding: 14,
-    borderRadius: 16,
+    padding: 16,
+    borderRadius: 24,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#c5c5d3',
     gap: 12,
   },
   keyIcon: {
@@ -474,9 +473,9 @@ const styles = StyleSheet.create({
     color: '#0284C7',
   },
   btnPrimary: {
-    backgroundColor: '#001946',
+    backgroundColor: '#00236f',
     paddingVertical: 14,
-    borderRadius: 14,
+    borderRadius: 20,
     alignItems: 'center',
     marginTop: 8,
   },
@@ -488,9 +487,9 @@ const styles = StyleSheet.create({
   batchCard: {
     backgroundColor: '#FFFFFF',
     padding: 16,
-    borderRadius: 16,
+    borderRadius: 24,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#c5c5d3',
     gap: 8,
   },
   batchHeader: {
@@ -501,7 +500,7 @@ const styles = StyleSheet.create({
   batchCode: {
     fontSize: 15,
     fontWeight: 'bold',
-    color: '#001946',
+    color: '#00236f',
   },
   batchBadge: {
     backgroundColor: '#D1FAE5',
@@ -529,7 +528,7 @@ const styles = StyleSheet.create({
   },
   navBar: {
     flexDirection: 'row',
-    backgroundColor: '#001946',
+    backgroundColor: '#00236f',
     borderTopWidth: 1,
     borderTopColor: 'rgba(255,255,255,0.15)',
     paddingVertical: 8,
