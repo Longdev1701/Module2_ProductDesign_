@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { StyleSheet, Text, View, FlatList, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { MobileKpiSummary, RegulationItem, LoadingStatus } from '../types';
 import { fetchMobileSummary } from '../api/client';
 import { RegulationItemCard } from '../components/RegulationItemCard';
@@ -70,47 +70,53 @@ export function LegalRadarTab() {
     const data = summary || DEFAULT_SUMMARY;
     return (
       <View style={styles.headerArea}>
-        {/* Top Protocol Badge */}
+        {/* Web Alignment: Top Protocol Badge */}
         <View style={styles.protocolBadge}>
           <Text style={styles.protocolText}>
-            🎯 NGHỊ ĐỊNH THƯ GACC TRUNG QUỐC — SẦU RIÊNG (HS: 0810.60.00)
+            🎯 NGHỊ ĐỊNH THƯ GACC TRUNG QUỐC — SẦU RIÊNG TƯƠI (HS: 0810.60.00)
           </Text>
         </View>
 
-        {/* KPI Grid */}
+        {/* Web Alignment: Clearance Gauge & Compliance Rate Widget */}
+        <View style={styles.gaugeCard}>
+          <View style={styles.gaugeHeader}>
+            <Text style={styles.gaugeTitle}>CHỈ SỐ THÔNG QUAN THỰC ĐỊA</Text>
+            <View style={styles.gaugeBadge}>
+              <Text style={styles.gaugeBadgeText}>ĐẠT {data.complianceRatePct || 92.5}%</Text>
+            </View>
+          </View>
+          <View style={styles.gaugeBarBg}>
+            <View style={[styles.gaugeBarFill, { width: `${data.complianceRatePct || 92.5}%` }]} />
+          </View>
+        </View>
+
+        {/* Web Alignment: Dashboard KPI Grid (4 Metrics Cards) */}
         <View style={styles.kpiGrid}>
           <View style={styles.kpiCardPrimary}>
             <Text style={styles.kpiLabelPrimary}>SẢN LƯỢNG SẴN SÀNG</Text>
-            <Text style={styles.kpiValPrimary}>
-              {data.readyVolumeTons || 54.2} Tấn
-            </Text>
-            <Text style={styles.kpiSubPrimary}>
-              💰 ~{data.readyValueBillionVnd || 6.5} Tỷ VNĐ (~{data.readyContainersEstimate || 2.7} Cont)
-            </Text>
+            <Text style={styles.kpiValPrimary}>{data.readyVolumeTons || 54.2} Tấn</Text>
+            <Text style={styles.kpiSubPrimary}>💰 ~{data.readyValueBillionVnd || 6.5} Tỷ VNĐ</Text>
           </View>
 
           <View style={styles.kpiCardWarning}>
             <Text style={styles.kpiLabelWarning}>CẢNH BÁO ĐIỂM MÙ</Text>
-            <Text style={styles.kpiValWarning}>
-              {data.cadmiumAlertCount || 1} Lô Cadmium
-            </Text>
-            <Text style={styles.kpiSubWarning}>
-              ⏳ {data.phytoExpiringCount || 2} Lô Phyto ≤ 3 ngày
-            </Text>
+            <Text style={styles.kpiValWarning}>{data.cadmiumAlertCount || 1} Lô Cadmium</Text>
+            <Text style={styles.kpiSubWarning}>⏳ {data.phytoExpiringCount || 2} Lô Phyto ≤ 3 ngày</Text>
           </View>
         </View>
 
-        {/* Cadmium Alert Banner */}
+        {/* Web Alignment: Action Items / Blind Spot Shield Card */}
         <View style={styles.alertBanner}>
           <View style={styles.alertHeader}>
             <Text style={styles.alertIcon}>⚠️</Text>
-            <Text style={styles.alertTitle}>LÁ CHẮN CADMIUM (GB 2762-2022)</Text>
+            <Text style={styles.alertTitle}>LÁ CHẮN CADMIUM GB 2762-2022 (ACTION ITEMS)</Text>
           </View>
           <Text style={styles.alertDesc}>
-            Lô DURIAN-2024-889 ghi nhận mức Cadmium <Text style={styles.boldAlert}>0.042 mg/kg</Text> (tiệm cận ngưỡng tối đa <Text style={styles.boldAlert}>0.05 mg/kg</Text>). Khuyến nghị đối soát phiếu Lab trước khi xuất bến.
+            Lô DURIAN-2024-889 ghi nhận mức Cadmium <Text style={styles.boldAlert}>0.042 mg/kg</Text> (tiệm cận ngưỡng tối đa <Text style={styles.boldAlert}>0.05 mg/kg</Text>). Cần đối soát phiếu Lab trước khi lăn bánh.
           </Text>
         </View>
 
+        {/* Web Alignment: Legal Risk Alerts Feed Section */}
         <Text style={styles.sectionHeader}>BẢNG TIN QUY ĐỊNH HẢI QUAN GACC MỚI NHẤT</Text>
       </View>
     );
@@ -171,6 +177,48 @@ const styles = StyleSheet.create({
     color: '#FFB800',
     textAlign: 'center',
     letterSpacing: 0.5,
+  },
+  gaugeCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    gap: 8,
+  },
+  gaugeHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  gaugeTitle: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#00236f',
+  },
+  gaugeBadge: {
+    backgroundColor: '#ECFDF5',
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 8,
+  },
+  gaugeBadgeText: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#059669',
+  },
+  gaugeBarBg: {
+    height: 8,
+    backgroundColor: '#E2E8F0',
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  gaugeBarFill: {
+    height: '100%',
+    backgroundColor: '#10B981',
+    borderRadius: 4,
   },
   kpiGrid: {
     flexDirection: 'row',
