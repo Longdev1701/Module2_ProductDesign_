@@ -157,7 +157,7 @@ export function DocumentUploadModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fadeIn">
-      <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl border border-outline-variant flex flex-col overflow-hidden">
+      <div className="bg-white w-full lg:max-w-xl h-full lg:h-auto lg:max-h-[90vh] lg:rounded-2xl shadow-2xl border border-outline-variant flex flex-col overflow-hidden">
         {/* Header */}
         <div className="p-4 px-6 border-b border-outline-variant flex items-center justify-between bg-surface-container-lowest">
           <div>

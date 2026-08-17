@@ -46,10 +46,11 @@ import adminRouter from './modules/admin/router';
 import { adminLegalUpdatesRouter, legalUpdatesRouter } from './modules/legal-updates/router';
 import productRouter from './modules/products/router';
 import batchRouter from './modules/batches/router';
-import documentRouter from './modules/documents/router';
+import { documentRouter, batchDocumentRouter } from './modules/document/router';
 import reportRouter from './modules/reports/router';
 import integrityRouter from './modules/integrity/router';
 import dashboardRouter from './modules/dashboard/router';
+import complianceRouter from './modules/compliance/router';
 import { initLegalSyncCron } from './jobs/legal-sync/cron';
 
 // ─── API Routes ─────────────────────────────────────────
@@ -62,11 +63,13 @@ app.use('/api/admin', adminRouter);
 
 // ─── Domain Modules (Senior Backend SRP Architecture) ───
 app.use('/api/products', productRouter);
+app.use('/api/batches/:batchId/documents', batchDocumentRouter);
 app.use('/api/batches', batchRouter);
 app.use('/api/documents', documentRouter);
 app.use('/api/reports', reportRouter);
 app.use('/api/integrity', integrityRouter);
 app.use('/api/dashboard', dashboardRouter);
+app.use('/api/compliance', complianceRouter);
 
 app.get('/api', (_req, res) => {
   res.json({

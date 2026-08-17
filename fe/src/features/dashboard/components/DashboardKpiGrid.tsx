@@ -14,9 +14,9 @@ interface DashboardKpiGridProps {
 export function DashboardKpiGrid({ summary, loading, onSelectDrillDown }: DashboardKpiGridProps) {
   if (loading && !summary) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-5">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="bg-white p-5 rounded-2xl border border-outline-variant/60 shadow-xs animate-pulse space-y-4">
+          <div key={i} className="bg-white p-4 lg:p-5 rounded-2xl border border-outline-variant/60 shadow-xs animate-pulse space-y-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-slate-200 rounded-xl"></div>
               <div className="h-4 bg-slate-200 rounded w-24"></div>
@@ -36,7 +36,7 @@ export function DashboardKpiGrid({ summary, loading, onSelectDrillDown }: Dashbo
   const totalVolumeTons = summary?.totalExportVolumeTons || 0;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-5">
       {/* KPI 1: Tổng Lô hàng (Click để Drill-down) */}
       <div
         onClick={() => onSelectDrillDown?.('TOTAL_BATCHES')}

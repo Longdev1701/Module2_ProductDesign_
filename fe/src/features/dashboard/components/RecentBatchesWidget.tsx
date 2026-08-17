@@ -143,8 +143,8 @@ export function RecentBatchesWidget({
           )}
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm font-sans min-w-[620px]">
+        <div className="-mx-3 lg:mx-0 overflow-x-auto">
+          <table className="w-full text-left text-sm font-sans min-w-[620px] lg:min-w-0">
             <thead className="bg-surface-container-low text-[11px] font-mono uppercase text-outline rounded-t-lg">
               <tr>
                 <th className="px-3.5 py-2.5 font-semibold rounded-l-lg">MÃ LÔ &amp; SẢN PHẨM</th>

@@ -8,8 +8,75 @@ Tất cả các thay đổi quan trọng của dự án **Themis LexiGuard** s�
 
 ## [Unreleased]
 
+### Added — 2026-08-17: Mobile Native Architecture (100% Expo Go Compatible)
+- **`mobile/App.tsx`**: Xây dựng kiến trúc React Navigation v7 native với Auth Gate (Splash → LoginScreen → 5 Bottom Tabs: `DIEU_HANH`, `SAN_PHAM`, `TU_VAN`, `LIEM_CHINH`, `CAI_DAT`). Thiết kế 0% emoji, sử dụng text badge nhận diện (`[DH]`, `[SP]`, `[AI]`, `[LC]`, `[CD]`), tone màu Deep Navy `#00143B` & Imperial Gold `#FFB800`.
+- **`mobile/src/lib/api.ts`**: Xây dựng client kết nối trực tiếp RESTful API Backend (`http://<LAN_IP>:3001/api`), lưu trữ session bảo mật qua `expo-secure-store`, auto-attach JWT Bearer token và header `x-organization-id`.
+- **`mobile/src/lib/theme.ts`**: Đồng bộ 100% Design Tokens (màu sắc, font size, padding) từ Web (`fe/src/app/globals.css`).
+- **`mobile/src/components/ui.tsx`**: Bộ UI components tái sử dụng chuẩn hóa (ScreenShell, Card, StatusBadge, KeyBadge 4 Khóa, Skeleton, ErrorBanner, EmptyState, PrimaryButton).
+- **`mobile/src/screens/`**:
+  - `LoginScreen.tsx`: Đăng nhập thực tế, kết nối endpoint `/api/auth/login`, tự động chuyển hướng và lưu trữ session.
+  - `DashboardScreen.tsx`: Kết nối `/api/dashboard/summary` và `/api/dashboard/recent-checks`, hiển thị lưới KPI 2x2, danh sách lô hàng kèm huy hiệu 4 Khóa Sống còn (Phyto, Lab, CO, Pkg), hỗ trợ Pull-to-refresh.
+  - `ProductsScreen.tsx`: Tra cứu danh mục sản phẩm từ `/api/products`, tìm kiếm thời gian thực theo tên, mã HS, hiển thị xuất xứ vùng trồng và thị trường mục tiêu.
+  - `ChecksScreen.tsx`: Lịch sử kiểm tra tuân thủ AI từ `/api/compliance/checks` với trạng thái và kết quả theo chuẩn Enum.
+  - `IntegrityScreen.tsx`: Dòng thời gian nhật ký kiểm toán bất biến SHA-256 từ `/api/integrity/audit-log`.
+  - `SettingsScreen.tsx`: Hồ sơ người dùng từ `/api/auth/me`, phân quyền vai trò RBAC (`OWNER | MANAGER | COMPLIANCE | VIEWER`) và tính năng đăng xuất an toàn.
+- **`mobile/package.json` & `app.json`**: Cấu hình các thư viện tương thích 100% với Expo Go SDK 54 (`@react-navigation/native` v7, `@react-navigation/bottom-tabs` v7, `expo-secure-store`, `react-native-safe-area-context`, `react-native-screens`).
+
+### Added — 2026-08-17: Hoàn thiện 100% Tính năng Tương tác Giống hệt Web (Full Feature Parity)
+- **`mobile/src/screens/ProductsScreen.tsx`**:
+  - Tích hợp 2 Sub-tab chuyển đổi: **SẢN PHẨM** & **LÔ HÀNG 4 KHÓA**.
+  - **Modal Thêm Sản phẩm**: Tạo sản phẩm mới kèm mã HS 0810.60.00, vùng trồng PUC GACC (`POST /api/products`).
+  - **Modal Khởi tạo Lô hàng**: Tạo lô hàng mới chọn sản phẩm, sản lượng tấn xuất khẩu (`POST /api/batches`).
+  - **Modal Nạp 4 Khóa Chứng từ**: Thao tác nạp số hóa từng chứng thư sống còn (Phyto, Lab Cadmium GB 2762, CO Form E, Packing List) trực tiếp vào lô hàng (`POST /api/batches/:batchId/documents`).
+  - Nút Xóa sản phẩm an toàn có xác nhận ghi nhật ký kiểm toán (`DELETE /api/products/:id`).
+- **`mobile/src/screens/ChecksScreen.tsx`**:
+  - Tích hợp 2 Sub-tab: **TRỢ LÝ AI THỰC ĐỊA** & **LỊCH SỬ THẨM ĐỊNH**.
+  - **Giao diện Chat AI Navigator**: Hỏi đáp quy chuẩn pháp lý thời gian thực (Giới hạn Cadmium GB 2762-2022, Nghị định thư sầu riêng 2024, Lệnh 248/249 CIFER, 4 Khóa chứng từ) kèm thanh gợi ý 1-chạm (Quick Prompts).
+- **`mobile/src/screens/IntegrityScreen.tsx`**:
+  - **Công cụ Xác thực Mã băm SHA-256**: Ô nhập/dán mã băm 64 ký tự $\to$ gọi trực tiếp `GET /api/integrity/verify/:hash` để kiểm định tính nguyên vẹn của Báo cáo thông quan tức thì.
+- **`mobile/src/screens/DashboardScreen.tsx`**:
+  - Bổ sung **Action Items Widget**: Danh sách việc cần xử lý ngay (Hồ sơ thiếu chứng thư, đếm ngược hạn Phyto 14 ngày) theo chuẩn `ActionRequiredWidget` trên Web.
+
+### Added — 2026-08-17: Đồng bộ Toàn diện Chuẩn `mobile/docs/technical.md` & `business.md`
+- **Tối ưu Hiệu năng Render chuẩn `technical.md`**:
+  - Chuyển đổi toàn bộ danh sách sang `FlatList` với `keyExtractor` định danh duy nhất (`p.id`, `c.id`, `log.id`), `windowSize={10}`, `maxToRenderPerBatch={10}`.
+  - Bọc tất cả Component thẻ con trong `React.memo` (`ProductCardMemo`, `CheckCardMemo`, `AuditRowMemo`, `KpiCard`).
+  - Sử dụng `useMemo` tính toán chuyển đổi định giá sản lượng/container và bộ lọc tìm kiếm.
+  - Toàn bộ `StyleSheet.create()` được khai báo ngoài phạm vi component ở cấp cao nhất (top-level), triệt tiêu việc tạo object style inline trong render cycle.
+  - Tích hợp `useSafeAreaInsets` cho toàn bộ các màn hình đảm bảo không tràn tai thỏ/thanh trạng thái.
+- **Hiện thực hóa Nghiệp vụ chuẩn `business.md`**:
+  - **Feature #1**: Ra-da cảnh báo điểm mù pháp lý GACC thời gian thực, ngưỡng Cadmium GB 2762-2022 ($\le 0.05\text{ mg/kg}$) và đếm ngược hạn Kiểm dịch TV Phyto (14 ngày).
+  - **Feature #2**: Kiểm tra 4 Khóa chứng từ sống còn (Phyto, Lab Cadmium, CO Form E, Packing List) trên từng lô hàng.
+  - **Feature #3**: Định giá tiền hàng ước tính (`💰 ~X.X Tỷ VNĐ / 🚛 ~X.X Cont`), theo dõi mã vùng trồng PUC, cơ sở đóng gói PHC và thanh trạng thái chuỗi băm SHA-256 Merkle Chain bảo vệ toàn vẹn 100%.
+
+### Fixed — 2026-08-17: Backend Compliance & Integrity Endpoints & Settings Session Handling
+- **`be/src/modules/compliance/`**:
+  - `service.ts`, `controller.ts`, `router.ts`: Xây dựng đầy đủ phân hệ kiểm tra tuân thủ AI với các endpoint `GET /api/compliance/checks` và `GET /api/compliance/checks/:id`, trả về lịch sử kiểm định từ bảng `compliance_checks`, liên kết với Lô hàng, Sản phẩm và Báo cáo.
+  - `be/src/index.ts`: Đăng ký `app.use('/api/compliance', complianceRouter)`.
+- **`be/src/modules/integrity/`**:
+  - Bổ sung định tuyến `GET /api/integrity/audit-log` alias cho `/logs`, đảm bảo tính tương thích chuẩn hóa giữa Web và Mobile.
+- **`mobile/src/screens/`**:
+  - `LoginScreen.tsx`: Sửa lỗi trích xuất `accessToken` từ `res.session.accessToken` và `orgId` từ `res.organizations[0].id`, lưu chính xác vào `expo-secure-store`.
+  - `SettingsScreen.tsx`: Cập nhật logic phân giải phản hồi `/api/auth/me` để hiển thị đúng thông tin Tổ chức, vai trò RBAC và email người dùng.
+
+### Fixed — 2026-08-17: Backend Dashboard Endpoints & Mobile Robust JSON Parsing
+- **`be/src/modules/dashboard/`**:
+  - `service.ts`: Triển khai đầy đủ các phương thức tính toán chỉ số thực tế từ Prisma ORM: `getSummary` (tổng lô, sẵn sàng, vi phạm, tỷ lệ tuân thủ, sản lượng tấn, ước tính container và giá trị xuất khẩu tỷ VNĐ), `getRecentBatches` (chi tiết 4 Khóa hồ sơ Phyto, Lab, CO, PackingList), `getTrends`, `getActionItems`, và `getOverview` (gộp 1 request duy nhất).
+  - `controller.ts` & `router.ts`: Đăng ký đầy đủ các route `/api/dashboard/overview`, `/api/dashboard/summary`, `/api/dashboard/recent-batches`, `/api/dashboard/recent-checks`, `/api/dashboard/trends`, `/api/dashboard/action-items`.
+- **`mobile/src/lib/api.ts`**: Nâng cấp phương thức `request` với cơ chế bọc phân tích JSON an toàn (`safe text parse`), chặn đứng lỗi `JSON Parse error: Unexpected character '<'` khi gặp phản hồi HTML/mạng.
+- **`mobile/src/screens/DashboardScreen.tsx`**: Chuyển sang sử dụng endpoint `/dashboard/overview` nạp đồng bộ dữ liệu chỉ trong 1 round-trip duy nhất.
+
+### Fixed — 2026-08-17: Responsive Web Layout cho Mobile
+- **`fe/src/components/layout/Topbar.tsx`**: Fix `w-[calc(100%-280px)]` cứng → `lg:w-[calc(100%-280px)] w-full`. Ẩn search bar trên mobile (`hidden md:flex`), thêm brand logo nhỏ thay thế (`lg:hidden`). Icon notifications compact hơn trên mobile.
+- **`fe/src/features/dashboard/components/DashboardKpiGrid.tsx`**: Grid KPI từ `sm:grid-cols-2 lg:grid-cols-4` → `grid-cols-2 lg:grid-cols-4` — luôn hiện 2 cột ngay từ màn hình nhỏ nhất. Gap thu hẹp `gap-3 lg:gap-5`. Card padding compact `p-4 lg:p-5`.
+- **`fe/src/features/dashboard/components/RecentBatchesWidget.tsx`**: Table bảng lô hàng thêm `-mx-3 lg:mx-0 overflow-x-auto` — người dùng mobile có thể scroll ngang tự nhiên trong giới hạn padding.
+- **`fe/src/features/dashboard/components/KpiDrillDownModal.tsx`**: Modal từ `max-w-4xl rounded-2xl` → full-screen trên mobile (`h-full lg:h-auto lg:max-w-4xl lg:rounded-2xl`).
+- **`fe/src/features/documents/DocumentPreviewModal.tsx`**: Modal → full-screen mobile.
+- **`fe/src/features/documents/DocumentUploadModal.tsx`**: Modal → full-screen mobile.
+
 ### Added
 - **Triển khai Trọn gói Toàn diện Toàn bộ Các Tính năng Phụ trợ CRUD (Thêm - Sửa - Xóa) Thực tế**:
+
   - **Phân hệ Sản phẩm (`be/src/modules/product/`, `fe/src/features/ProductsPage.tsx`, `ProductDetailPage.tsx`)**:
     - Backend: Xây dựng bộ RESTful endpoints `GET|POST /api/products`, `GET|PATCH|DELETE /api/products/:id` với Zod schema (`CreateProductInput`, `UpdateProductInput`), tích hợp Prisma ORM, kiểm tra quan hệ lô hàng trước khi xóa, ghi nhận Audit Log (`product.created`, `product.updated`, `product.deleted`).
     - Frontend: Loại bỏ 100% dữ liệu mock/hardcoded, kết nối API thực tế, tích hợp Modal Thêm mới Sản phẩm, Modal Chỉnh sửa, Dialog Xác nhận Xóa và chi tiết sản phẩm.
