@@ -116,3 +116,58 @@ export interface ReportDetailDTO {
   citations: LegalCitationDTO[];
   documents: ReportDocumentSummaryDTO[];
 }
+
+export interface HistoryItemDTO {
+  id: string;
+  checkId: string;
+  batchId: string;
+  batchCode: string;
+  productId: string;
+  productName: string;
+  productCategory: string;
+  hsCode: string | null;
+  origin: string | null;
+  market: string;
+  quantity: number | null;
+  unit: string | null;
+  checkStatus: string;
+  result: string;
+  aiConfidence: number | null;
+  summary: string | null;
+  reportId?: string | null;
+  reportStatus?: string | null;
+  integrityHash?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  criticalFindingsCount: number;
+  totalFindingsCount: number;
+}
+
+export interface HistoryAlertDTO {
+  id: string;
+  title: string;
+  description: string;
+  severity: 'CRITICAL' | 'HIGH' | 'MEDIUM';
+  createdAt: string;
+}
+
+export interface HistorySummaryDTO {
+  totalChecks: number;
+  compliantCount: number;
+  nonCompliantCount: number;
+  pendingCount: number;
+  complianceRate: number;
+  recentAlerts: HistoryAlertDTO[];
+}
+
+export interface HistoryResponseDTO {
+  items: HistoryItemDTO[];
+  summary: HistorySummaryDTO;
+  meta: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
+}
+

@@ -9,8 +9,10 @@ const reportRouter = Router();
 reportRouter.use(authMiddleware);
 reportRouter.use(orgMiddleware());
 
+reportRouter.get('/history', ReportController.getHistory);
 reportRouter.get('/batch/:batchId', ReportController.getReportByBatchId);
 reportRouter.get('/:id', ReportController.getReportById);
 reportRouter.post('/:id/approve', ReportController.approveReport);
 
 export default reportRouter;
+

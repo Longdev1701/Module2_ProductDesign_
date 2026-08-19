@@ -1,8 +1,26 @@
 import { Request, Response, NextFunction } from 'express';
 import { ReportService } from './service';
-import { approveReportSchema } from './schema';
+import { approveReportSchema, listHistorySchema } from './schema';
 
 export class ReportController {
+  static async getHistory(req: Request, res: Response, next: NextFunction) {
+    try {
+      const orgId = req.orgMember!.organizationId;
+      const parsedQuery = listHistorySchema.parse(req.query);
+      const result = await ReportService.getHistory(orgId, parsedQuery);
+      return res.json({
+        data: result.items,
+        summary: result.summary,
+        meta: {
+          ...result.meta,
+          requestId: req.requestId ?? '',
+        },
+      });
+    } catch (error) {
+      return next(error);
+    }
+  }
+
   static async getReportById(req: Request, res: Response, next: NextFunction) {
     try {
       const orgId = req.orgMember!.organizationId;
