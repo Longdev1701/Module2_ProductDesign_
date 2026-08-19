@@ -13,7 +13,7 @@ const baseNavItems = [
   { name: "Sản phẩm & Lô hàng", href: "/products", icon: "inventory_2" },
   { name: "Lịch sử Thẩm định", href: "/history", icon: "history" },
   { name: "Giám sát Liêm chính", href: "/integrity", icon: "gavel" },
-  { name: "Cài đặt & Phân quyền", href: "/settings", icon: "settings" },
+  { name: "Cài đặt Doanh nghiệp", href: "/settings", icon: "settings" },
 ];
 
 export function Sidebar() {

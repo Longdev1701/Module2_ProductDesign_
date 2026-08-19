@@ -5,14 +5,14 @@ import { authMiddleware } from '../../middleware/authMiddleware';
 
 const authRouter = Router();
 
-// Rate limiter for login: 5 attempts per minute per IP
+// Rate limiter for login: 20 attempts per minute per IP
 const loginLimiter = rateLimit({
   windowMs: 60 * 1000,
-  max: 5,
+  max: 20,
   message: {
     error: {
       code: 'TOO_MANY_REQUESTS',
-      message: 'Bạn đã nhập sai quá 5 lần. Vui lòng thử lại sau 1 phút.',
+      message: 'Bạn đã nhập sai quá nhiều lần. Vui lòng thử lại sau 1 phút.',
     },
   },
   standardHeaders: true,

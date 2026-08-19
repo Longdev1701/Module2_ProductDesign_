@@ -86,15 +86,7 @@ export function UserDropdown() {
   const isAdmin = user?.platformRole === "SUPER_ADMIN" || user?.platformRole === "PLATFORM_ADMIN";
 
   return (
-    <div className="flex items-center gap-4">
-      {/* Quick Dashboard Return Button */}
-      <Link
-        href="/dashboard"
-        className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-[#00327d] text-white hover:bg-[#0047ab] rounded-lg text-xs font-semibold transition-all shadow-xs"
-      >
-        <span>Quay về Dashboard</span>
-      </Link>
-
+    <div className="flex items-center gap-3">
       {/* Active Organization Badge */}
       {activeOrg && (
         <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-white border border-[#c3c6d5] rounded-lg text-xs">
@@ -160,7 +152,7 @@ export function UserDropdown() {
               className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-on-surface hover:bg-surface-container-low"
             >
               <span className="material-symbols-outlined text-sm text-primary">settings</span>
-              Cài đặt & Phân quyền
+              Cài đặt Doanh nghiệp
             </Link>
 
             <div className="border-t border-outline-variant/50 my-1"></div>

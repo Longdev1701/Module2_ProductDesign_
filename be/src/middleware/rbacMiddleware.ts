@@ -5,9 +5,16 @@ export type TenantPermission =
   | 'org.manage'
   | 'member.invite'
   | 'member.role_change'
+  | 'product.create'
+  | 'product.manage'
+  | 'product.delete'
+  | 'batch.create'
+  | 'batch.manage'
+  | 'batch.delete'
   | 'shipment.create'
   | 'shipment.delete'
   | 'document.upload'
+  | 'document.delete'
   | 'check.run'
   | 'finding.resolve'
   | 'report.draft'
@@ -20,9 +27,16 @@ const TENANT_PERMISSION_MATRIX: Record<TenantPermission, OrganizationRole[]> = {
   'org.manage': [OrganizationRole.OWNER],
   'member.invite': [OrganizationRole.OWNER, OrganizationRole.MANAGER],
   'member.role_change': [OrganizationRole.OWNER],
+  'product.create': [OrganizationRole.OWNER, OrganizationRole.MANAGER, OrganizationRole.COMPLIANCE],
+  'product.manage': [OrganizationRole.OWNER, OrganizationRole.MANAGER, OrganizationRole.COMPLIANCE],
+  'product.delete': [OrganizationRole.OWNER, OrganizationRole.MANAGER],
+  'batch.create': [OrganizationRole.OWNER, OrganizationRole.MANAGER, OrganizationRole.COMPLIANCE],
+  'batch.manage': [OrganizationRole.OWNER, OrganizationRole.MANAGER, OrganizationRole.COMPLIANCE],
+  'batch.delete': [OrganizationRole.OWNER, OrganizationRole.MANAGER],
   'shipment.create': [OrganizationRole.OWNER, OrganizationRole.MANAGER, OrganizationRole.COMPLIANCE],
   'shipment.delete': [OrganizationRole.OWNER, OrganizationRole.MANAGER],
   'document.upload': [OrganizationRole.OWNER, OrganizationRole.MANAGER, OrganizationRole.COMPLIANCE],
+  'document.delete': [OrganizationRole.OWNER, OrganizationRole.MANAGER, OrganizationRole.COMPLIANCE],
   'check.run': [OrganizationRole.OWNER, OrganizationRole.MANAGER, OrganizationRole.COMPLIANCE],
   'finding.resolve': [OrganizationRole.OWNER, OrganizationRole.MANAGER, OrganizationRole.COMPLIANCE],
   'report.draft': [OrganizationRole.OWNER, OrganizationRole.MANAGER, OrganizationRole.COMPLIANCE],
