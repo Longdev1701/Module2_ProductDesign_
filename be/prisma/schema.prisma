@@ -54,6 +54,7 @@ model Organization {
   products     Product[]
   documents    Document[]
   legalUpdates LegalUpdate[]
+  ciferRegistries CiferRegistry[]
 
   @@map("organizations")
 }
@@ -159,11 +160,14 @@ enum BatchStatus {
 }
 
 model ProductMarketRequirement {
-  id         String  @id @default(uuid())
-  productId  String
-  product    Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  marketCode String // e.g., "EU", "US", "CN"
-  marketName String
+  id                 String         @id @default(uuid())
+  productId          String
+  product            Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  marketCode         String // e.g., "EU", "US", "CN"
+  marketName         String
+  requiredDocuments  DocumentType[] @default([PHYTO, LAB_REPORT, CO, PACKING_LIST]) // Default to original 4
+  requirementDetails Json? // AI generated details explaining why these are required
+  lastSyncedAt       DateTime?
 
   @@unique([productId, marketCode])
   @@map("product_market_requirements")
@@ -499,4 +503,61 @@ enum NotificationType {
   CHECK_COMPLETED
   RISK_ALERT
   SYSTEM
+}
+
+// ─── CIFER REGISTRY ──────────────────────────────────────
+
+model CiferRegistry {
+  id              String   @id @default(uuid())
+  no              String?  
+  country         String   @default("Vietnam")
+  category        String   
+  chinaRegNo      String   @unique 
+  overseasRegNo   String?  
+  name            String   
+  address         String?  
+  regDate         String?  
+  expDate         String?  
+  state           String?  
+  
+  organizationId  String?
+  organization    Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  history         CiferRegistryHistory[]
+
+  @@index([overseasRegNo])
+  @@index([chinaRegNo])
+  @@index([category])
+  @@map("cifer_registry")
+}
+
+model CiferRegistryHistory {
+  id              String   @id @default(uuid())
+  ciferRegistryId String
+  ciferRegistry   CiferRegistry @relation(fields: [ciferRegistryId], references: [id], onDelete: Cascade)
+  oldState        String?
+  newState        String
+  recordedAt      DateTime @default(now())
+
+  @@index([ciferRegistryId])
+  @@map("cifer_registry_history")
+}
+// ─── SYSTEM SYNC LOG ──────────────────────────────────────
+
+model SystemSyncLog {
+  id              String   @id @default(uuid())
+  jobName         String   // e.g. "CIFER_SYNC"
+  status          String   // e.g. "RUNNING", "SUCCESS", "FAILED"
+  recordsAdded    Int      @default(0)
+  recordsUpdated  Int      @default(0)
+  errorMessage    String?
+  durationMs      Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([jobName, status])
+  @@map("system_sync_logs")
 }
