@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ShieldAlert, LogOut, Building2, Mail, UserCheck, RefreshCw } from "lucide-react";
-import { Button } from "../../components/Button";
+import { Button } from "@/components/ui/button";
 import { api } from "../../lib/api";
 import type { AuthMeResponse, UserProfile } from "@/types/api";
 
@@ -83,10 +83,10 @@ export function PendingAccessView() {
         )}
 
         <div className="pt-2 flex flex-col sm:flex-row gap-3">
-          <Button fullWidth variant="outline" onClick={() => window.location.reload()} className="gap-2">
+          <Button variant="outline" onClick={() => window.location.reload()} className="w-full gap-2">
             <RefreshCw className="w-4 h-4" /> Tải lại trang kiểm tra
           </Button>
-          <Button fullWidth variant="outline" onClick={handleLogout} className="gap-2 text-red-600 border-red-200 hover:bg-red-50">
+          <Button variant="outline" onClick={handleLogout} className="w-full gap-2 text-red-600 border-red-200 hover:bg-red-50">
             <LogOut className="w-4 h-4" /> Đăng xuất
           </Button>
         </div>
