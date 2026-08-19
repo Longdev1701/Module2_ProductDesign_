@@ -16,7 +16,7 @@ export class DashboardService {
   static async getOverview(orgId: string): Promise<DashboardOverviewDTO> {
     const fourteenDaysAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
 
-    const [batches, criticalAlertsCount, criticalUpdates] = await Promise.all([
+    const [batches, criticalAlertsCount] = await Promise.all([
       prisma.batch.findMany({
         where: {
           product: {
@@ -29,6 +29,12 @@ export class DashboardService {
               id: true,
               name: true,
               category: true,
+              marketRequirements: {
+                select: {
+                  marketCode: true,
+                  requiredDocuments: true,
+                }
+              }
             },
           },
           documents: {
@@ -45,6 +51,14 @@ export class DashboardService {
               },
             },
           },
+          complianceChecks: {
+            orderBy: { createdAt: 'desc' },
+            take: 1,
+            include: {
+              items: true,
+              report: true,
+            },
+          },
         },
         orderBy: {
           updatedAt: 'desc',
@@ -56,16 +70,6 @@ export class DashboardService {
           severity: 'CRITICAL',
           OR: [{ organizationId: null }, { organizationId: orgId }],
         },
-      }),
-      prisma.legalUpdate.findMany({
-        where: {
-          reviewStatus: 'PUBLISHED',
-          severity: 'CRITICAL',
-          publishedAt: { gte: fourteenDaysAgo },
-          OR: [{ organizationId: null }, { organizationId: orgId }],
-        },
-        orderBy: { publishedAt: 'desc' },
-        take: 3,
       }),
     ]);
 
@@ -95,6 +99,9 @@ export class DashboardService {
         ? Math.round(((compliantBatches + readyForCheckBatches) / totalBatches) * 1000) / 10
         : 100;
 
+    const readyBatchesCount = compliantBatches + readyForCheckBatches;
+    const pendingBatchesCount = Math.max(0, totalBatches - readyBatchesCount);
+
     const summary: DashboardSummaryDTO = {
       totalBatches,
       readyForCheckBatches,
@@ -105,6 +112,8 @@ export class DashboardService {
       totalExportVolumeTons: Math.round(totalExportVolumeTons * 10) / 10,
       readyVolumeTons: Math.round(readyVolumeTons * 10) / 10,
       pendingVolumeTons: Math.round(pendingVolumeTons * 10) / 10,
+      readyBatchesCount,
+      pendingBatchesCount,
       readyContainersEstimate,
       readyValueVndBillion,
       pendingValueVndBillion,
@@ -185,17 +194,32 @@ export class DashboardService {
       };
     });
 
-    // 3. Tính toán Việc cần làm ngay trong bộ nhớ
+    // 3. Tính toán Việc cần làm ngay (Action Items) từ 100% dữ liệu thực tế của doanh nghiệp
     const actionItems: DashboardActionItemDTO[] = [];
-    for (const b of batches.slice(0, 10)) {
+    const now = new Date();
+
+    for (const b of batches) {
       const docTypes = new Set(b.documents.map((d) => d.document.type));
       const missing: string[] = [];
+      const requiredDocs = b.product.marketRequirements?.[0]?.requiredDocuments || ['PHYTO', 'LAB_REPORT', 'CO', 'PACKING_LIST'];
 
-      if (!docTypes.has(DocumentType.PHYTO)) missing.push('Kiểm dịch TV (Phyto)');
-      if (!docTypes.has(DocumentType.LAB_REPORT)) missing.push('Phiếu Lab Cadmium/MRL');
-      if (!docTypes.has(DocumentType.CO)) missing.push('C/O Form E');
-      if (!docTypes.has(DocumentType.PACKING_LIST)) missing.push('Packing List (PHC)');
+      requiredDocs.forEach(reqDoc => {
+        if (!docTypes.has(reqDoc as DocumentType)) {
+          const docLabels: Record<string, string> = {
+            PHYTO: 'Kiểm dịch TV (Phyto)',
+            LAB_REPORT: 'Phiếu Lab Cadmium/MRL',
+            CO: 'C/O Form E',
+            PACKING_LIST: 'Packing List (PHC)',
+            GPS_MAP: 'Bản đồ định vị GPS',
+            OTHER: 'Chứng từ khác (CIFER)'
+          };
+          missing.push(docLabels[reqDoc] || reqDoc);
+        }
+      });
 
+      const latestCheck = b.complianceChecks?.[0];
+
+      // 3.1. Lô hàng thiếu chứng từ xuất khẩu bắt buộc
       if (missing.length > 0) {
         actionItems.push({
           id: `missing-${b.id}`,
@@ -203,14 +227,16 @@ export class DashboardService {
           batchCode: b.batchCode,
           reportId: b.id,
           type: 'MISSING_DOCUMENT',
-          severity: missing.includes('Kiểm dịch TV (Phyto)') ? 'CRITICAL' : 'HIGH',
-          title: `Thiếu ${missing.length} chứng từ xuất khẩu bắt buộc`,
+          severity: missing.includes('Kiểm dịch TV (Phyto)') || b.status === 'ACTION_REQUIRED' ? 'CRITICAL' : 'HIGH',
+          title: `Lô ${b.batchCode}: Thiếu ${missing.length} chứng từ bắt buộc`,
           description: `Cần nạp bổ sung: ${missing.join(', ')} trước khi đóng container thông quan.`,
-          actionLabel: 'Nạp hồ sơ',
+          actionLabel: 'Nạp chứng từ',
           actionUrl: `/products/${b.productId}`,
           createdAt: b.updatedAt.toISOString(),
         });
-      } else if (b.status !== 'COMPLIANT') {
+      }
+      // 3.2. Lô hàng đã nạp đủ chứng từ nhưng chưa chạy kiểm tra tuân thủ AI
+      else if (!latestCheck || latestCheck.checkStatus !== 'COMPLETED') {
         actionItems.push({
           id: `ready-${b.id}`,
           batchId: b.id,
@@ -218,64 +244,76 @@ export class DashboardService {
           reportId: b.id,
           type: 'READY_FOR_CHECK',
           severity: 'INFO',
-          title: `Đủ 4 Khóa — Sẵn sàng Quét AI`,
-          description: `Đã nạp đầy đủ Phyto, Lab test, C/O, Packing List. Hãy chạy thẩm định AI ngay.`,
+          title: `Lô ${b.batchCode}: Đủ hồ sơ — Sẵn sàng Quét AI`,
+          description: `Đã nạp đầy đủ ${requiredDocs.length} chứng từ bắt buộc. Hãy chạy thẩm định AI ngay.`,
           actionLabel: 'Quét AI',
           actionUrl: `/checks/new?batch=${b.batchCode}&product=${encodeURIComponent(b.product.name)}`,
           createdAt: b.updatedAt.toISOString(),
         });
       }
 
-      // ⚠️ Cảnh báo Điểm mù 1: Vùng Tiệm Cận Nguy Hiểm Cadmium (GB 2762-2022)
-      if (docTypes.has(DocumentType.LAB_REPORT)) {
+      // 3.3. Các sai lệch/cảnh báo thực tế từ kết quả thẩm định AI của Lô hàng
+      if (latestCheck && latestCheck.items) {
+        const nonCompliantItems = latestCheck.items.filter(
+          (item) => item.status === 'NON_COMPLIANT' || item.status === 'CONDITIONALLY_COMPLIANT'
+        );
+        for (const item of nonCompliantItems) {
+          actionItems.push({
+            id: `finding-${item.id}`,
+            batchId: b.id,
+            batchCode: b.batchCode,
+            reportId: latestCheck.report?.id || b.id,
+            type: 'CRITICAL_ALERT',
+            severity: item.severity === 'CRITICAL' ? 'CRITICAL' : 'HIGH',
+            title: `Lô ${b.batchCode}: ${item.requirement}`,
+            description: item.deviation || item.remediation || 'Phát hiện điểm không phù hợp với quy định thị trường xuất khẩu.',
+            actionLabel: latestCheck.report?.id ? 'Xem Báo Cáo' : 'Xem Thẩm Định',
+            actionUrl: latestCheck.report?.id ? `/reports/${latestCheck.report.id}` : `/compliance/checks/${latestCheck.id}`,
+            createdAt: item.createdAt.toISOString(),
+          });
+        }
+      }
+
+      // 3.4. Báo cáo thẩm định đang chờ phê duyệt
+      if (latestCheck?.report && latestCheck.report.status === 'IN_REVIEW') {
         actionItems.push({
-          id: `cadmium-warn-${b.id}`,
+          id: `report-review-${latestCheck.report.id}`,
           batchId: b.id,
           batchCode: b.batchCode,
-          reportId: b.id,
-          type: 'CADMIUM_NEAR_LIMIT',
+          reportId: latestCheck.report.id,
+          type: 'CRITICAL_ALERT',
           severity: 'HIGH',
-          title: `Vùng Tiệm Cận Nguy Hiểm: Cadmium 0.046 mg/kg`,
-          description: `Gần chạm ngưỡng GACC GB 2762-2022 (≤ 0.05 mg/kg). Nguy cơ cô đặc khi đi cont lạnh 3-4 ngày!`,
-          actionLabel: 'Xem Báo Cáo',
-          actionUrl: `/reports/${b.id}`,
-          createdAt: b.updatedAt.toISOString(),
+          title: `Duyệt Báo cáo Thẩm định: Lô ${b.batchCode}`,
+          description: `Báo cáo "${latestCheck.report.title}" đã lập xong và đang chờ phê duyệt trước khi xuất khẩu.`,
+          actionLabel: 'Phê duyệt',
+          actionUrl: `/reports/${latestCheck.report.id}`,
+          createdAt: latestCheck.report.createdAt.toISOString(),
         });
       }
 
-      // ⏳ Cảnh báo Điểm mù 2: Cửa Sổ Hạn Dùng Kiểm Dịch TV (Phyto Window)
-      if (docTypes.has(DocumentType.PHYTO)) {
-        actionItems.push({
-          id: `phyto-exp-${b.id}`,
-          batchId: b.id,
-          batchCode: b.batchCode,
-          reportId: b.id,
-          type: 'EXPIRING_PHYTO_WINDOW',
-          severity: 'HIGH',
-          title: `Cửa Sổ Hạn KDTV: Còn 3 Ngày Hiệu Lực`,
-          description: `Giấy Kiểm dịch TV sắp hết hạn 14 ngày. Cần ưu tiên điều phối xe xuất bến tránh nghẽn biên quá hạn!`,
-          actionLabel: 'Ưu tiên ra cảng',
-          actionUrl: `/reports/${b.id}`,
-          createdAt: b.updatedAt.toISOString(),
-        });
+      // 3.5. Lô hàng sắp hết hạn xuất khẩu thực tế dựa trên expiresAt
+      if (b.expiresAt) {
+        const diffMs = new Date(b.expiresAt).getTime() - now.getTime();
+        const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+        if (diffDays <= 7) {
+          actionItems.push({
+            id: `expiring-${b.id}`,
+            batchId: b.id,
+            batchCode: b.batchCode,
+            reportId: b.id,
+            type: 'EXPIRING_BATCH',
+            severity: diffDays <= 3 ? 'CRITICAL' : 'HIGH',
+            title: `Lô ${b.batchCode}: Sắp hết hạn (${diffDays > 0 ? `Còn ${diffDays} ngày` : 'Đã quá hạn'})`,
+            description: `Thời hạn lô hàng đến ngày ${new Date(b.expiresAt).toLocaleDateString('vi-VN')}. Cần ưu tiên làm thủ tục thông quan.`,
+            actionLabel: 'Xem lô hàng',
+            actionUrl: `/products/${b.productId}`,
+            createdAt: b.updatedAt.toISOString(),
+          });
+        }
       }
-    }
-
-    for (const update of criticalUpdates) {
-      actionItems.push({
-        id: `legal-${update.id}`,
-        type: 'CRITICAL_ALERT',
-        severity: 'CRITICAL',
-        title: `Cảnh báo khẩn: ${update.frontendTitleVi || update.titleVi}`,
-        description: update.frontendSummaryVi || update.summaryVi || 'Quy định kiểm soát mới từ cơ quan thẩm quyền.',
-        actionLabel: 'Xem radar',
-        actionUrl: '/regulations',
-        createdAt: update.publishedAt?.toISOString() || update.createdAt.toISOString(),
-      });
     }
 
     // 4. Tính toán Biểu đồ Xu hướng 6 tháng trong bộ nhớ
-    const now = new Date();
     const monthMap = new Map<string, { totalBatches: number; compliantBatches: number; totalVolumeTons: number }>();
     for (let i = 5; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
@@ -396,6 +434,9 @@ export class DashboardService {
     const pendingValueVndBillion = Math.round(pendingVolumeTons * pricePerTonBillion * 10) / 10;
     const totalValueVndBillion = Math.round(totalExportVolumeTons * pricePerTonBillion * 10) / 10;
 
+    const readyBatchesCount = compliantBatches + readyForCheckBatches;
+    const pendingBatchesCount = Math.max(0, totalBatches - readyBatchesCount);
+
     return {
       totalBatches,
       readyForCheckBatches,
@@ -406,6 +447,8 @@ export class DashboardService {
       totalExportVolumeTons: Math.round(totalExportVolumeTons * 10) / 10,
       readyVolumeTons: Math.round(readyVolumeTons * 10) / 10,
       pendingVolumeTons: Math.round(pendingVolumeTons * 10) / 10,
+      readyBatchesCount,
+      pendingBatchesCount,
       readyContainersEstimate,
       readyValueVndBillion,
       pendingValueVndBillion,
@@ -527,12 +570,12 @@ export class DashboardService {
   }
 
   /**
-   * 3. Lấy danh sách việc cần làm ngay (Action Items)
+   * 3. Lấy danh sách việc cần làm ngay (Action Items) từ 100% dữ liệu thực tế
    */
   static async getActionItems(orgId: string): Promise<DashboardActionItemDTO[]> {
     const actionItems: DashboardActionItemDTO[] = [];
+    const now = new Date();
 
-    // Tìm các lô hàng đang thiếu chứng từ hoặc sẵn sàng quét
     const activeBatches = await prisma.batch.findMany({
       where: {
         product: {
@@ -540,15 +583,23 @@ export class DashboardService {
         },
       },
       include: {
-        product: { select: { name: true } },
+        product: { select: { id: true, name: true } },
         documents: {
           include: {
-            document: { select: { type: true } },
+            document: { select: { id: true, title: true, type: true } },
+          },
+        },
+        complianceChecks: {
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+          include: {
+            items: true,
+            report: true,
           },
         },
       },
       orderBy: { updatedAt: 'desc' },
-      take: 10,
+      take: 15,
     });
 
     for (const b of activeBatches) {
@@ -560,6 +611,9 @@ export class DashboardService {
       if (!docTypes.has(DocumentType.CO)) missing.push('C/O Form E');
       if (!docTypes.has(DocumentType.PACKING_LIST)) missing.push('Packing List (PHC)');
 
+      const latestCheck = b.complianceChecks?.[0];
+
+      // 3.1. Lô hàng thiếu chứng từ xuất khẩu bắt buộc
       if (missing.length > 0) {
         actionItems.push({
           id: `missing-${b.id}`,
@@ -567,14 +621,16 @@ export class DashboardService {
           batchCode: b.batchCode,
           reportId: b.id,
           type: 'MISSING_DOCUMENT',
-          severity: missing.includes('Kiểm dịch TV (Phyto)') ? 'CRITICAL' : 'HIGH',
-          title: `Thiếu ${missing.length} chứng từ xuất khẩu bắt buộc`,
+          severity: missing.includes('Kiểm dịch TV (Phyto)') || b.status === 'ACTION_REQUIRED' ? 'CRITICAL' : 'HIGH',
+          title: `Lô ${b.batchCode}: Thiếu ${missing.length} chứng từ bắt buộc`,
           description: `Cần nạp bổ sung: ${missing.join(', ')} trước khi đóng container thông quan.`,
-          actionLabel: 'Nạp hồ sơ',
+          actionLabel: 'Nạp chứng từ',
           actionUrl: `/products/${b.productId}`,
           createdAt: b.updatedAt.toISOString(),
         });
-      } else if (b.status !== 'COMPLIANT') {
+      }
+      // 3.2. Lô hàng đã nạp đủ 4 khóa nhưng chưa chạy kiểm tra tuân thủ AI
+      else if (!latestCheck || latestCheck.checkStatus !== 'COMPLETED') {
         actionItems.push({
           id: `ready-${b.id}`,
           batchId: b.id,
@@ -582,7 +638,7 @@ export class DashboardService {
           reportId: b.id,
           type: 'READY_FOR_CHECK',
           severity: 'INFO',
-          title: `Đủ 4 Khóa — Sẵn sàng Quét AI`,
+          title: `Lô ${b.batchCode}: Đủ 4 Khóa — Sẵn sàng Quét AI`,
           description: `Đã nạp đầy đủ Phyto, Lab test, C/O, Packing List. Hãy chạy thẩm định AI ngay.`,
           actionLabel: 'Quét AI',
           actionUrl: `/checks/new?batch=${b.batchCode}&product=${encodeURIComponent(b.product.name)}`,
@@ -590,65 +646,65 @@ export class DashboardService {
         });
       }
 
-      // ⚠️ Cảnh báo Điểm mù 1: Vùng Tiệm Cận Nguy Hiểm Cadmium (GB 2762-2022)
-      if (docTypes.has(DocumentType.LAB_REPORT)) {
+      // 3.3. Các sai lệch/cảnh báo thực tế từ kết quả thẩm định AI của Lô hàng
+      if (latestCheck && latestCheck.items) {
+        const nonCompliantItems = latestCheck.items.filter(
+          (item) => item.status === 'NON_COMPLIANT' || item.status === 'CONDITIONALLY_COMPLIANT'
+        );
+        for (const item of nonCompliantItems) {
+          actionItems.push({
+            id: `finding-${item.id}`,
+            batchId: b.id,
+            batchCode: b.batchCode,
+            reportId: latestCheck.report?.id || b.id,
+            type: 'CRITICAL_ALERT',
+            severity: item.severity === 'CRITICAL' ? 'CRITICAL' : 'HIGH',
+            title: `Lô ${b.batchCode}: ${item.requirement}`,
+            description: item.deviation || item.remediation || 'Phát hiện điểm không phù hợp với quy định thị trường xuất khẩu.',
+            actionLabel: latestCheck.report?.id ? 'Xem Báo Cáo' : 'Xem Thẩm Định',
+            actionUrl: latestCheck.report?.id ? `/reports/${latestCheck.report.id}` : `/compliance/checks/${latestCheck.id}`,
+            createdAt: item.createdAt.toISOString(),
+          });
+        }
+      }
+
+      // 3.4. Báo cáo thẩm định đang chờ phê duyệt
+      if (latestCheck?.report && latestCheck.report.status === 'IN_REVIEW') {
         actionItems.push({
-          id: `cadmium-warn-${b.id}`,
+          id: `report-review-${latestCheck.report.id}`,
           batchId: b.id,
           batchCode: b.batchCode,
-          reportId: b.id,
-          type: 'CADMIUM_NEAR_LIMIT',
+          reportId: latestCheck.report.id,
+          type: 'CRITICAL_ALERT',
           severity: 'HIGH',
-          title: `Vùng Tiệm Cận Nguy Hiểm: Cadmium 0.046 mg/kg`,
-          description: `Gần chạm ngưỡng GACC GB 2762-2022 (≤ 0.05 mg/kg). Nguy cơ cô đặc khi đi cont lạnh 3-4 ngày!`,
-          actionLabel: 'Xem Báo Cáo',
-          actionUrl: `/reports/${b.id}`,
-          createdAt: b.updatedAt.toISOString(),
+          title: `Duyệt Báo cáo Thẩm định: Lô ${b.batchCode}`,
+          description: `Báo cáo "${latestCheck.report.title}" đã lập xong và đang chờ phê duyệt trước khi xuất khẩu.`,
+          actionLabel: 'Phê duyệt',
+          actionUrl: `/reports/${latestCheck.report.id}`,
+          createdAt: latestCheck.report.createdAt.toISOString(),
         });
       }
 
-      // ⏳ Cảnh báo Điểm mù 2: Cửa Sổ Hạn Dùng Kiểm Dịch TV (Phyto Window)
-      if (docTypes.has(DocumentType.PHYTO)) {
-        actionItems.push({
-          id: `phyto-exp-${b.id}`,
-          batchId: b.id,
-          batchCode: b.batchCode,
-          reportId: b.id,
-          type: 'EXPIRING_PHYTO_WINDOW',
-          severity: 'HIGH',
-          title: `Cửa Sổ Hạn KDTV: Còn 3 Ngày Hiệu Lực`,
-          description: `Giấy Kiểm dịch TV sắp hết hạn 14 ngày. Cần ưu tiên điều phối xe xuất bến tránh nghẽn biên quá hạn!`,
-          actionLabel: 'Ưu tiên ra cảng',
-          actionUrl: `/reports/${b.id}`,
-          createdAt: b.updatedAt.toISOString(),
-        });
+      // 3.5. Lô hàng sắp hết hạn xuất khẩu thực tế dựa trên expiresAt
+      if (b.expiresAt) {
+        const diffMs = new Date(b.expiresAt).getTime() - now.getTime();
+        const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+        if (diffDays <= 7) {
+          actionItems.push({
+            id: `expiring-${b.id}`,
+            batchId: b.id,
+            batchCode: b.batchCode,
+            reportId: b.id,
+            type: 'EXPIRING_BATCH',
+            severity: diffDays <= 3 ? 'CRITICAL' : 'HIGH',
+            title: `Lô ${b.batchCode}: Sắp hết hạn (${diffDays > 0 ? `Còn ${diffDays} ngày` : 'Đã quá hạn'})`,
+            description: `Thời hạn lô hàng đến ngày ${new Date(b.expiresAt).toLocaleDateString('vi-VN')}. Cần ưu tiên làm thủ tục thông quan.`,
+            actionLabel: 'Xem lô hàng',
+            actionUrl: `/products/${b.productId}`,
+            createdAt: b.updatedAt.toISOString(),
+          });
+        }
       }
-    }
-
-    // Lấy cảnh báo pháp lý khẩn cấp từ GACC/Cục BVTV trong 14 ngày gần nhất
-    const fourteenDaysAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
-    const criticalUpdates = await prisma.legalUpdate.findMany({
-      where: {
-        reviewStatus: 'PUBLISHED',
-        severity: 'CRITICAL',
-        publishedAt: { gte: fourteenDaysAgo },
-        OR: [{ organizationId: null }, { organizationId: orgId }],
-      },
-      orderBy: { publishedAt: 'desc' },
-      take: 3,
-    });
-
-    for (const update of criticalUpdates) {
-      actionItems.push({
-        id: `legal-${update.id}`,
-        type: 'CRITICAL_ALERT',
-        severity: 'CRITICAL',
-        title: `🚨 Cảnh báo pháp lý khẩn cấp: ${update.frontendTitleVi || update.titleVi}`,
-        description: update.frontendSummaryVi || update.summaryVi || 'Quy định kiểm soát mới từ cơ quan hải quan.',
-        actionLabel: 'Xem quy định',
-        actionUrl: `/regulations`,
-        createdAt: update.publishedAt?.toISOString() || update.createdAt.toISOString(),
-      });
     }
 
     return actionItems;

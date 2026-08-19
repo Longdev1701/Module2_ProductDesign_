@@ -33,14 +33,8 @@ export interface BatchDocumentChecklistDTO {
   uploadedRequiredCount: number;
   completionRate: number; // 0 to 100%
   isReadyForCheck: boolean;
-  keys: {
-    phyto: GateKeyStatus;
-    labReport: GateKeyStatus;
-    co: GateKeyStatus;
-    packingList: GateKeyStatus;
-    gpsMap: GateKeyStatus;
-    other: DocumentItemDTO[];
-  };
+  gates: GateKeyStatus[];
+  otherDocuments: DocumentItemDTO[];
 }
 
 export interface UploadBatchDocumentDTO {

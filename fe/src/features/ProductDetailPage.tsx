@@ -26,12 +26,52 @@ import type { ProductItem, BatchItem, BatchStatus } from "@/types/api";
 import { getErrorMessage } from "@/types/api";
 
 const MARKET_OPTIONS = [
-  { code: "CN", name: "Trung Quốc (GACC)" },
-  { code: "EU", name: "Liên minh Châu Âu (EUDR)" },
-  { code: "US", name: "Hoa Kỳ (FDA / USDA)" },
-  { code: "JP", name: "Nhật Bản (MAFF)" },
-  { code: "KR", name: "Hàn Quốc (MFDS)" },
+  { code: "CN", name: "Trung Quốc (GACC)", desc: "Nghị định thư 2024 & CIFER" },
+  { code: "EU", name: "Liên minh Châu Âu (EUDR)", desc: "Tiêu chuẩn MRL & Chống phá rừng" },
+  { code: "US", name: "Hoa Kỳ (FDA / USDA)", desc: "Chiếu xạ & Kiểm dịch Thực vật" },
+  { code: "JP", name: "Nhật Bản (MAFF / MHLW)", desc: "Danh mục Positive List MRL" },
+  { code: "KR", name: "Hàn Quốc (MFDS / APQA)", desc: "Hệ thống PLS & Chứng thư KDTV" },
+  { code: "ASEAN", name: "Đông Nam Á (Singapore SFA)", desc: "Chứng nhận C/O Form D & ATTP" },
 ];
+
+function parseOriginFields(originStr: string | null | undefined) {
+  if (!originStr) {
+    return { province: "", pucCode: "", phcCode: "", ciferCode: "" };
+  }
+  const pucMatch = originStr.match(/PUC:\s*([^|\)]+)/i);
+  const phcMatch = originStr.match(/PHC:\s*([^|\)]+)/i);
+  const ciferMatch = originStr.match(/CIFER:\s*([^|\)]+)/i);
+
+  let province = originStr;
+  if (originStr.includes('(')) {
+    province = originStr.split('(')[0].trim();
+  } else if (pucMatch || phcMatch || ciferMatch) {
+    province = "";
+  }
+
+  return {
+    province: province.trim(),
+    pucCode: pucMatch ? pucMatch[1].trim() : "",
+    phcCode: phcMatch ? phcMatch[1].trim() : "",
+    ciferCode: ciferMatch ? ciferMatch[1].trim() : "",
+  };
+}
+
+function buildOriginString(form: { province: string; pucCode: string; phcCode: string; ciferCode: string }) {
+  const parts: string[] = [];
+  if (form.province.trim()) parts.push(form.province.trim());
+
+  const codes: string[] = [];
+  if (form.pucCode.trim()) codes.push(`Mã PUC: ${form.pucCode.trim()}`);
+  if (form.phcCode.trim()) codes.push(`PHC: ${form.phcCode.trim()}`);
+  if (form.ciferCode.trim()) codes.push(`CIFER: ${form.ciferCode.trim()}`);
+
+  if (codes.length > 0) {
+    parts.push(`(${codes.join(' | ')})`);
+  }
+
+  return parts.join(' ').trim() || null;
+}
 
 const BATCH_STATUS_CONFIG: Record<BatchStatus, { label: string; bg: string; text: string; border: string }> = {
   DRAFT: { label: "Nháp", bg: "bg-slate-100", text: "text-slate-700", border: "border-slate-200" },
@@ -59,7 +99,10 @@ export default function ProductDetailPage() {
     name: "",
     category: "",
     hsCode: "",
-    origin: "",
+    province: "",
+    pucCode: "",
+    phcCode: "",
+    ciferCode: "",
     description: "",
     selectedMarkets: ["CN"] as string[],
   });
@@ -107,11 +150,15 @@ export default function ProductDetailPage() {
 
   const handleOpenEdit = () => {
     if (!product) return;
+    const parsedOrigin = parseOriginFields(product.origin);
     setProductForm({
       name: product.name,
       category: product.category,
       hsCode: product.hsCode || "",
-      origin: product.origin || "",
+      province: parsedOrigin.province,
+      pucCode: parsedOrigin.pucCode,
+      phcCode: parsedOrigin.phcCode,
+      ciferCode: parsedOrigin.ciferCode,
       description: product.description || "",
       selectedMarkets: product.marketRequirements?.map(m => m.marketCode) || ["CN"],
     });
@@ -125,11 +172,18 @@ export default function ProductDetailPage() {
     setSavingProduct(true);
     setProductFormError(null);
 
+    const formattedOrigin = buildOriginString({
+      province: productForm.province,
+      pucCode: productForm.pucCode,
+      phcCode: productForm.phcCode,
+      ciferCode: productForm.ciferCode,
+    });
+
     const payload = {
       name: productForm.name.trim(),
       category: productForm.category.trim(),
       hsCode: productForm.hsCode.trim() || null,
-      origin: productForm.origin.trim() || null,
+      origin: formattedOrigin,
       description: productForm.description.trim() || null,
       markets: productForm.selectedMarkets.map(code => ({
         marketCode: code,
@@ -496,83 +550,224 @@ export default function ProductDetailPage() {
       {/* MODAL: CHỈNH SỬA SẢN PHẨM */}
       {isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-fadeIn">
-          <div className="bg-white w-full max-w-xl rounded-2xl shadow-xl border border-outline-variant overflow-hidden">
-            <div className="px-6 py-4 border-b border-outline-variant flex items-center justify-between bg-surface-container-low">
-              <h3 className="font-bold text-lg text-on-surface flex items-center gap-2">
-                <Edit2 className="w-5 h-5 text-[#00327d]" />
-                Chỉnh sửa Sản phẩm
-              </h3>
+          <div className="bg-white w-full max-w-2xl rounded-2xl shadow-xl border border-outline-variant overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="px-6 py-4 border-b border-outline-variant flex items-center justify-between bg-surface-container-low flex-shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-[#00327d]/10 text-[#00327d] flex items-center justify-center">
+                  <Edit2 className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-serif font-bold text-base text-[#191c1e]">
+                    Chỉnh sửa Thông tin Sản phẩm
+                  </h3>
+                  <p className="text-xs text-[#434653]">
+                    Cập nhật quy cách hàng hóa, mã số vùng trồng và thị trường mục tiêu
+                  </p>
+                </div>
+              </div>
               <button
                 onClick={() => setIsEditModalOpen(false)}
-                className="text-on-surface-variant hover:text-on-surface p-1 rounded-lg hover:bg-surface-container transition-colors cursor-pointer"
+                className="text-on-surface-variant hover:text-on-surface p-1.5 rounded-lg hover:bg-surface-container transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveProduct} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+            <form onSubmit={handleSaveProduct} className="p-6 space-y-5 overflow-y-auto flex-1">
               {productFormError && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-xs flex items-center gap-2">
+                <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 flex-shrink-0" />
                   <span>{productFormError}</span>
                 </div>
               )}
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#191c1e] uppercase">Tên sản phẩm *</label>
-                <input
-                  type="text"
-                  required
-                  value={productForm.name}
-                  onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-[#c3c6d5] rounded-lg text-sm focus:ring-2 focus:ring-[#00327d]/20 focus:border-[#00327d] text-[#191c1e]"
-                />
-              </div>
+              {/* SECTION 1: THÔNG TIN CƠ BẢN */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-[#191c1e] uppercase tracking-wider">
+                    1. Thông tin hàng hóa cơ bản
+                  </label>
+                  <span className="text-[11px] text-[#434653] font-medium">* Bắt buộc</span>
+                </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-[#191c1e] uppercase">Ngành hàng / Phân loại *</label>
+                  <label className="text-xs font-semibold text-[#434653]">
+                    Tên thương mại sản phẩm <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="text"
                     required
-                    value={productForm.category}
-                    onChange={(e) => setProductForm({ ...productForm, category: e.target.value })}
-                    className="w-full px-3 py-2 border border-[#c3c6d5] rounded-lg text-sm focus:ring-2 focus:ring-[#00327d]/20 focus:border-[#00327d] text-[#191c1e]"
+                    value={productForm.name}
+                    onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
+                    className="w-full px-3.5 py-2.5 border border-[#c3c6d5] rounded-xl text-sm focus:ring-2 focus:ring-[#00327d]/20 focus:border-[#00327d] text-[#191c1e] bg-white shadow-2xs"
                   />
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-[#191c1e] uppercase">Mã HS (HS Code)</label>
-                  <input
-                    type="text"
-                    value={productForm.hsCode}
-                    onChange={(e) => setProductForm({ ...productForm, hsCode: e.target.value })}
-                    className="w-full px-3 py-2 border border-[#c3c6d5] rounded-lg text-sm font-mono focus:ring-2 focus:ring-[#00327d]/20 focus:border-[#00327d] text-[#191c1e]"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-[#434653]">
+                      Ngành hàng / Phân loại <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={productForm.category}
+                      onChange={(e) => setProductForm({ ...productForm, category: e.target.value })}
+                      className="w-full px-3.5 py-2 border border-[#c3c6d5] rounded-xl text-sm focus:ring-2 focus:ring-[#00327d]/20 focus:border-[#00327d] text-[#191c1e] bg-white shadow-2xs"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-[#434653]">
+                      Mã HS Quốc tế (HS Code)
+                    </label>
+                    <input
+                      type="text"
+                      value={productForm.hsCode}
+                      onChange={(e) => setProductForm({ ...productForm, hsCode: e.target.value })}
+                      className="w-full px-3.5 py-2 border border-[#c3c6d5] rounded-xl text-sm font-mono font-bold focus:ring-2 focus:ring-[#00327d]/20 focus:border-[#00327d] text-[#191c1e] bg-white shadow-2xs"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#191c1e] uppercase">Vùng trồng / Mã số PUC &amp; PHC</label>
-                <input
-                  type="text"
-                  value={productForm.origin}
-                  onChange={(e) => setProductForm({ ...productForm, origin: e.target.value })}
-                  className="w-full px-3 py-2 border border-[#c3c6d5] rounded-lg text-sm focus:ring-2 focus:ring-[#00327d]/20 focus:border-[#00327d] text-[#191c1e]"
-                />
+              {/* SECTION 2: HỒ SƠ VÙNG TRỒNG & MÃ SỐ HẢI QUAN */}
+              <div className="p-4 bg-slate-50 border border-slate-200/80 rounded-2xl space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Building2 className="w-4 h-4 text-[#00327d]" />
+                    <span className="text-xs font-bold text-[#191c1e] uppercase tracking-wider">
+                      2. Hồ sơ Vùng trồng &amp; Mã số Hải quan
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
+                    XUẤT KHẨU CHÍNH NGẠCH
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-[#434653]">
+                      Tỉnh / Vùng trồng xuất xứ
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="VD: Tiền Giang, Đắk Lắk..."
+                      value={productForm.province}
+                      onChange={(e) => setProductForm({ ...productForm, province: e.target.value })}
+                      className="w-full px-3 py-2 border border-[#c3c6d5] rounded-lg text-sm bg-white focus:ring-2 focus:ring-[#00327d]/20 focus:border-[#00327d] text-[#191c1e]"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-[#434653]">
+                      Mã số Vùng trồng (Mã PUC)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="VD: VN-TGOR-0095"
+                      value={productForm.pucCode}
+                      onChange={(e) => setProductForm({ ...productForm, pucCode: e.target.value.toUpperCase() })}
+                      className="w-full px-3 py-2 border border-[#c3c6d5] rounded-lg text-sm font-mono focus:ring-2 focus:ring-[#00327d]/20 focus:border-[#00327d] text-[#191c1e] bg-white"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-[#434653]">
+                      Mã Cơ sở đóng gói (Mã PHC)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="VD: VN-TGPH-0012"
+                      value={productForm.phcCode}
+                      onChange={(e) => setProductForm({ ...productForm, phcCode: e.target.value.toUpperCase() })}
+                      className="w-full px-3 py-2 border border-[#c3c6d5] rounded-lg text-sm font-mono focus:ring-2 focus:ring-[#00327d]/20 focus:border-[#00327d] text-[#191c1e] bg-white"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-[#434653]">
+                      Mã Doanh nghiệp CIFER (GACC)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="VD: CVNM2401240001"
+                      value={productForm.ciferCode}
+                      onChange={(e) => setProductForm({ ...productForm, ciferCode: e.target.value.toUpperCase() })}
+                      className="w-full px-3 py-2 border border-[#c3c6d5] rounded-lg text-sm font-mono focus:ring-2 focus:ring-[#00327d]/20 focus:border-[#00327d] text-[#191c1e] bg-white"
+                    />
+                  </div>
+                </div>
               </div>
 
+              {/* SECTION 3: THỊ TRƯỜNG XUẤT KHẨU MỤC TIÊU */}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-[#191c1e] uppercase tracking-wider">
+                    3. Thị trường xuất khẩu mục tiêu
+                  </label>
+                  <span className="text-[11px] text-[#434653]">Áp dụng radar pháp lý &amp; ngưỡng MRL</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {MARKET_OPTIONS.map((m) => {
+                    const isChecked = productForm.selectedMarkets.includes(m.code);
+                    return (
+                      <label
+                        key={m.code}
+                        className={`flex items-start gap-2.5 p-3 rounded-xl border text-xs cursor-pointer transition-all ${
+                          isChecked
+                            ? 'bg-[#00327d]/5 border-[#00327d] text-[#00327d] shadow-2xs'
+                            : 'bg-white border-[#c3c6d5] text-[#434653] hover:border-slate-400'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setProductForm({
+                                ...productForm,
+                                selectedMarkets: [...productForm.selectedMarkets, m.code],
+                              });
+                            } else {
+                              setProductForm({
+                                ...productForm,
+                                selectedMarkets: productForm.selectedMarkets.filter((c) => c !== m.code),
+                              });
+                            }
+                          }}
+                          className="mt-0.5 rounded text-[#00327d] focus:ring-[#00327d]"
+                        />
+                        <div className="min-w-0">
+                          <div className="font-bold truncate">{m.name}</div>
+                          <div className="text-[11px] text-[#434653] opacity-80 mt-0.5 truncate">{m.desc}</div>
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* SECTION 4: GHI CHÚ / MÔ TẢ THÊM (TÙY CHỌN) */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[#191c1e] uppercase">Mô tả / Quy cách</label>
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-[#191c1e] uppercase tracking-wider">
+                    4. Ghi chú / Mô tả thêm
+                  </label>
+                  <span className="text-[11px] text-[#434653] font-normal italic">Không bắt buộc</span>
+                </div>
                 <textarea
                   rows={2}
+                  placeholder="VD: Trọng lượng quả 2.5 - 4.5 kg, độ brix ≥ 16%, phân loại hàng xuất khẩu tuyển chọn VIP..."
                   value={productForm.description}
                   onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
-                  className="w-full px-3 py-2 border border-[#c3c6d5] rounded-lg text-sm focus:ring-2 focus:ring-[#00327d]/20 focus:border-[#00327d] text-[#191c1e]"
+                  className="w-full px-3.5 py-2.5 border border-[#c3c6d5] rounded-xl text-sm focus:ring-2 focus:ring-[#00327d]/20 focus:border-[#00327d] text-[#191c1e] bg-white shadow-2xs resize-none"
                 />
               </div>
 
-              <div className="pt-4 border-t border-outline-variant flex items-center justify-end gap-3">
+              {/* Modal Footer Buttons */}
+              <div className="pt-3 border-t border-outline-variant flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setIsEditModalOpen(false)}
@@ -583,7 +778,7 @@ export default function ProductDetailPage() {
                 <button
                   type="submit"
                   disabled={savingProduct}
-                  className="px-5 py-2 bg-[#00327d] hover:bg-[#0047ab] text-white font-semibold text-sm rounded-xl transition-colors cursor-pointer shadow-xs disabled:opacity-50"
+                  className="px-6 py-2 bg-[#00327d] hover:bg-[#0047ab] text-white font-semibold text-sm rounded-xl transition-colors cursor-pointer shadow-xs disabled:opacity-50"
                 >
                   {savingProduct ? "Đang lưu..." : "Lưu thay đổi"}
                 </button>

@@ -76,10 +76,7 @@ export function BatchDocumentVault({
     );
   }
 
-  const keys = checklist?.keys;
-  const gates: GateKeyStatus[] = keys
-    ? [keys.phyto, keys.labReport, keys.co, keys.packingList]
-    : [];
+  const gates: GateKeyStatus[] = checklist?.gates || [];
 
   return (
     <div className="space-y-6">
@@ -286,39 +283,9 @@ export function BatchDocumentVault({
         </div>
 
         {/* List of other docs if any */}
-        {keys?.gpsMap?.isUploaded || (keys?.other && keys.other.length > 0) ? (
+        {checklist?.otherDocuments && checklist.otherDocuments.length > 0 ? (
           <div className="divide-y divide-outline-variant/60 border border-outline-variant rounded-xl overflow-hidden">
-            {keys.gpsMap.isUploaded && keys.gpsMap.document && (
-              <div className="p-3 bg-surface-container-lowest flex items-center justify-between hover:bg-surface-container-low transition-colors">
-                <div className="flex items-center gap-2.5">
-                  <FileText className="w-4 h-4 text-emerald-600" />
-                  <div>
-                    <p className="text-xs font-semibold text-on-surface">
-                      {keys.gpsMap.document.title}
-                    </p>
-                    <span className="text-[10px] font-mono text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded font-bold">
-                      ĐỊNH VỊ GPS (EUDR)
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => setPreviewDoc(keys.gpsMap.document!)}
-                    className="p-1.5 text-primary hover:bg-primary/10 rounded-lg cursor-pointer"
-                  >
-                    <Eye className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => setDeleteTargetDoc(keys.gpsMap.document!)}
-                    className="p-1.5 text-on-surface-variant hover:text-red-600 hover:bg-red-50 rounded-lg cursor-pointer"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {keys?.other?.map((doc) => (
+            {checklist.otherDocuments.map((doc) => (
               <div
                 key={doc.id}
                 className="p-3 bg-surface-container-lowest flex items-center justify-between hover:bg-surface-container-low transition-colors"

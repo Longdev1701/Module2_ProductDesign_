@@ -26,6 +26,11 @@ export class DocumentService {
         },
       },
       include: {
+        product: {
+          include: {
+            marketRequirements: true,
+          }
+        },
         documents: {
           include: {
             document: true,
@@ -51,76 +56,40 @@ export class DocumentService {
       updatedAt: bd.document.updatedAt,
     }));
 
-    // Phân loại tài liệu theo 4 Khóa cốt tử
-    const phytoDoc = docs.find((d) => d.type === 'PHYTO');
-    const labDoc = docs.find((d) => d.type === 'LAB_REPORT');
-    const coDoc = docs.find((d) => d.type === 'CO');
-    const packingDoc = docs.find((d) => d.type === 'PACKING_LIST');
-    const gpsDoc = docs.find((d) => d.type === 'GPS_MAP');
-    const otherDocs = docs.filter(
-      (d) =>
-        d.type !== 'PHYTO' &&
-        d.type !== 'LAB_REPORT' &&
-        d.type !== 'CO' &&
-        d.type !== 'PACKING_LIST' &&
-        d.type !== 'GPS_MAP'
-    );
+    const requiredDocsTypes = batch.product.marketRequirements?.[0]?.requiredDocuments || ['PHYTO', 'LAB_REPORT', 'CO', 'PACKING_LIST'];
+    const requirementDetails: any = batch.product.marketRequirements?.[0]?.requirementDetails || {};
 
-    const phytoGate: GateKeyStatus = {
-      type: 'PHYTO',
-      label: 'Giấy Chứng nhận Kiểm dịch Thực vật',
-      shortLabel: 'Kiểm dịch TV (Phyto)',
-      description: 'Chứng thư kiểm dịch thực vật do Chi cục KDTV (Cục BVTV) cấp, đảm bảo không có sinh vật gây hại (rệp sáp, ruồi đục quả).',
-      required: true,
-      isUploaded: !!phytoDoc,
-      document: phytoDoc,
+    const gateDefinitions: Record<string, Omit<GateKeyStatus, 'required' | 'isUploaded' | 'document'>> = {
+      PHYTO: { type: 'PHYTO', label: 'Giấy Chứng nhận Kiểm dịch Thực vật', shortLabel: 'Kiểm dịch TV', description: 'Chứng thư kiểm dịch thực vật do cơ quan nhà nước cấp.' },
+      LAB_REPORT: { type: 'LAB_REPORT', label: 'Phiếu Kiểm nghiệm Dư lượng & Hóa chất', shortLabel: 'Kiểm nghiệm Lab', description: 'Phiếu phân tích từ phòng lab đạt chuẩn.' },
+      CO: { type: 'CO', label: 'Chứng nhận Xuất xứ Hàng hóa (C/O)', shortLabel: 'Chứng nhận Xuất xứ', description: 'Giấy chứng nhận nguồn gốc xuất xứ của hàng hóa.' },
+      PACKING_LIST: { type: 'PACKING_LIST', label: 'Bảng kê Đóng gói & Quy cách (Packing List)', shortLabel: 'Bảng kê Đóng gói', description: 'Quy cách đóng thùng, mã cơ sở đóng gói.' },
+      GPS_MAP: { type: 'GPS_MAP', label: 'Bản đồ Tọa độ GPS Vùng trồng', shortLabel: 'Định vị GPS', description: 'Định vị đa giác tọa độ vườn trồng.' },
+      OTHER: { type: 'OTHER', label: 'Chứng từ khác', shortLabel: 'Chứng từ khác', description: 'Các giấy phép hoặc chứng nhận khác.' }
     };
 
-    const labGate: GateKeyStatus = {
-      type: 'LAB_REPORT',
-      label: 'Phiếu Kiểm nghiệm Dư lượng & Cadmium',
-      shortLabel: 'Kiểm nghiệm Lab (Cadmium)',
-      description: 'Phiếu phân tích từ phòng lab đạt chuẩn (Eurofins, SGS...), xác nhận chỉ tiêu Cadmium ≤ 0.05 mg/kg và thuốc BVTV đạt chuẩn GB 2762/2763.',
-      required: true,
-      isUploaded: !!labDoc,
-      document: labDoc,
-    };
+    const gates: GateKeyStatus[] = [];
+    const usedDocTypes = new Set<string>();
 
-    const coGate: GateKeyStatus = {
-      type: 'CO',
-      label: 'Chứng nhận Xuất xứ Hàng hóa (C/O)',
-      shortLabel: 'Chứng nhận Xuất xứ (C/O)',
-      description: 'C/O Form E (Hiệp định ACFTA) hoặc Form B xác nhận nguồn gốc thuần túy Việt Nam để hưởng thuế suất ưu đãi.',
-      required: true,
-      isUploaded: !!coDoc,
-      document: coDoc,
-    };
+    for (const reqType of requiredDocsTypes) {
+      const docItem = docs.find((d) => d.type === reqType);
+      const def = gateDefinitions[reqType] || { type: reqType as any, label: reqType, shortLabel: reqType, description: 'Chứng từ yêu cầu' };
+      
+      gates.push({
+        ...def,
+        description: requirementDetails[reqType] || def.description,
+        required: true,
+        isUploaded: !!docItem,
+        document: docItem,
+      });
+      usedDocTypes.add(reqType);
+    }
 
-    const packingGate: GateKeyStatus = {
-      type: 'PACKING_LIST',
-      label: 'Bảng kê Đóng gói & Quy cách (Packing List)',
-      shortLabel: 'Bảng kê Đóng gói (Packing List)',
-      description: 'Quy cách đóng thùng 15kg/18kg, số container, số seal, mã cơ sở đóng gói (PHC) đã phê duyệt.',
-      required: true,
-      isUploaded: !!packingDoc,
-      document: packingDoc,
-    };
+    const otherDocs = docs.filter((d) => !usedDocTypes.has(d.type));
 
-    const gpsGate: GateKeyStatus = {
-      type: 'GPS_MAP',
-      label: 'Bản đồ Tọa độ GPS Vùng trồng (PUC / EUDR)',
-      shortLabel: 'Định vị GPS Vùng trồng',
-      description: 'Định vị đa giác tọa độ vườn sầu riêng đối soát với mã số vùng trồng PUC và tiêu chuẩn EUDR không mất rừng.',
-      required: false,
-      isUploaded: !!gpsDoc,
-      document: gpsDoc,
-    };
-
-    // Tính toán tỷ lệ hoàn thiện 4 khóa bắt buộc
-    const requiredGates = [phytoGate, labGate, coGate, packingGate];
-    const uploadedRequiredCount = requiredGates.filter((g) => g.isUploaded).length;
-    const totalRequired = requiredGates.length;
-    const completionRate = Math.round((uploadedRequiredCount / totalRequired) * 100);
+    const uploadedRequiredCount = gates.filter((g) => g.isUploaded).length;
+    const totalRequired = gates.length;
+    const completionRate = totalRequired === 0 ? 100 : Math.round((uploadedRequiredCount / totalRequired) * 100);
     const isReadyForCheck = uploadedRequiredCount === totalRequired;
 
     return {
@@ -130,14 +99,8 @@ export class DocumentService {
       uploadedRequiredCount,
       completionRate,
       isReadyForCheck,
-      keys: {
-        phyto: phytoGate,
-        labReport: labGate,
-        co: coGate,
-        packingList: packingGate,
-        gpsMap: gpsGate,
-        other: otherDocs,
-      },
+      gates,
+      otherDocuments: otherDocs,
     };
   }
 

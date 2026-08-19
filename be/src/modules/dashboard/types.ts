@@ -8,11 +8,14 @@ export interface DashboardSummaryDTO {
   totalExportVolumeTons: number;
   readyVolumeTons: number;
   pendingVolumeTons: number;
-  readyContainersEstimate: number;
-  readyValueVndBillion: number; // Tiền hàng đã sẵn sàng thông quan (Tỷ VNĐ)
-  pendingValueVndBillion: number; // Tiền hàng đang bị tắc nghẽn hồ sơ (Tỷ VNĐ)
-  totalValueVndBillion: number; // Tổng giá trị hàng hóa (Tỷ VNĐ)
+  readyBatchesCount: number;
+  pendingBatchesCount: number;
+  readyContainersEstimate?: number;
+  readyValueVndBillion?: number;
+  pendingValueVndBillion?: number;
+  totalValueVndBillion?: number;
 }
+
 
 export interface DashboardBatchDocSummary {
   id: string;

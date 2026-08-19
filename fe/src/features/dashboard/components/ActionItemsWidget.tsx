@@ -60,72 +60,60 @@ export function ActionItemsWidget({ actionItems, loading, onOpenUpload }: Action
             const isCritical = item.severity === 'CRITICAL';
             const isHigh = item.severity === 'HIGH';
             const isMissingDoc = item.type === 'MISSING_DOCUMENT' && item.batchId;
-            const isCadmiumNearLimit = item.type === 'CADMIUM_NEAR_LIMIT';
-            const isPhytoExpiring = item.type === 'EXPIRING_PHYTO_WINDOW';
+            const isExpiring = item.type === 'EXPIRING_BATCH' || item.type === 'EXPIRING_PHYTO_WINDOW';
+            const isReady = item.type === 'READY_FOR_CHECK';
+
+            let badgeLabel = 'Sẵn sàng';
+            if (isMissingDoc) badgeLabel = 'Cần nạp';
+            else if (isExpiring) badgeLabel = 'Sắp hết hạn';
+            else if (isCritical) badgeLabel = 'Khẩn cấp';
+            else if (isHigh) badgeLabel = 'Cần xử lý';
 
             return (
               <div
                 key={item.id}
                 className={`p-3.5 rounded-xl border transition-all hover:shadow-xs w-full min-w-0 space-y-2.5 ${
-                  isCadmiumNearLimit
+                  isCritical
                     ? 'bg-rose-50/70 border-rose-300 hover:border-rose-400'
-                    : isPhytoExpiring
+                    : isExpiring || isHigh
                     ? 'bg-amber-50/70 border-amber-300 hover:border-amber-400'
-                    : isCritical
-                    ? 'bg-rose-50/60 border-rose-200 hover:border-rose-300'
-                    : isHigh
-                    ? 'bg-amber-50/60 border-amber-200 hover:border-amber-300'
-                    : 'bg-blue-50/50 border-blue-200 hover:border-blue-300'
+                    : 'bg-emerald-50/50 border-emerald-200 hover:border-emerald-300'
                 }`}
               >
                 {/* Top Badge Row */}
                 <div className="flex items-center justify-between gap-2 min-w-0">
                   <div className="flex items-center gap-1.5 min-w-0 overflow-hidden">
-                    {isCadmiumNearLimit ? (
-                      <span className="p-1 rounded bg-rose-200 text-rose-800 text-[10px] font-bold">🧪 MRL</span>
-                    ) : isPhytoExpiring ? (
-                      <span className="p-1 rounded bg-amber-200 text-amber-900 text-[10px] font-bold">⏳ HẠN</span>
-                    ) : isCritical ? (
+                    {isCritical ? (
                       <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0" />
+                    ) : isExpiring ? (
+                      <span className="p-1 rounded bg-amber-200 text-amber-900 text-[10px] font-bold">⏳ HẠN</span>
                     ) : isHigh ? (
                       <AlertTriangle className="w-4 h-4 text-amber-700 flex-shrink-0" />
                     ) : (
-                      <Sparkles className="w-4 h-4 text-primary flex-shrink-0" />
+                      <Sparkles className="w-4 h-4 text-emerald-600 flex-shrink-0" />
                     )}
                     <span className="font-mono text-xs font-bold text-on-surface truncate">
-                      {item.batchCode || 'CẢNH BÁO'}
+                      {item.batchCode || 'HỒ SƠ XUẤT KHẨU'}
                     </span>
                   </div>
 
                   <span
                     className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full flex-shrink-0 ${
-                      isCadmiumNearLimit
-                        ? 'bg-rose-100 text-rose-900 border border-rose-300 font-mono'
-                        : isPhytoExpiring
-                        ? 'bg-amber-100 text-amber-950 border border-amber-300 font-mono'
-                        : isCritical
-                        ? 'bg-rose-100 text-rose-800 border border-rose-200'
-                        : isHigh
-                        ? 'bg-amber-100 text-amber-900 border border-amber-200'
-                        : 'bg-primary/10 text-primary border border-primary/20'
+                      isCritical
+                        ? 'bg-rose-100 text-rose-900 border border-rose-300'
+                        : isExpiring || isHigh
+                        ? 'bg-amber-100 text-amber-950 border border-amber-300'
+                        : 'bg-emerald-100 text-emerald-900 border border-emerald-300'
                     }`}
                   >
-                    {isCadmiumNearLimit
-                      ? 'Tiệm cận ngưỡng'
-                      : isPhytoExpiring
-                      ? 'Hạn 3 ngày'
-                      : isCritical
-                      ? 'Khẩn cấp'
-                      : isHigh
-                      ? 'Cần nạp'
-                      : 'Sẵn sàng'}
+                    {badgeLabel}
                   </span>
                 </div>
 
                 {/* Content */}
                 <div className="min-w-0 space-y-1">
                   <h4 className={`text-xs font-bold leading-snug break-words ${
-                    isCritical || isCadmiumNearLimit ? 'text-rose-950' : isHigh || isPhytoExpiring ? 'text-amber-950' : 'text-primary'
+                    isCritical ? 'text-rose-950' : isHigh || isExpiring ? 'text-amber-950' : 'text-emerald-950'
                   }`}>
                     {item.title}
                   </h4>
@@ -142,19 +130,17 @@ export function ActionItemsWidget({ actionItems, loading, onOpenUpload }: Action
                       className="w-full inline-flex items-center justify-center gap-1.5 py-1.5 px-3 text-xs font-bold rounded-lg shadow-2xs transition-all active:scale-98 bg-amber-700 text-white hover:bg-amber-800 border border-amber-800 cursor-pointer"
                     >
                       <UploadCloud className="w-3.5 h-3.5" />
-                      Nạp chứng từ còn thiếu
+                      {item.actionLabel || 'Nạp chứng từ còn thiếu'}
                     </button>
                   ) : (
                     <Link
                       href={item.actionUrl}
                       className={`w-full inline-flex items-center justify-center gap-1.5 py-1.5 px-3 text-xs font-bold rounded-lg shadow-2xs transition-all active:scale-98 ${
-                        isCadmiumNearLimit
-                          ? 'bg-rose-700 text-white hover:bg-rose-800 border border-rose-800'
-                          : isPhytoExpiring
-                          ? 'bg-amber-700 text-white hover:bg-amber-800 border border-amber-800'
-                          : isCritical
+                        isCritical
                           ? 'bg-rose-600 text-white hover:bg-rose-700 border border-rose-700'
-                          : 'bg-primary text-white hover:bg-primary/90 border border-primary'
+                          : isExpiring || isHigh
+                          ? 'bg-amber-700 text-white hover:bg-amber-800 border border-amber-800'
+                          : 'bg-emerald-700 text-white hover:bg-emerald-800 border border-emerald-800'
                       }`}
                     >
                       {item.actionLabel} <ArrowRight className="w-3.5 h-3.5" />

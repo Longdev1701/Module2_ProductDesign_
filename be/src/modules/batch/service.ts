@@ -140,6 +140,8 @@ export class BatchService {
         markets: batch.product.marketRequirements.map((m) => ({
           marketCode: m.marketCode,
           marketName: m.marketName,
+          requiredDocuments: m.requiredDocuments || ['PHYTO', 'LAB_REPORT', 'CO', 'PACKING_LIST'],
+          requirementDetails: m.requirementDetails,
         })),
       },
       quantity: batch.quantity,

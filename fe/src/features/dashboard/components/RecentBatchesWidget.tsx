@@ -182,7 +182,7 @@ export function RecentBatchesWidget({
                     <div className="flex items-center justify-center gap-1.5">
                       {/* Phyto Badge */}
                       <button
-                        onClick={(e) => handleBadgeClick(b, b.hasPhyto, b.phytoDoc, 'PHYTO', e)}
+                        onClick={(e) => handleBadgeClick(b, Boolean(b.hasPhyto), b.phytoDoc, 'PHYTO', e)}
                         title={
                           b.hasPhyto
                             ? `🌿 Kiểm dịch Thực vật: ĐÃ CÓ (${b.phytoDoc?.title || 'Bấm để xem PDF'})`
@@ -200,7 +200,7 @@ export function RecentBatchesWidget({
 
                       {/* Lab Cadmium Badge */}
                       <button
-                        onClick={(e) => handleBadgeClick(b, b.hasLabReport, b.labReportDoc, 'LAB_REPORT', e)}
+                        onClick={(e) => handleBadgeClick(b, Boolean(b.hasLabReport), b.labReportDoc, 'LAB_REPORT', e)}
                         title={
                           b.hasLabReport
                             ? `🧪 Phiếu Lab Cadmium: ĐÃ CÓ (${b.labReportDoc?.title || 'Bấm để xem PDF'})`
@@ -218,7 +218,7 @@ export function RecentBatchesWidget({
 
                       {/* CO Badge */}
                       <button
-                        onClick={(e) => handleBadgeClick(b, b.hasCO, b.coDoc, 'CO', e)}
+                        onClick={(e) => handleBadgeClick(b, Boolean(b.hasCO), b.coDoc, 'CO', e)}
                         title={
                           b.hasCO
                             ? `📜 C/O Form E: ĐÃ CÓ (${b.coDoc?.title || 'Bấm để xem PDF'})`
@@ -236,7 +236,7 @@ export function RecentBatchesWidget({
 
                       {/* Packing List Badge */}
                       <button
-                        onClick={(e) => handleBadgeClick(b, b.hasPackingList, b.packingListDoc, 'PACKING_LIST', e)}
+                        onClick={(e) => handleBadgeClick(b, Boolean(b.hasPackingList), b.packingListDoc, 'PACKING_LIST', e)}
                         title={
                           b.hasPackingList
                             ? `📦 Packing List PHC: ĐÃ CÓ (${b.packingListDoc?.title || 'Bấm để xem PDF'})`

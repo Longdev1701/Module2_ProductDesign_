@@ -248,7 +248,16 @@ export function LegalTrackingWidget({
 
                 {/* Footer Link */}
                 <div className="mt-3 pt-2 border-t border-outline-variant/40 flex items-center justify-between gap-2 text-xs">
-                  <span className="text-on-surface-variant font-medium truncate min-w-0">Nguồn: {activeUpdate.sourceAgency}</span>
+                  <a 
+                    href={activeUpdate.sourceUrl || undefined} 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="text-on-surface-variant font-medium truncate min-w-0 hover:underline hover:text-primary relative z-10"
+                    onClick={(e) => e.stopPropagation()}
+                    title="Mở link bài viết gốc"
+                  >
+                    Nguồn: {activeUpdate.sourceAgency}
+                  </a>
                   <span className="text-primary font-semibold group-hover:underline inline-flex items-center gap-0.5 whitespace-nowrap shrink-0">
                     Chi tiết
                     <ArrowUpRight className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />

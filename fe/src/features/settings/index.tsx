@@ -2,10 +2,9 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Building, Users, Sliders, ShieldCheck, CheckCircle2, AlertCircle } from "lucide-react";
+import { Building, Sliders, ShieldCheck, CheckCircle2, AlertCircle } from "lucide-react";
 import { api } from "@/lib/api";
 import { ProfileSettingsTab } from "./ProfileSettingsTab";
-import { MemberSettingsTab } from "./MemberSettingsTab";
 import { SecuritySettingsTab } from "./SecuritySettingsTab";
 import { NotificationSettingsTab } from "./NotificationSettingsTab";
 import type { AuthMeResponse, OrganizationRole, OrganizationSummary, UserProfile } from "@/types/api";
@@ -46,11 +45,6 @@ export default function SettingsFeature() {
   const [urgentGaccAlerts, setUrgentGaccAlerts] = useState(true);
   const [cadmiumAlerts, setCadmiumAlerts] = useState(true);
   const [phytoAlerts, setPhytoAlerts] = useState(true);
-
-  // Invite Member State
-  const [inviteEmail, setInviteEmail] = useState("");
-  const [inviteRole, setInviteRole] = useState("COMPLIANCE");
-  const [inviting, setInviting] = useState(false);
 
   const fetchInitialData = useCallback(async () => {
     setLoading(true);
@@ -200,60 +194,8 @@ export default function SettingsFeature() {
     }
   };
 
-  // 4. Mời thành viên mới
-  const handleInviteMember = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!org?.id || !inviteEmail) return;
-    setInviting(true);
-    setMsg(null);
-
-    try {
-      await api.post(`/api/organizations/${org.id}/invitations`, {
-        email: inviteEmail,
-        role: inviteRole,
-      });
-
-      setMsg({ type: 'success', text: `Đã gửi lời mời tới ${inviteEmail} thành công!` });
-      setInviteEmail("");
-      await fetchInitialData();
-    } catch (err: unknown) {
-      setMsg({ type: 'error', text: getErrorMessage(err, 'Mời thành viên thất bại.') });
-    } finally {
-      setInviting(false);
-    }
-  };
-
-  // 5. Cập nhật phân quyền thành viên
-  const handleUpdateMemberRole = async (memberId: string, newRole: OrganizationRole) => {
-    if (!org?.id) return;
-    setMsg(null);
-    try {
-      await api.patch(`/api/organizations/${org.id}/members/${memberId}`, {
-        role: newRole,
-      });
-      setMsg({ type: 'success', text: 'Cập nhật vai trò nhân sự thành công!' });
-      await fetchInitialData();
-    } catch (err: unknown) {
-      setMsg({ type: 'error', text: getErrorMessage(err, 'Cập nhật vai trò thất bại.') });
-    }
-  };
-
-  // 6. Xóa thành viên khỏi tổ chức
-  const handleRemoveMember = async (memberId: string) => {
-    if (!org?.id) return;
-    setMsg(null);
-    try {
-      await api.delete(`/api/organizations/${org.id}/members/${memberId}`);
-      setMsg({ type: 'success', text: 'Đã thu hồi quyền thành viên thành công!' });
-      await fetchInitialData();
-    } catch (err: unknown) {
-      setMsg({ type: 'error', text: getErrorMessage(err, 'Xóa thành viên thất bại.') });
-    }
-  };
-
   const tabs = [
     { id: "profile", name: "Hồ sơ Doanh nghiệp & GACC CIFER", icon: Building },
-    { id: "members", name: "Đội ngũ & Phân quyền RBAC", icon: Users },
     { id: "thresholds", name: "Ngưỡng An Toàn & Cảnh Báo", icon: Sliders },
     { id: "security", name: "Bảo mật & Tài khoản Cá nhân", icon: ShieldCheck },
   ];
@@ -262,7 +204,7 @@ export default function SettingsFeature() {
     return (
       <div className="p-12 text-center">
         <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-primary border-t-transparent mb-4"></div>
-        <p className="text-xs text-on-surface-variant">Đang tải dữ liệu cấu hình &amp; phân quyền doanh nghiệp...</p>
+        <p className="text-xs text-on-surface-variant">Đang tải dữ liệu cấu hình doanh nghiệp...</p>
       </div>
     );
   }
@@ -276,14 +218,14 @@ export default function SettingsFeature() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-[10px] font-bold font-mono uppercase tracking-widest px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-              CẤU HÌNH TỔ CHỨC &amp; QUẢN TRỊ
+              CẤU HÌNH TỔ CHỨC
             </span>
           </div>
           <h1 className="font-serif text-2xl sm:text-3xl font-bold text-on-surface tracking-tight">
-            Cài Đặt &amp; Phân Quyền Doanh Nghiệp
+            Cài Đặt Doanh Nghiệp
           </h1>
           <p className="text-xs sm:text-sm text-on-surface-variant mt-1">
-            Quản lý hồ sơ pháp lý GACC CIFER, đội ngũ chứng từ xuất khẩu và cấu hình ngưỡng an toàn độc tố
+            Quản lý hồ sơ pháp lý GACC CIFER, tài khoản cá nhân và cấu hình ngưỡng an toàn độc tố
           </p>
         </div>
 
@@ -366,21 +308,6 @@ export default function SettingsFeature() {
               isOwnerOrManager={isOwnerOrManager}
               saving={saving}
               onSave={handleSaveOrganization}
-            />
-          )}
-
-          {activeTab === "members" && (
-            <MemberSettingsTab
-              members={org?.members || []}
-              inviteEmail={inviteEmail}
-              setInviteEmail={setInviteEmail}
-              inviteRole={inviteRole}
-              setInviteRole={setInviteRole}
-              inviting={inviting}
-              onInvite={handleInviteMember}
-              isOwnerOrManager={isOwnerOrManager}
-              onUpdateRole={handleUpdateMemberRole}
-              onRemoveMember={handleRemoveMember}
             />
           )}
 

@@ -209,7 +209,16 @@ export function LegalUpdateFeedDialog({
                   )}
 
                   <div className="mt-3 flex items-center justify-between gap-2 text-xs pt-2 border-t border-outline-variant/40">
-                    <span className="text-on-surface-variant truncate min-w-0">Nguồn: {item.sourceAgency}</span>
+                    <a 
+                      href={item.sourceUrl || undefined} 
+                      target="_blank" 
+                      rel="noreferrer" 
+                      className="text-on-surface-variant font-medium truncate min-w-0 hover:underline hover:text-primary relative z-10"
+                      onClick={(e) => e.stopPropagation()}
+                      title="Mở link bài viết gốc"
+                    >
+                      Nguồn: {item.sourceAgency}
+                    </a>
                     <span className="text-primary font-semibold group-hover:underline whitespace-nowrap shrink-0">Xem chi tiết →</span>
                   </div>
                 </div>
