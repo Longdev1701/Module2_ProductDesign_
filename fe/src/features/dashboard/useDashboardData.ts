@@ -86,9 +86,16 @@ export function useDashboardData() {
       void fetchOverview(true);
     };
 
+    // Lắng nghe sự kiện làm mới toàn cục
+    const handleRefreshAll = () => {
+      void fetchOverview(true);
+    };
+
     window.addEventListener('themis:organization-changed', handleOrgChanged);
+    window.addEventListener('themis:refresh-all', handleRefreshAll);
     return () => {
       window.removeEventListener('themis:organization-changed', handleOrgChanged);
+      window.removeEventListener('themis:refresh-all', handleRefreshAll);
     };
   }, [fetchOverview]);
 

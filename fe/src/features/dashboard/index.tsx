@@ -25,6 +25,7 @@ export function DashboardFeature() {
     actionItems,
     trends,
     loading,
+    isRefreshing,
     error,
     refetch,
   } = useDashboardData();
@@ -85,19 +86,9 @@ export function DashboardFeature() {
         </div>
 
         <div className="flex items-center gap-2.5 self-start sm:self-auto">
-          <button
-            onClick={() => refetch()}
-            disabled={loading}
-            className="px-3 py-2 bg-white border border-outline-variant/80 text-on-surface font-semibold text-xs rounded-xl hover:bg-surface-container-low transition-colors flex items-center gap-1.5 shadow-2xs cursor-pointer disabled:opacity-50"
-            title="Tải lại số liệu"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-            Làm mới
-          </button>
-
           <Link
             href="/products"
-            className="px-4 py-2 bg-primary text-white font-bold text-xs rounded-xl hover:bg-primary/90 transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer"
+            className="px-4 py-2.5 bg-primary text-white font-bold text-xs rounded-xl hover:bg-primary/90 transition-colors flex items-center gap-1.5 shadow-xs cursor-pointer"
           >
             <Plus className="w-4 h-4" /> Tạo Lô hàng mới
           </Link>
