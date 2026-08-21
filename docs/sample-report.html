@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo cáo Thẩm định Tuân thủ — Lô DURIAN-2025-0889</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Serif:wght@400;700&display=swap');
+
+    :root {
+      --navy: #00327d;
+      --navy-light: #d2e0fe;
+      --green: #047857;
+      --green-bg: #ecfdf5;
+      --amber: #b45309;
+      --amber-bg: #fffbeb;
+      --red: #b91c1c;
+      --red-bg: #fef2f2;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-500: #6b7280;
+      --gray-700: #374151;
+      --gray-900: #111827;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      color: var(--gray-900);
+      background: white;
+      line-height: 1.5;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      padding: 20mm 18mm 15mm;
+      background: white;
+    }
+
+    @media print {
+      body { background: white; }
+      .page { padding: 12mm 15mm 10mm; margin: 0; width: 100%; }
+      .no-print { display: none !important; }
+      @page { size: A4; margin: 0; }
+    }
+
+    /* Header */
+    .doc-header {
+      text-align: center;
+      padding-bottom: 14px;
+      border-bottom: 2.5px solid var(--gray-900);
+      margin-bottom: 16px;
+    }
+    .doc-header .country {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--gray-500);
+      text-transform: uppercase;
+    }
+    .doc-header h1 {
+      font-family: 'Noto Serif', serif;
+      font-size: 17px;
+      font-weight: 900;
+      color: var(--navy);
+      margin: 6px 0 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .doc-header .subtitle-cn {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+    .doc-header .report-code {
+      margin-top: 8px;
+      display: inline-block;
+      background: var(--navy);
+      color: white;
+      padding: 3px 12px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      font-family: monospace;
+      letter-spacing: 1px;
+    }
+
+    /* Metadata Grid */
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 0;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .meta-cell {
+      padding: 8px 12px;
+      border-right: 1px solid var(--gray-200);
+      border-bottom: 1px solid var(--gray-200);
+    }
+    .meta-cell:nth-child(4n) { border-right: none; }
+    .meta-cell:nth-child(n+5) { border-bottom: none; }
+    .meta-cell .label {
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+    .meta-cell .value {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+    .meta-cell .value.mono { font-family: monospace; }
+
+    /* Section Headers */
+    .section-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--navy);
+      margin: 18px 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .section-title .icon {
+      width: 18px;
+      height: 18px;
+      background: var(--navy);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10px;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    thead { background: var(--gray-100); }
+    thead th {
+      padding: 7px 10px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gray-700);
+      border-bottom: 1.5px solid var(--gray-300);
+    }
+    thead th:last-child { text-align: right; }
+    tbody td {
+      padding: 7px 10px;
+      border-bottom: 1px solid var(--gray-200);
+      vertical-align: top;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody td:last-child { text-align: right; }
+
+    /* Status Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 9px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .badge-green { background: var(--green-bg); color: var(--green); border: 1px solid #a7f3d0; }
+    .badge-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid #fde68a; }
+    .badge-red { background: var(--red-bg); color: var(--red); border: 1px solid #fecaca; }
+    .badge-navy { background: var(--navy-light); color: var(--navy); border: 1px solid #93bbfd; }
+
+    .severity-critical { background: var(--red-bg); color: var(--red); border: 1px solid #fecaca; }
+    .severity-high { background: #fff1f2; color: #be123c; border: 1px solid #fda4af; }
+    .severity-medium { background: var(--amber-bg); color: var(--amber); border: 1px solid #fde68a; }
+    .severity-low { background: var(--green-bg); color: var(--green); border: 1px solid #a7f3d0; }
+
+    /* Conclusion Box */
+    .conclusion {
+      background: var(--green-bg);
+      border: 1.5px solid #a7f3d0;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 16px 0;
+    }
+    .conclusion h4 {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--green);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .conclusion p {
+      font-size: 10.5px;
+      color: var(--gray-700);
+      line-height: 1.6;
+    }
+
+    /* Legal Citations */
+    .citation-card {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-bottom: 8px;
+    }
+    .citation-card .cite-code {
+      font-family: monospace;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--navy);
+      background: var(--navy-light);
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+    .citation-card .cite-title {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin: 4px 0 2px;
+    }
+    .citation-card .cite-article {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+    .citation-card .cite-summary {
+      font-size: 9.5px;
+      color: var(--gray-500);
+      margin-top: 3px;
+      line-height: 1.5;
+    }
+    .citation-card .cite-authority {
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--gray-500);
+      margin-top: 4px;
+      font-style: italic;
+    }
+
+    /* Signature Block */
+    .sig-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 2px solid var(--gray-300);
+    }
+    .sig-block {
+      text-align: center;
+    }
+    .sig-block .sig-label {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+    .sig-block .sig-space {
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .sig-block .sig-name {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--gray-900);
+    }
+    .sig-block .sig-role {
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--gray-500);
+      font-family: monospace;
+    }
+    .sig-block .sig-hash {
+      font-size: 8px;
+      font-family: monospace;
+      color: var(--gray-500);
+      margin-top: 4px;
+      word-break: break-all;
+    }
+
+    /* Footer */
+    .doc-footer {
+      margin-top: 20px;
+      padding-top: 10px;
+      border-top: 1px solid var(--gray-200);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 8px;
+      color: var(--gray-500);
+    }
+    .doc-footer .logo-text {
+      font-weight: 800;
+      color: var(--navy);
+      font-size: 10px;
+    }
+
+    /* Score Bar */
+    .score-bar-wrap {
+      margin: 12px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .score-bar {
+      flex: 1;
+      height: 10px;
+      background: var(--gray-200);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .score-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.3s;
+    }
+    .score-bar-fill.green { background: linear-gradient(90deg, #059669, #34d399); }
+    .score-bar-fill.amber { background: linear-gradient(90deg, #d97706, #fbbf24); }
+    .score-label {
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--green);
+      min-width: 50px;
+      text-align: right;
+    }
+
+    /* QR placeholder */
+    .qr-box {
+      width: 60px;
+      height: 60px;
+      border: 2px solid var(--gray-300);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 7px;
+      color: var(--gray-500);
+      text-align: center;
+      font-weight: 600;
+    }
+
+    /* Print button */
+    .print-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: var(--navy);
+      color: white;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 999;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    .print-bar .title {
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .print-btn {
+      background: white;
+      color: var(--navy);
+      border: none;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .print-btn:hover { background: var(--navy-light); }
+
+    @media print {
+      .page { padding-top: 12mm; }
+    }
+
+    /* Conditional result box */
+    .result-box {
+      background: var(--amber-bg);
+      border: 1.5px solid #fde68a;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 16px 0;
+    }
+    .result-box h4 {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--amber);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .result-box p {
+      font-size: 10.5px;
+      color: var(--gray-700);
+      line-height: 1.6;
+    }
+
+    .value-green { color: var(--green); }
+    .value-mono { font-family: monospace; font-size: 10px; }
+    .fw-600 { font-weight: 600; }
+    .fw-700 { font-weight: 700; }
+    .text-right { text-align: right; }
+  </style>
+</head>
+<body>
+  <!-- Print Action Bar -->
+  <div class="print-bar no-print">
+    <span class="title">📄 Báo cáo Thẩm định Tuân thủ Xuất khẩu — Themis LexiGuard</span>
+    <button class="print-btn" onclick="window.print()">
+      🖨️ Xuất PDF / In
+    </button>
+  </div>
+
+  <div class="page" style="padding-top: 50px;">
+    <!-- ========== HEADER ========== -->
+    <div class="doc-header">
+      <div class="country">Cộng Hòa Xã Hội Chủ Nghĩa Việt Nam — Độc Lập · Tự Do · Hạnh Phúc</div>
+      <h1>Báo Cáo Thẩm Định Pháp Lý &amp; Hồ Sơ Thông Quan Xuất Khẩu</h1>
+      <div class="subtitle-cn">越南鲜食榴莲输华合规与海关清关技术报告 (GB 2762-2022 &amp; GACC Protocol 2024)</div>
+      <div style="margin-top: 8px;">
+        <span class="report-code">REP-DURIAN-2025-0889-V1</span>
+      </div>
+    </div>
+
+    <!-- ========== METADATA ========== -->
+    <div class="meta-grid">
+      <div class="meta-cell">
+        <div class="label">Mã số Báo cáo</div>
+        <div class="value mono">REP-DURIAN-2025-0889-V1</div>
+      </div>
+      <div class="meta-cell">
+        <div class="label">Mã Lô hàng</div>
+        <div class="value mono">DURIAN-2025-0889</div>
+      </div>
+      <div class="meta-cell">
+        <div class="label">Sản phẩm xuất khẩu</div>
+        <div class="value">Sầu riêng Ri6 tươi nguyên trái</div>
+      </div>
+      <div class="meta-cell">
+        <div class="label">Mã HS</div>
+        <div class="value mono">0810.60.00</div>
+      </div>
+      <div class="meta-cell">
+        <div class="label">Xuất xứ / Vùng trồng</div>
+        <div class="value">Tiền Giang (PUC: VN-TGOR-0095)</div>
+      </div>
+      <div class="meta-cell">
+        <div class="label">Thị trường đích</div>
+        <div class="value">Trung Quốc (Hải quan GACC)</div>
+      </div>
+      <div class="meta-cell">
+        <div class="label">Sản lượng</div>
+        <div class="value">22 tấn (~1.1 cont 40ft)</div>
+      </div>
+      <div class="meta-cell">
+        <div class="label">Ngày thẩm định</div>
+        <div class="value">21/08/2025</div>
+      </div>
+    </div>
+
+    <!-- ========== OVERALL SCORE ========== -->
+    <div style="background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <span style="font-size: 10px; font-weight: 700; color: var(--gray-700); text-transform: uppercase; letter-spacing: 0.5px;">Điểm Tuân thủ Tổng hợp (Compliance Shield Score)</span>
+        <span class="badge badge-green">✅ ĐẠT ĐIỀU KIỆN THÔNG QUAN</span>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar">
+          <div class="score-bar-fill green" style="width: 92%;"></div>
+        </div>
+        <div class="score-label">92%</div>
+      </div>
+      <div style="font-size: 9px; color: var(--gray-500);">AI Confidence: 94.5% · Phân tích bởi Themis LexiGuard Engine v2.1 · Thời gian xử lý: 3.2s</div>
+    </div>
+
+    <!-- ========== SECTION I: 5 BLIND SPOTS ========== -->
+    <div class="section-title">
+      <div class="icon">I</div>
+      Kết quả Đối soát 5 Điểm Mù Pháp Lý Sống Còn (Critical Clearance Shield)
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 25%;">Hạng mục kiểm soát</th>
+          <th style="width: 18%;">Quy chuẩn / Căn cứ</th>
+          <th style="width: 22%;">Giá trị Thực tế</th>
+          <th style="width: 20%;">Ngưỡng GACC yêu cầu</th>
+          <th style="width: 15%;">Kết luận</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="fw-600">1. Kim loại nặng Cadmium (Cd)</td>
+          <td class="value-mono">GB 2762-2022</td>
+          <td><strong class="value-green" style="font-family: monospace;">0.021 mg/kg</strong></td>
+          <td>≤ 0.05 mg/kg</td>
+          <td class="text-right"><span class="badge badge-green">✅ ĐẠT CHUẨN</span></td>
+        </tr>
+        <tr>
+          <td class="fw-600">2. Mã Vùng trồng (PUC) &amp; Đóng gói (PHC)</td>
+          <td>Điều 4 GACC Protocol</td>
+          <td><span style="font-family: monospace; font-size: 10px;">VN-TGOR-0095 / VN-TGPH-0012</span></td>
+          <td>Đã cấp phép CIFER</td>
+          <td class="text-right"><span class="badge badge-green">✅ TRÙNG KHỚP</span></td>
+        </tr>
+        <tr>
+          <td class="fw-600">3. Cửa sổ hạn Kiểm dịch TV (Phyto)</td>
+          <td>Hiệu lực 14 ngày</td>
+          <td>Cấp: 18/08/2025 · Hết hạn: 01/09/2025<br><strong class="value-green">Còn 11 ngày hiệu lực</strong></td>
+          <td>Đủ cửa sổ vận chuyển (≥ 3 ngày buffer)</td>
+          <td class="text-right"><span class="badge badge-green">✅ AN TOÀN</span></td>
+        </tr>
+        <tr>
+          <td class="fw-600">4. Quy cách Tem nhãn thùng carton</td>
+          <td>Điều 7 GACC Protocol</td>
+          <td>Đủ 5 trường tiếng Trung: 鲜食榴莲, PUC, PHC, Nhà XK, Trọng lượng</td>
+          <td>Song ngữ Trung - Việt bắt buộc</td>
+          <td class="text-right"><span class="badge badge-green">✅ HỢP LỆ</span></td>
+        </tr>
+        <tr>
+          <td class="fw-600">5. Chứng nhận Xuất xứ C/O</td>
+          <td>Hiệp định ACFTA</td>
+          <td>C/O Form E: <span style="font-family: monospace;">VN-CN-25-009-4827</span></td>
+          <td>Thuế suất ưu đãi 0%</td>
+          <td class="text-right"><span class="badge badge-green">✅ ƯU ĐÃI 0%</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ========== SECTION II: FINDINGS ========== -->
+    <div class="section-title">
+      <div class="icon">II</div>
+      Ma Trận Phát Hiện Chi Tiết (Detailed Findings Matrix)
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 8%;">Mức độ</th>
+          <th style="width: 35%;">Yêu cầu tuân thủ</th>
+          <th style="width: 10%;">Kết quả</th>
+          <th style="width: 22%;">Khuyến nghị / Khắc phục</th>
+          <th style="width: 25%;">Căn cứ pháp lý</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge severity-critical">CRITICAL</span></td>
+          <td class="fw-600">Kiểm soát chỉ tiêu kim loại nặng Cadmium theo tiêu chuẩn GB 2762-2022 (≤ 0.05 mg/kg)</td>
+          <td><span class="badge badge-green">ĐẠT</span></td>
+          <td>Duy trì nhật ký canh tác vùng trồng và kiểm tra định kỳ trước thu hoạch.</td>
+          <td style="font-size: 9px;">Tiêu chuẩn GB 2762-2022, Bảng 1: Ngưỡng Cd quả tươi</td>
+        </tr>
+        <tr>
+          <td><span class="badge severity-critical">CRITICAL</span></td>
+          <td class="fw-600">Mã số vùng trồng (PUC) &amp; Cơ sở đóng gói (PHC) đã phê duyệt trên hệ thống CIFER GACC</td>
+          <td><span class="badge badge-green">ĐẠT</span></td>
+          <td>Đảm bảo giám sát rệp sáp và rầy phấn trắng tại vườn trồng trước khi đóng thùng.</td>
+          <td style="font-size: 9px;">Điều 4: Yêu cầu Vùng trồng &amp; Quản lý sinh vật gây hại</td>
+        </tr>
+        <tr>
+          <td><span class="badge severity-high">HIGH</span></td>
+          <td class="fw-600">Giấy chứng nhận Kiểm dịch Thực vật do Chi cục KDTV cấp còn thời hạn hiệu lực</td>
+          <td><span class="badge badge-green">ĐẠT</span></td>
+          <td>Kẹp bản gốc chứng thư cùng hồ sơ hải quan tại cửa khẩu xuất.</td>
+          <td style="font-size: 9px;">Luật Kiểm dịch Thực vật 2014 &amp; Nghị định thư GACC</td>
+        </tr>
+        <tr>
+          <td><span class="badge severity-medium">MEDIUM</span></td>
+          <td class="fw-600">Quy cách tem nhãn song ngữ Trung - Việt trên bao bì thùng carton theo Điều 7</td>
+          <td><span class="badge badge-green">ĐẠT</span></td>
+          <td>In đầy đủ tên tiếng Trung: 越南鲜食榴莲, mã số PUC và mã số PHC.</td>
+          <td style="font-size: 9px;">Điều 7: Nhãn mác thùng carton song ngữ Việt - Trung</td>
+        </tr>
+        <tr>
+          <td><span class="badge severity-medium">MEDIUM</span></td>
+          <td class="fw-600">Kết quả xét nghiệm dư lượng thuốc BVTV (MRL) đạt tiêu chuẩn GB 2763</td>
+          <td><span class="badge badge-amber">CẢNH BÁO</span></td>
+          <td>Giá trị Chlorpyrifos: 0.018 mg/kg (ngưỡng 0.02). Biên an toàn chỉ còn 10%. Khuyến nghị rà soát lại liều lượng phun.</td>
+          <td style="font-size: 9px;">GB 2763-2021: Giới hạn MRL thuốc BVTV</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ========== SECTION III: CONCLUSION ========== -->
+    <div class="section-title">
+      <div class="icon">III</div>
+      Kết Luận Thẩm Định Hải Quan
+    </div>
+
+    <div class="conclusion">
+      <h4>✅ Kết Luận: Đủ Điều Kiện Thông Quan Có Điều Kiện</h4>
+      <p>
+        Lô hàng sầu riêng tươi mã số <strong>DURIAN-2025-0889</strong> (Sầu riêng Ri6 — 22 tấn, xuất xứ Tiền Giang)
+        đã được kiểm soát toàn diện bởi hệ thống AI Themis LexiGuard, đáp ứng cơ bản các tiêu chuẩn kỹ thuật
+        an toàn thực phẩm của Tổng cục Hải quan Trung Quốc (GACC). Hồ sơ đủ điều kiện kẹp chì niêm phong
+        và xuất bến qua các cửa khẩu quốc tế Hữu Nghị / Tân Thanh.
+      </p>
+      <p style="margin-top: 6px;">
+        <strong>Lưu ý:</strong> Chỉ tiêu Chlorpyrifos (0.018 mg/kg) gần ngưỡng tối đa GB 2763-2021.
+        Khuyến nghị doanh nghiệp rà soát quy trình canh tác và giảm liều lượng phun thuốc BVTV cho các lô tiếp theo.
+      </p>
+    </div>
+
+    <!-- ========== SECTION IV: LEGAL CITATIONS ========== -->
+    <div class="section-title">
+      <div class="icon">IV</div>
+      Căn Cứ Pháp Lý &amp; Quy Chuẩn Viện Dẫn
+    </div>
+
+    <div class="citation-card">
+      <span class="cite-code">GACC-PROTOCOL-2024-ART4</span>
+      <div class="cite-title">Nghị định thư Kiểm dịch Thực vật Sầu riêng tươi Việt Nam - Trung Quốc</div>
+      <div class="cite-article">Điều 4: Yêu cầu Vùng trồng &amp; Quản lý sinh vật gây hại</div>
+      <div class="cite-summary">Toàn bộ vùng trồng xuất khẩu sang Trung Quốc phải được đăng ký và phê duyệt bởi Cục BVTV Việt Nam và GACC Trung Quốc. Mỗi vùng trồng có mã PUC duy nhất được đăng tải trên hệ thống CIFER.</div>
+      <div class="cite-authority">— Tổng cục Hải quan Trung Quốc (GACC)</div>
+    </div>
+
+    <div class="citation-card">
+      <span class="cite-code">GACC-PROTOCOL-2024-ART7</span>
+      <div class="cite-title">Quy cách đóng gói &amp; Ghi nhãn hàng hóa xuất khẩu</div>
+      <div class="cite-article">Điều 7: Nhãn mác thùng carton song ngữ Việt - Trung</div>
+      <div class="cite-summary">Bao bì phải in rõ ràng bằng tiếng Trung hoặc tiếng Anh: Tên hoa quả (越南鲜食榴莲), nơi sản xuất, mã số vùng trồng (PUC), mã số cơ sở đóng gói (PHC), và trọng lượng tịnh.</div>
+      <div class="cite-authority">— Tổng cục Hải quan Trung Quốc (GACC)</div>
+    </div>
+
+    <div class="citation-card">
+      <span class="cite-code">GB-2762-2022</span>
+      <div class="cite-title">Tiêu chuẩn An toàn Thực phẩm Quốc gia Trung Quốc — Giới hạn Kim loại nặng</div>
+      <div class="cite-article">Bảng 1: Ngưỡng tối đa Cadmium (Cd) trong quả tươi</div>
+      <div class="cite-summary">Ngưỡng hàm lượng Cadmium (Cd) tối đa cho phép đối với quả tươi nhập khẩu vào Trung Quốc là ≤ 0.05 mg/kg. Kết quả xét nghiệm phải do phòng thí nghiệm được công nhận ISO/IEC 17025 thực hiện.</div>
+      <div class="cite-authority">— Ủy ban Y tế Sức khỏe Quốc gia Trung Quốc (NHC)</div>
+    </div>
+
+    <div class="citation-card">
+      <span class="cite-code">GB-2763-2021</span>
+      <div class="cite-title">Tiêu chuẩn An toàn Thực phẩm Quốc gia — Giới hạn Dư lượng Thuốc BVTV (MRL)</div>
+      <div class="cite-article">Phụ lục A: Ngưỡng MRL cho quả nhiệt đới tươi</div>
+      <div class="cite-summary">Chlorpyrifos: ≤ 0.02 mg/kg. Carbendazim: ≤ 0.5 mg/kg. Fipronil: không phát hiện. Quy định áp dụng cho tất cả quả tươi nhập khẩu qua hệ thống hải quan GACC.</div>
+      <div class="cite-authority">— Bộ Nông nghiệp và Nông thôn Trung Quốc (MARA)</div>
+    </div>
+
+    <!-- ========== SECTION V: DOCUMENT CHECKLIST ========== -->
+    <div class="section-title">
+      <div class="icon">V</div>
+      Danh Mục Chứng Thư Kèm Theo
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 5%;">STT</th>
+          <th style="width: 20%;">Loại chứng thư</th>
+          <th style="width: 35%;">Tên tài liệu</th>
+          <th style="width: 20%;">Cơ quan cấp</th>
+          <th style="width: 20%;">Trạng thái</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td class="fw-600">Phytosanitary Certificate</td>
+          <td>Giấy chứng nhận KDTV số 25-TG-0889</td>
+          <td>Chi cục KDTV Tiền Giang</td>
+          <td class="text-right"><span class="badge badge-green">✅ Hợp lệ</span></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td class="fw-600">Lab Report (Cd + MRL)</td>
+          <td>Phiếu kết quả phân tích SMP-DURIAN-0889-01</td>
+          <td>Eurofins Sắc Ký Hải Đăng</td>
+          <td class="text-right"><span class="badge badge-green">✅ Hợp lệ</span></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td class="fw-600">C/O Form E (ACFTA)</td>
+          <td>Chứng nhận xuất xứ VN-CN-25-009-4827</td>
+          <td>VCCI Chi nhánh TP.HCM</td>
+          <td class="text-right"><span class="badge badge-green">✅ Hợp lệ</span></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td class="fw-600">Packing List</td>
+          <td>Phiếu đóng gói Lô DURIAN-2025-0889</td>
+          <td>Công ty TNHH XK Trái Cây Mekong</td>
+          <td class="text-right"><span class="badge badge-green">✅ Hợp lệ</span></td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td class="fw-600">Commercial Invoice</td>
+          <td>Hóa đơn thương mại INV-2025-0889</td>
+          <td>Công ty TNHH XK Trái Cây Mekong</td>
+          <td class="text-right"><span class="badge badge-green">✅ Hợp lệ</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ========== SIGNATURE BLOCK ========== -->
+    <div class="sig-grid">
+      <div class="sig-block">
+        <div class="sig-label">Xác Nhận Cơ Cấu Mã Vùng Trồng (PUC)</div>
+        <div class="sig-space">
+          <div style="font-size: 9px; color: var(--gray-500); font-style: italic;">(Đã đối soát với CSDL Cục Bảo vệ Thực vật)</div>
+        </div>
+        <div style="font-family: monospace; font-size: 10px; font-weight: 700; color: var(--navy);">PUC: VN-TGOR-0095 · PHC: VN-TGPH-0012</div>
+      </div>
+      <div class="sig-block">
+        <div class="sig-label">Người Ký Phê Duyệt &amp; Kẹp Chì Container</div>
+        <div class="sig-space">
+          <div>
+            <div class="sig-name">Nguyễn Văn Minh</div>
+            <div class="sig-role">GIÁM ĐỐC ĐIỀU HÀNH · OWNER</div>
+          </div>
+        </div>
+        <div class="sig-hash">SHA-256: a3f7c2e9d1b84f6a0e5c3d2b1a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1...</div>
+      </div>
+    </div>
+
+    <!-- ========== FOOTER ========== -->
+    <div class="doc-footer">
+      <div>
+        <span class="logo-text">⚖️ Themis LexiGuard</span>
+        <span style="margin-left: 6px;">AI Compliance Navigator for Agricultural Export</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div class="qr-box">QR<br>Verify</div>
+        <div style="text-align: right;">
+          <div>Tạo lúc: 21/08/2025 07:55 (UTC+7)</div>
+          <div>Phiên bản: v1 · Trang 1/1</div>
+          <div style="font-family: monospace; font-size: 7px; color: var(--gray-500);">https://lexiguard.themis.vn/verify/report/REP-DURIAN-2025-0889-V1</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

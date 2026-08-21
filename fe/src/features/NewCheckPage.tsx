@@ -12,6 +12,7 @@ interface ChatMessage {
     title: string;
     items: { status: 'error' | 'success' | 'warning'; text: string }[];
     pdfName?: string;
+    pdfUrl?: string;
   };
   time: string;
 }
@@ -53,23 +54,26 @@ export default function NewCheckPage() {
       {
         id: 2,
         sender: 'user',
-        text: 'Tôi cần kiểm tra hợp đồng phân phối độc quyền này theo luật thương mại mới nhất.',
-        attachment: 'hop_dong_phan_phoi_v2.pdf',
+        text: 'Tôi cần thẩm định hồ sơ xuất khẩu Lô sầu riêng DURIAN-2025-0889 sang Trung Quốc theo Nghị định thư GACC mới nhất.',
+        attachment: 'Phieu_dong_goi_DURIAN_2025_0889.pdf',
         time: '10:31 AM'
       },
       {
         id: 3,
         sender: 'ai',
-        text: 'Tôi đã phân tích xong hợp đồng. Dưới đây là kết quả đánh giá rủi ro pháp lý chi tiết:',
+        text: 'Tôi đã phân tích xong hồ sơ Phiếu đóng gói & Hóa đơn thương mại Lô DURIAN-2025-0889. Dưới đây là kết quả thẩm định tuân thủ chi tiết:',
         time: '10:32 AM',
         report: {
-          title: 'Báo cáo Thẩm định Tuân thủ Sầu riêng — GACC Trung Quốc',
+          title: 'Báo cáo Thẩm định Tuân thủ — Lô DURIAN-2025-0889',
           items: [
-            { status: 'error', text: 'Chỉ tiêu Cadmium (0.07 mg/kg) vượt mức tối đa GB 2762-2022 của GACC (≤ 0.05 mg/kg).' },
-            { status: 'success', text: 'Mã số vùng trồng (PUC: VN-DLOR-0128) hợp lệ trong danh mục GACC phê duyệt.' },
-            { status: 'warning', text: 'Cần bổ sung Giấy chứng nhận kiểm dịch thực vật (Phytosanitary) của Cục BVTV.' }
+            { status: 'error', text: 'Chỉ tiêu Cadmium (0.07 mg/kg) vượt mức tối đa GB 2762-2022 của GACC (≤ 0.05 mg/kg). Cần xét nghiệm lại.' },
+            { status: 'success', text: 'Mã số vùng trồng PUC: VN-TGOR-0095 & PHC: VN-TGPH-0012 trùng khớp 100% trên hệ thống CIFER GACC.' },
+            { status: 'success', text: 'Chứng nhận Kiểm dịch Thực vật số 25-TG-0889 còn hiệu lực (còn 11 ngày).' },
+            { status: 'warning', text: 'Chỉ tiêu Chlorpyrifos (0.018 mg/kg) gần ngưỡng tối đa GB 2763 (≤ 0.02). Biên an toàn chỉ còn 10%.' },
+            { status: 'success', text: 'C/O Form E (ACFTA) hợp lệ — thuế suất ưu đãi 0% tại cửa khẩu Bằng Tường.' }
           ],
-          pdfName: 'Bao_cao_tham_dinh_sau_rieng_GACC.pdf'
+          pdfName: 'Bao_cao_tham_dinh_sau_rieng_GACC_2025.pdf',
+          pdfUrl: '/samples/Bao_cao_tham_dinh_sau_rieng_GACC_2025.pdf'
         }
       }
     ];
@@ -78,6 +82,7 @@ export default function NewCheckPage() {
   const [inputText, setInputText] = useState('');
   const [attachedFileName, setAttachedFileName] = useState<string | null>(null);
   const [isTyping, setIsTyping] = useState(false);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const [history, setHistory] = useState<ChatHistoryItem[]>([
@@ -108,21 +113,24 @@ export default function NewCheckPage() {
     setAttachedFileName(null);
     setIsTyping(true);
 
-    // Simulate AI response after 1.2 seconds
+    // Simulate AI multi-step response
     setTimeout(() => {
       setIsTyping(false);
       const aiReply: ChatMessage = {
         id: Date.now() + 1,
         sender: 'ai',
-        text: `Tôi đã tiếp nhận yêu cầu "${text.slice(0, 40)}...". Dựa trên cơ sở dữ liệu pháp lý mới nhất, tôi xin phản hồi như sau:`,
+        text: `Tôi đã tiếp nhận và phân tích yêu cầu "${text.slice(0, 50)}...". Dựa trên đối chiếu với Nghị định thư GACC 2024 và tiêu chuẩn GB 2762-2022, dưới đây là kết quả thẩm định:`,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         report: {
-          title: 'Kết quả rà soát tự động Themis AI',
+          title: 'Báo cáo Thẩm định Tuân thủ — Themis AI',
           items: [
-            { status: 'success', text: 'Nội dung phù hợp với Khung pháp lý xuất khẩu EUDR 2024.' },
-            { status: 'warning', text: 'Khuyến nghị rà soát lại mốc thời gian áp dụng trước ngày 15/11/2024.' }
+            { status: 'success', text: 'Mã số PUC/PHC trùng khớp hệ thống CIFER GACC. Vùng trồng đã được phê duyệt.' },
+            { status: 'success', text: 'Giấy chứng nhận Kiểm dịch Thực vật còn hiệu lực, đủ cửa sổ vận chuyển.' },
+            { status: 'warning', text: 'Khuyến nghị bổ sung xét nghiệm kim loại nặng Cadmium (GB 2762-2022) cho lô hàng mới.' },
+            { status: 'success', text: 'C/O Form E (ACFTA) hợp lệ — thuế suất ưu đãi 0%.' }
           ],
-          pdfName: 'Ket_qua_tu_van_Themis.pdf'
+          pdfName: 'Bao_cao_tham_dinh_sau_rieng_GACC_2025.pdf',
+          pdfUrl: '/samples/Bao_cao_tham_dinh_sau_rieng_GACC_2025.pdf'
         }
       };
       setMessages(prev => [...prev, aiReply]);
@@ -145,6 +153,28 @@ export default function NewCheckPage() {
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }
     ]);
+  };
+
+  const handleDeleteChat = (id: string) => {
+    const deletedItem = history.find(h => h.id === id);
+    setHistory(prev => {
+      const remaining = prev.filter(h => h.id !== id);
+      // If deleted item was active and there are remaining items, activate the first one
+      if (deletedItem?.active && remaining.length > 0) {
+        remaining[0].active = true;
+      }
+      return remaining;
+    });
+    // If the deleted item was the active chat, reset messages
+    if (deletedItem?.active) {
+      handleNewChat();
+    }
+  };
+
+  const handleClearAllHistory = () => {
+    setHistory([]);
+    setShowClearConfirm(false);
+    handleNewChat();
   };
 
   return (
@@ -214,9 +244,13 @@ export default function NewCheckPage() {
                     {msg.report.pdfName && (
                       <div className="pt-2 border-t border-[#c3c6d5]/40 flex items-center justify-between">
                         <span className="text-xs text-[#434653] font-semibold">{msg.report.pdfName}</span>
-                        <button className="px-3 py-1.5 bg-[#00327d] text-white text-xs font-semibold rounded hover:bg-[#0047ab] transition-colors flex items-center gap-1.5 cursor-pointer">
+                        <a
+                          href={msg.report.pdfUrl || `/samples/${msg.report.pdfName}`}
+                          download={msg.report.pdfName}
+                          className="px-3 py-1.5 bg-[#00327d] text-white text-xs font-semibold rounded hover:bg-[#0047ab] transition-colors flex items-center gap-1.5 cursor-pointer no-underline"
+                        >
                           <span className="material-symbols-outlined text-xs">download</span> Download PDF
-                        </button>
+                        </a>
                       </div>
                     )}
                   </div>
@@ -306,7 +340,7 @@ export default function NewCheckPage() {
           {/* Main Textarea Bar */}
           <div className="relative flex items-center bg-white border-2 border-[#00327d]/40 rounded-xl focus-within:border-[#00327d] shadow-sm">
             <button 
-              onClick={() => setAttachedFileName('hop_dong_tu_van.pdf')}
+              onClick={() => setAttachedFileName('Phieu_dong_goi_DURIAN_2025_0889.pdf')}
               className="p-3 text-[#434653] hover:text-[#00327d] transition-colors cursor-pointer"
               title="Đính kèm tệp PDF"
             >
@@ -340,42 +374,97 @@ export default function NewCheckPage() {
           <h2 className="font-serif text-lg font-bold text-[#191c1e] flex items-center gap-2">
             <span className="material-symbols-outlined text-[#00327d]">history</span> Lịch sử trò chuyện
           </h2>
-          <button 
-            onClick={handleNewChat}
-            className="p-1.5 bg-[#00327d]/10 hover:bg-[#00327d]/20 text-[#00327d] rounded-lg transition-colors cursor-pointer"
-            title="Tạo cuộc hội thoại mới"
-          >
-            <span className="material-symbols-outlined text-sm">add</span>
-          </button>
+          <div className="flex items-center gap-1">
+            {history.length > 0 && (
+              <button 
+                onClick={() => setShowClearConfirm(true)}
+                className="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors cursor-pointer"
+                title="Xóa tất cả lịch sử"
+              >
+                <span className="material-symbols-outlined text-sm">delete_sweep</span>
+              </button>
+            )}
+            <button 
+              onClick={handleNewChat}
+              className="p-1.5 bg-[#00327d]/10 hover:bg-[#00327d]/20 text-[#00327d] rounded-lg transition-colors cursor-pointer"
+              title="Tạo cuộc hội thoại mới"
+            >
+              <span className="material-symbols-outlined text-sm">add</span>
+            </button>
+          </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          <div className="space-y-2">
-            <p className="text-[11px] font-bold text-[#737784] uppercase tracking-wider">Hôm nay</p>
-            {history.map((item) => (
-              <button 
-                key={item.id}
-                onClick={() => {
-                  setHistory(prev => prev.map(h => ({ ...h, active: h.id === item.id })));
-                }}
-                className={`w-full text-left p-3 rounded-xl border transition-all flex items-start gap-3 cursor-pointer ${
-                  item.active 
-                    ? 'bg-[#d2e0fe]/40 border-[#00327d]/40 shadow-xs' 
-                    : 'bg-white hover:bg-[#eceef0] border-[#c3c6d5]/40 text-[#434653]'
-                }`}
+        {/* Clear All Confirmation */}
+        {showClearConfirm && (
+          <div className="p-3 bg-red-50 border-b border-red-200 space-y-2">
+            <p className="text-xs text-red-800 font-semibold">Xóa toàn bộ lịch sử trò chuyện?</p>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleClearAllHistory}
+                className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer"
               >
-                <span className={`material-symbols-outlined text-sm mt-0.5 ${item.active ? 'text-[#00327d]' : 'text-[#737784]'}`}>
-                  chat_bubble
-                </span>
-                <div className="flex-1 min-w-0">
-                  <p className={`text-xs font-semibold truncate ${item.active ? 'text-[#00327d]' : 'text-[#191c1e]'}`}>
-                    {item.title}
-                  </p>
-                  <p className="text-[10px] text-[#737784] mt-0.5">{item.time}</p>
-                </div>
+                Xóa tất cả
               </button>
-            ))}
+              <button
+                onClick={() => setShowClearConfirm(false)}
+                className="px-3 py-1.5 bg-white hover:bg-gray-100 text-gray-700 text-xs font-semibold rounded-lg border border-gray-300 transition-colors cursor-pointer"
+              >
+                Hủy
+              </button>
+            </div>
           </div>
+        )}
+
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {history.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center space-y-3">
+              <span className="material-symbols-outlined text-4xl text-[#c3c6d5]">forum</span>
+              <p className="text-xs text-[#737784]">Chưa có lịch sử trò chuyện</p>
+              <button
+                onClick={handleNewChat}
+                className="px-3 py-1.5 bg-[#00327d] text-white text-xs font-semibold rounded-lg hover:bg-[#0047ab] transition-colors cursor-pointer flex items-center gap-1.5"
+              >
+                <span className="material-symbols-outlined text-sm">add</span> Bắt đầu trò chuyện
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <p className="text-[11px] font-bold text-[#737784] uppercase tracking-wider">Hôm nay</p>
+              {history.map((item) => (
+                <div
+                  key={item.id}
+                  className={`group w-full text-left p-3 rounded-xl border transition-all flex items-start gap-3 cursor-pointer ${
+                    item.active 
+                      ? 'bg-[#d2e0fe]/40 border-[#00327d]/40 shadow-xs' 
+                      : 'bg-white hover:bg-[#eceef0] border-[#c3c6d5]/40 text-[#434653]'
+                  }`}
+                  onClick={() => {
+                    setHistory(prev => prev.map(h => ({ ...h, active: h.id === item.id })));
+                  }}
+                >
+                  <span className={`material-symbols-outlined text-sm mt-0.5 ${item.active ? 'text-[#00327d]' : 'text-[#737784]'}`}>
+                    chat_bubble
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-xs font-semibold truncate ${item.active ? 'text-[#00327d]' : 'text-[#191c1e]'}`}>
+                      {item.title}
+                    </p>
+                    <p className="text-[10px] text-[#737784] mt-0.5">{item.time}</p>
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteChat(item.id);
+                    }}
+                    className="p-1 rounded-md opacity-0 group-hover:opacity-100 hover:bg-red-100 text-[#737784] hover:text-red-600 transition-all cursor-pointer flex-shrink-0"
+                    title="Xóa cuộc trò chuyện này"
+                  >
+                    <span className="material-symbols-outlined text-sm">delete</span>
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

@@ -8,6 +8,17 @@ Tất cả các thay đổi quan trọng của dự án **Themis LexiGuard** s�
 
 ## [Unreleased]
 
+### Changed
+- **Cập Nhật Toàn Diện Pitch Deck HTML Phản Ánh Trạng Thái Dự Án Hiện Tại (`themis-lexiguard-pitch-deck/index.html`)**:
+  - **Slide 4 (Product)**: Cập nhật sidebar navigation mockup phản ánh đúng menu thực tế (Sản phẩm & Lô hàng, Giám sát liêm chính, Lịch sử thẩm định). Cập nhật mã lô hàng thành `DURIAN-2026-889`. Cập nhật tech stack footer (Next.js 15 + Express + Supabase + Prisma + Gemini 2.4).
+  - **Slide 5 (Market)**: Cập nhật SAM beachhead từ 3,3 tỷ → ~4 tỷ USD (số liệu 2025). Bổ sung data point Q1/2026 tăng 128%. Cập nhật mốc thời gian siết kiểm tra GACC 2024–2026.
+  - **Slide 7 (Traction)**: Cập nhật toàn bộ metrics phản ánh trạng thái thực tế: 09 cổng pháp lý quốc tế → 4.375 cơ sở CIFER → 10+ phân hệ web hoàn chỉnh. Cập nhật proof list: CRUD hoàn chỉnh, Admin Portal 6 phân hệ, Dashboard 1-chạm, Notification real-time, Audit log bất biến. Đánh dấu Build ✓ và Integrate ✓ trên validation path.
+  - **Slide 1 (Hero)**: Bổ sung Prisma ORM vào tech line.
+  - **Slide 10 (Ask) & tất cả footer**: Sửa URL repo từ `Module2_ProductDesign_` → `Team-1---Module-2---ProductDesign` (đúng với repo hiện tại trên GitHub).
+  - **Slide 3 (Solution)**: Viết lại toàn bộ pipeline 5 bước phản ánh đúng luồng giải pháp thực tế của website: (1) Tập trung dữ liệu — Sản phẩm, lô hàng, chứng từ 4 Khóa, (2) Thư viện pháp lý — cào 9 cổng chính phủ + tóm tắt AI, (3) Tư vấn AI tuân thủ — Chat AI + Rule Engine, (4) Báo cáo có căn cứ — Finding kèm trích dẫn điều khoản, (5) Giám sát liên tục — Dashboard, cảnh báo, lịch sử. Cập nhật before/after section.
+  - **Slide 4 (Product) — lần 2**: Sửa sidebar mockup khớp chính xác với menu thực tế của website: thứ tự đúng (Dashboard → Tư vấn AI Tuân thủ → Thư viện Pháp lý GACC → Sản phẩm & Lô hàng → Lịch sử Thẩm định → Giám sát Liêm chính), viết hoa đúng. Demo step 3 đổi từ "Chạy kiểm tra AI" → "Chat AI tuân thủ" phản ánh giao diện Chat AI thực tế.
+  - **Sources panel**: Cập nhật toàn bộ link repo, thay commit reference bằng CHANGELOG.md reference phản ánh lịch sử phát triển đầy đủ.
+
 ### Removed
 - **Dọn Dẹp Mã Nguồn Rác, Tệp Tạm & Thành Phần Dư Thừa (Code Cleanup & Dead Code Removal)**:
   - Xóa bỏ toàn bộ thư mục và tệp tạm kiểm thử `be/scratch/` (`check_cifer_dates.ts`).

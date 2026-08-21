@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#06111f" />
+  <title>Themis LexiGuard - Pitch Deck 2026</title>
+  <style>
+    :root {
+      --ink: #f6f8fb;
+      --muted: #9fb0c5;
+      --muted-2: #6f829b;
+      --navy-950: #030914;
+      --navy-900: #06111f;
+      --navy-850: #0a1728;
+      --navy-800: #0c1c31;
+      --line: rgba(159, 176, 197, .18);
+      --blue: #4d8dff;
+      --blue-soft: #85adff;
+      --green: #2ed7a0;
+      --amber: #ff9c4a;
+      --red: #ff6577;
+      --white: #ffffff;
+      --shadow: 0 38px 100px rgba(0, 0, 0, .44);
+      --slide-w: 1600;
+      --slide-h: 900;
+      --deck-scale: 1;
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #01050b; color: var(--ink); }
+    body { display: grid; place-items: center; }
+    button, a { font: inherit; }
+    a { color: inherit; }
+
+    .deck-shell {
+      position: relative;
+      width: calc(1600px * var(--deck-scale));
+      height: calc(900px * var(--deck-scale));
+      filter: drop-shadow(var(--shadow));
+    }
+
+    .deck {
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: 1600px;
+      height: 900px;
+      transform: scale(var(--deck-scale));
+      transform-origin: top left;
+      overflow: hidden;
+      background: var(--navy-950);
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: none;
+      overflow: hidden;
+      padding: 72px 84px 62px;
+      background:
+        radial-gradient(circle at 82% 8%, rgba(77, 141, 255, .13), transparent 28%),
+        radial-gradient(circle at 8% 90%, rgba(46, 215, 160, .08), transparent 28%),
+        linear-gradient(135deg, #07111f 0%, #050d19 58%, #030914 100%);
+    }
+
+    .slide.active { display: block; animation: reveal .42s cubic-bezier(.2, .8, .2, 1); }
+    @keyframes reveal { from { opacity: 0; transform: translateY(12px) scale(.995); } to { opacity: 1; transform: none; } }
+
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: .42;
+      background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: linear-gradient(to bottom, transparent 0, black 22%, black 75%, transparent 100%);
+    }
+
+    .hero {
+      padding: 0;
+      background: #020914 url("assets/hero-durian-compliance.png") center / cover no-repeat;
+    }
+    .hero::before {
+      opacity: 1;
+      background:
+        linear-gradient(90deg, rgba(2, 8, 18, .98) 0%, rgba(2, 8, 18, .91) 30%, rgba(2, 8, 18, .36) 62%, rgba(2, 8, 18, .1) 100%),
+        linear-gradient(0deg, rgba(2, 8, 18, .62), transparent 36%);
+      mask-image: none;
+    }
+
+    .hero-content { position: relative; z-index: 2; width: 760px; padding: 88px 0 0 92px; }
+    .eyebrow { display: flex; align-items: center; gap: 16px; color: var(--blue-soft); font-size: 18px; font-weight: 750; letter-spacing: .18em; text-transform: uppercase; }
+    .eyebrow::before { content: ""; width: 38px; height: 3px; background: linear-gradient(90deg, var(--green), var(--blue)); border-radius: 99px; }
+
+    .brand { width: 390px; height: 116px; overflow: hidden; margin-bottom: 54px; }
+    .brand-logo { display: block; width: 390px; height: auto; transform: translate(-3px, -66px); mix-blend-mode: screen; filter: brightness(1.28) saturate(1.05); }
+
+    h1, h2, h3, p { margin: 0; }
+    .hero h1 { max-width: 760px; font-size: 72px; line-height: 1.02; letter-spacing: -.055em; font-weight: 780; }
+    .hero h1 em { color: var(--green); font-style: normal; }
+    .hero-lede { width: 670px; margin-top: 30px; color: #c2cede; font-size: 25px; line-height: 1.45; }
+    .hero-scope { display: flex; align-items: center; gap: 18px; margin-top: 42px; color: #dce5f0; font-size: 18px; font-weight: 680; }
+    .hero-scope strong { color: var(--amber); }
+    .hero-scope .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted-2); }
+    .hero-bottom { position: absolute; z-index: 2; left: 92px; right: 78px; bottom: 54px; display: flex; align-items: end; justify-content: space-between; }
+    .tech-line { color: var(--muted); font-size: 15px; letter-spacing: .08em; text-transform: uppercase; }
+
+    .slide-head { position: relative; z-index: 2; display: grid; grid-template-columns: 120px 1fr; align-items: start; }
+    .chapter { color: var(--blue-soft); font-size: 19px; font-weight: 820; letter-spacing: .18em; padding-top: 9px; }
+    .slide-title { max-width: 1260px; font-size: 54px; line-height: 1.08; font-weight: 760; letter-spacing: -.04em; }
+    .slide-title .accent { color: var(--green); }
+    .slide-subtitle { margin-top: 16px; color: var(--muted); font-size: 22px; line-height: 1.42; max-width: 1120px; }
+
+    .footer { position: absolute; z-index: 3; left: 84px; right: 84px; bottom: 25px; display: flex; align-items: center; justify-content: space-between; color: var(--muted-2); font-size: 13px; letter-spacing: .05em; }
+    .footer strong { color: #aebbc9; }
+    .footer .source-link { max-width: 1060px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .page-no { display: inline-flex; align-items: center; gap: 10px; color: #c9d3df; font-weight: 750; }
+    .page-no::before { content: ""; width: 28px; height: 2px; background: var(--blue); }
+
+    .content { position: relative; z-index: 2; }
+    .big-number { font-variant-numeric: tabular-nums; }
+    .muted { color: var(--muted); }
+    .green { color: var(--green); }
+    .amber { color: var(--amber); }
+    .red { color: var(--red); }
+    .blue { color: var(--blue-soft); }
+
+    /* Slide 2 */
+    .problem-layout { display: grid; grid-template-columns: 1.05fr .8fr; gap: 88px; margin: 66px 0 0 120px; }
+    .risk-chain { position: relative; padding-left: 52px; }
+    .risk-chain::before { content: ""; position: absolute; left: 13px; top: 12px; bottom: 20px; width: 2px; background: linear-gradient(var(--blue), var(--amber), var(--red)); }
+    .risk-step { position: relative; padding: 0 0 40px; }
+    .risk-step::before { content: ""; position: absolute; left: -47px; top: 9px; width: 14px; height: 14px; border-radius: 50%; background: var(--navy-900); border: 4px solid var(--blue); box-shadow: 0 0 0 7px rgba(77,141,255,.08); }
+    .risk-step:nth-child(2)::before { border-color: var(--amber); }
+    .risk-step:nth-child(3)::before { border-color: var(--red); }
+    .risk-step h3 { font-size: 28px; margin-bottom: 8px; }
+    .risk-step p { max-width: 650px; color: var(--muted); font-size: 19px; line-height: 1.45; }
+    .consequence { border-left: 1px solid var(--line); padding-left: 58px; }
+    .consequence .lead { color: var(--muted); font-size: 18px; text-transform: uppercase; letter-spacing: .13em; }
+    .consequence-word { display: block; margin-top: 16px; font-size: 62px; line-height: 1.12; font-weight: 760; letter-spacing: -.045em; }
+    .consequence-word + .consequence-word { margin-top: 4px; }
+    .exposure-unit { display: block; margin-top: 5px; color: #e8eef6; font-size: 27px; font-weight: 720; }
+    .outcome-list { margin-top: 24px; border-top: 1px solid var(--line); }
+    .outcome-list span { display: block; padding: 11px 0; border-bottom: 1px solid var(--line); color: #d5deea; font-size: 18px; }
+    .context-note { margin-top: 30px; padding-top: 24px; border-top: 1px solid var(--line); color: #cbd5e1; font-size: 18px; line-height: 1.5; }
+
+    /* Slide 3 */
+    .solution-stage { margin: 74px 0 0 120px; }
+    .pipeline { position: relative; display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+    .pipeline::before { content: ""; position: absolute; left: 9%; right: 9%; top: 32px; height: 2px; background: linear-gradient(90deg, var(--blue), var(--green)); opacity: .7; }
+    .pipe-step { position: relative; text-align: center; padding: 0 8px; }
+    .pipe-icon { position: relative; z-index: 2; display: grid; place-items: center; width: 66px; height: 66px; margin: 0 auto 20px; border-radius: 50%; background: #0b1e34; border: 1px solid rgba(133,173,255,.55); color: var(--blue-soft); font-size: 20px; font-weight: 850; box-shadow: 0 0 0 9px rgba(4,12,23,.94); }
+    .pipe-step:nth-child(n+4) .pipe-icon { border-color: rgba(46,215,160,.6); color: var(--green); }
+    .pipe-step h3 { font-size: 21px; line-height: 1.25; }
+    .pipe-step p { margin-top: 9px; color: var(--muted); font-size: 16px; line-height: 1.4; }
+    .before-after { display: grid; grid-template-columns: 1fr 72px 1fr; align-items: center; gap: 26px; margin-top: 66px; padding-top: 36px; border-top: 1px solid var(--line); }
+    .ba-label { color: var(--muted-2); font-size: 15px; font-weight: 750; letter-spacing: .15em; text-transform: uppercase; margin-bottom: 10px; }
+    .ba-copy { font-size: 25px; line-height: 1.34; font-weight: 650; }
+    .ba-arrow { color: var(--green); font-size: 44px; text-align: center; }
+
+    /* Slide 4 */
+    .demo-layout { display: grid; grid-template-columns: 1.14fr .54fr; gap: 52px; margin: 46px 0 0 120px; }
+    .browser-mock { min-height: 555px; border: 1px solid rgba(133,173,255,.26); border-radius: 20px; overflow: hidden; background: #f5f7fa; color: #0b1730; box-shadow: 0 32px 70px rgba(0,0,0,.35); }
+    .browser-top { height: 42px; padding: 0 18px; display: flex; align-items: center; gap: 9px; background: #dfe5ec; border-bottom: 1px solid #cbd4df; }
+    .browser-top i { width: 10px; height: 10px; border-radius: 50%; background: #acb7c4; }
+    .browser-top i:first-child { background: #ff6b6b; }
+    .browser-top i:nth-child(2) { background: #ffb84d; }
+    .browser-top i:nth-child(3) { background: #37c98b; }
+    .browser-url { margin-left: 16px; width: 58%; height: 22px; border-radius: 6px; background: rgba(255,255,255,.72); }
+    .app-shell { display: grid; grid-template-columns: 180px 1fr; min-height: 513px; }
+    .app-side { background: #071b35; color: #d6e2f1; padding: 26px 18px; }
+    .app-logo { width: 145px; height: 47px; overflow: hidden; margin: -3px 0 25px; }
+    .app-logo img { display: block; width: 160px; height: auto; transform: translate(-6px, -29px); mix-blend-mode: screen; filter: brightness(1.5) saturate(1.08); }
+    .nav-item { padding: 10px 12px; margin-bottom: 7px; border-radius: 8px; color: #8ea4bd; font-size: 13px; }
+    .nav-item.active { color: #fff; background: rgba(77,141,255,.22); }
+    .app-main { padding: 27px 30px; }
+    .app-kicker { color: #6a7a91; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+    .app-title { margin-top: 5px; font-size: 24px; font-weight: 800; }
+    .status-row { display: grid; grid-template-columns: 1.15fr 1fr 1fr; gap: 14px; margin-top: 22px; }
+    .status-box { padding: 16px; border: 1px solid #dde4ec; border-radius: 11px; background: #fff; }
+    .status-box small { color: #748398; font-size: 11px; }
+    .status-box strong { display: block; margin-top: 7px; font-size: 18px; }
+    .report-card { margin-top: 18px; padding: 18px; border: 1px solid #dde4ec; border-radius: 12px; background: #fff; }
+    .report-head { display: flex; justify-content: space-between; align-items: center; }
+    .report-head strong { font-size: 15px; }
+    .risk-label { padding: 6px 10px; border-radius: 999px; color: #8c3f00; background: #fff1df; font-size: 11px; font-weight: 800; }
+    .finding { display: grid; grid-template-columns: 9px 1fr auto; gap: 12px; align-items: center; margin-top: 15px; padding-top: 15px; border-top: 1px solid #e9edf2; font-size: 12px; }
+    .finding-dot { width: 8px; height: 8px; border-radius: 50%; background: #f34f63; }
+    .finding:nth-child(3) .finding-dot { background: #f4a63a; }
+    .finding:nth-child(4) .finding-dot { background: #28b782; }
+    .citation { color: #316cd9; font-weight: 720; }
+    .demo-steps { padding: 12px 0; }
+    .demo-step { display: grid; grid-template-columns: 38px 1fr; gap: 18px; padding: 0 0 26px; }
+    .demo-step span { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid rgba(133,173,255,.5); border-radius: 50%; color: var(--blue-soft); font-size: 14px; font-weight: 800; }
+    .demo-step h3 { font-size: 21px; line-height: 1.2; }
+    .demo-step p { margin-top: 5px; color: var(--muted); font-size: 15px; line-height: 1.4; }
+
+    /* Slide 5 */
+    .market-layout { margin: 58px 0 0 120px; }
+    .market-metrics { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .market-metric { min-height: 225px; padding: 34px 42px 30px 0; }
+    .market-metric + .market-metric { padding-left: 48px; border-left: 1px solid var(--line); }
+    .market-metric .value { display: block; font-size: 58px; line-height: 1; font-weight: 780; letter-spacing: -.045em; }
+    .market-tag { display: block; margin-bottom: 17px; color: var(--muted-2); font-size: 14px; font-weight: 850; letter-spacing: .16em; text-transform: uppercase; }
+    .market-metric .label { display: block; margin-top: 18px; color: #d2dce8; font-size: 19px; line-height: 1.4; }
+    .market-metric .when { display: block; margin-top: 10px; color: var(--muted); font-size: 14px; }
+    .scope-ladder { display: grid; grid-template-columns: 1.3fr 1fr .72fr; gap: 14px; margin-top: 38px; align-items: end; }
+    .scope { position: relative; padding: 22px 24px; background: rgba(255,255,255,.025); border-bottom: 3px solid var(--blue); }
+    .scope:nth-child(2) { border-color: var(--green); }
+    .scope:nth-child(3) { border-color: var(--amber); }
+    .scope small { color: var(--muted-2); font-size: 13px; font-weight: 800; letter-spacing: .16em; }
+    .scope strong { display: block; margin-top: 8px; font-size: 21px; line-height: 1.3; }
+    .why-now-band { display: grid; grid-template-columns: 170px 1fr 1fr; gap: 0; margin-top: 36px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .why-now-band > div { padding: 21px 27px; border-right: 1px solid var(--line); }
+    .why-now-band > div:last-child { border-right: 0; }
+    .why-now-label { color: var(--amber); font-size: 15px; font-weight: 850; letter-spacing: .15em; text-transform: uppercase; }
+    .why-now-band strong { display: block; color: #edf3f9; font-size: 20px; }
+    .why-now-band span { display: block; margin-top: 7px; color: var(--muted); font-size: 16px; line-height: 1.4; }
+
+    /* Slide 6 */
+    .business-layout { margin: 28px 0 0 120px; }
+    .pricing-table { border-top: 2px solid rgba(133,173,255,.55); border-left: 1px solid var(--line); }
+    .pricing-row { display: grid; grid-template-columns: 205px 1fr 1fr; }
+    .pricing-row > div { padding: 10px 17px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); color: #dbe4ee; font-size: 16px; line-height: 1.35; }
+    .pricing-row > div:first-child { color: var(--muted); font-size: 14px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+    .pricing-row.pricing-head > div { min-height: 70px; padding-top: 15px; background: rgba(77,141,255,.08); }
+    .pricing-row.pricing-head > div:nth-child(3) { background: rgba(46,215,160,.09); }
+    .pricing-row.pricing-head strong { display: block; color: #f2f6fa; font-size: 21px; }
+    .pricing-row.pricing-head span { display: block; margin-top: 4px; color: var(--muted); font-size: 14px; }
+    .price-emphasis { color: var(--green); font-weight: 800; }
+    .price-note { color: var(--muted); font-size: 14px; }
+    .performance-strip { display: grid; grid-template-columns: 285px 1fr 1fr 1fr; gap: 0; margin-top: 15px; border-left: 3px solid var(--amber); background: rgba(255,156,74,.055); }
+    .performance-strip > div { padding: 13px 17px; border-right: 1px solid var(--line); }
+    .performance-strip .rate-title { color: #eef3f8; font-size: 16px; font-weight: 760; line-height: 1.35; }
+    .performance-strip small { display: block; color: var(--muted); font-size: 13px; line-height: 1.25; }
+    .performance-strip strong { display: block; margin-top: 4px; color: var(--amber); font-size: 25px; }
+
+    /* Slide 7 */
+    .traction-layout { display: grid; grid-template-columns: .8fr 1fr; gap: 82px; margin: 56px 0 0 120px; }
+    .mvp-block { padding-right: 50px; border-right: 1px solid var(--line); }
+    .mvp-word { font-size: 104px; line-height: .92; font-weight: 820; letter-spacing: -.06em; color: transparent; -webkit-text-stroke: 2px rgba(77,141,255,.85); }
+    .proof-list { margin-top: 35px; display: grid; gap: 18px; }
+    .proof { display: grid; grid-template-columns: 17px 1fr; gap: 15px; color: #d8e1ec; font-size: 18px; line-height: 1.36; }
+    .proof::before { content: ""; width: 10px; height: 10px; margin-top: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 6px rgba(46,215,160,.08); }
+    .repo-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .repo-metric { padding: 20px 18px 18px; border-top: 2px solid var(--blue); background: rgba(255,255,255,.025); }
+    .repo-metric:nth-child(2) { border-color: var(--green); }
+    .repo-metric:nth-child(3) { border-color: var(--amber); }
+    .repo-metric strong { display: block; font-size: 38px; }
+    .repo-metric span { display: block; margin-top: 6px; color: var(--muted); font-size: 14px; line-height: 1.35; }
+    .validation-path { margin-top: 52px; }
+    .path-line { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; position: relative; }
+    .path-line::before { content: ""; position: absolute; left: 6%; right: 6%; top: 14px; height: 2px; background: linear-gradient(90deg, var(--green) 0 66%, var(--muted-2) 66%); }
+    .path-step { position: relative; padding-top: 43px; }
+    .path-step::before { content: ""; position: absolute; top: 5px; left: 0; width: 18px; height: 18px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 7px rgba(46,215,160,.09); }
+    .path-step:last-child::before { background: var(--amber); box-shadow: 0 0 0 7px rgba(255,156,74,.09); }
+    .path-step strong { font-size: 19px; }
+    .path-step span { display: block; margin-top: 5px; color: var(--muted); font-size: 15px; }
+    .honesty-note { margin-top: 36px; padding: 18px 20px; border-left: 3px solid var(--amber); background: rgba(255,156,74,.05); color: #d5dee9; font-size: 16px; line-height: 1.45; }
+
+    /* Slide 8 */
+    .competition-layout { display: grid; grid-template-columns: 1.05fr .65fr; gap: 78px; margin: 48px 0 0 120px; }
+    .matrix-wrap { position: relative; padding: 18px 0 42px 54px; }
+    .matrix { position: relative; height: 445px; border-left: 2px solid #52657a; border-bottom: 2px solid #52657a; background:
+      linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 50% 50%;
+    }
+    .axis-y { position: absolute; left: -54px; top: 50%; transform: rotate(-90deg) translate(-50%, -50%); transform-origin: left top; color: var(--muted); font-size: 13px; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
+    .axis-x { position: absolute; left: 54px; right: 0; bottom: 5px; display: flex; justify-content: space-between; color: var(--muted); font-size: 13px; letter-spacing: .1em; text-transform: uppercase; }
+    .player { position: absolute; transform: translate(-50%, -50%); padding: 12px 15px; min-width: 138px; text-align: center; border: 1px solid var(--line); background: rgba(7,18,33,.92); border-radius: 10px; color: #cbd7e5; font-size: 15px; font-weight: 720; }
+    .player.p1 { left: 22%; top: 69%; }
+    .player.p2 { left: 28%; top: 30%; }
+    .player.p3 { left: 69%; top: 67%; }
+    .player.themis { left: 79%; top: 22%; min-width: 190px; color: #06111f; background: linear-gradient(135deg, var(--green), #72a8ff); border: 0; font-weight: 880; box-shadow: 0 18px 50px rgba(46,215,160,.18); }
+    .advantage { padding-top: 30px; }
+    .advantage-lead { color: var(--green); font-size: 16px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+    .advantage h3 { margin-top: 14px; font-size: 31px; line-height: 1.23; }
+    .advantage-list { margin-top: 32px; display: grid; gap: 28px; }
+    .advantage-item { padding-top: 18px; border-top: 1px solid var(--line); }
+    .advantage-item strong { display: block; color: #eaf0f7; font-size: 19px; }
+    .advantage-item span { display: block; margin-top: 6px; color: var(--muted); font-size: 16px; line-height: 1.38; }
+
+    /* Slide 9 */
+    .team-layout { display: grid; grid-template-columns: .66fr 1fr; gap: 90px; margin: 64px 0 0 120px; }
+    .team-core { position: relative; min-height: 500px; border-right: 1px solid var(--line); padding-right: 64px; }
+    .team-core .team-count { font-size: 132px; line-height: .9; font-weight: 820; color: var(--green); letter-spacing: -.06em; }
+    .team-core h3 { margin-top: 18px; font-size: 32px; line-height: 1.25; }
+    .team-core p { margin-top: 22px; color: var(--muted); font-size: 18px; line-height: 1.55; }
+    .discipline-line { margin-top: 35px; color: var(--blue-soft); font-size: 15px; line-height: 1.75; font-weight: 740; text-transform: uppercase; letter-spacing: .08em; }
+    .people { display: grid; grid-template-columns: 1fr 1fr; column-gap: 54px; }
+    .person { padding: 0 0 21px; margin-bottom: 21px; border-bottom: 1px solid var(--line); }
+    .person strong { display: block; font-size: 21px; }
+    .person span { display: block; margin-top: 5px; color: var(--muted); font-size: 15px; line-height: 1.35; }
+    .person.lead strong { color: var(--green); }
+
+    /* Slide 10 */
+    .ask-layout { display: grid; grid-template-columns: .88fr 1fr; gap: 86px; margin: 56px 0 0 120px; }
+    .ask-hero { padding-right: 56px; border-right: 1px solid var(--line); }
+    .ask-kicker { color: var(--amber); font-size: 16px; font-weight: 850; letter-spacing: .16em; text-transform: uppercase; }
+    .ask-number { margin-top: 18px; font-size: 118px; line-height: .92; font-weight: 820; letter-spacing: -.06em; color: var(--ink); }
+    .ask-number span { color: var(--green); }
+    .ask-copy { margin-top: 24px; font-size: 30px; line-height: 1.3; font-weight: 650; }
+    .ask-needs { margin-top: 34px; display: grid; gap: 14px; color: #d5deea; font-size: 18px; }
+    .ask-needs div { display: grid; grid-template-columns: 18px 1fr; gap: 13px; align-items: start; }
+    .ask-needs div::before { content: "+"; color: var(--green); font-weight: 900; }
+    .pilot-roadmap { padding-top: 6px; }
+    .road-step { display: grid; grid-template-columns: 92px 1fr; gap: 24px; padding: 0 0 34px; }
+    .road-day { color: var(--blue-soft); font-size: 17px; font-weight: 850; letter-spacing: .09em; }
+    .road-step h3 { font-size: 25px; }
+    .road-step p { margin-top: 8px; color: var(--muted); font-size: 17px; line-height: 1.45; }
+    .cta-line { margin-top: 12px; padding-top: 26px; border-top: 1px solid var(--line); color: #eef4fb; font-size: 25px; font-weight: 720; }
+    .cta-line span { color: var(--green); }
+
+    /* Controls */
+    .controls { position: fixed; z-index: 100; left: 50%; bottom: 18px; transform: translateX(-50%); display: flex; align-items: center; gap: 7px; padding: 7px; background: rgba(3,9,20,.72); border: 1px solid rgba(255,255,255,.09); border-radius: 999px; backdrop-filter: blur(18px); transition: opacity .25s; }
+    .controls button { display: grid; place-items: center; width: 34px; height: 34px; border: 0; border-radius: 50%; color: #dce5ef; background: transparent; cursor: pointer; }
+    .controls button:hover { background: rgba(255,255,255,.08); }
+    .progress-dots { display: flex; gap: 6px; padding: 0 7px; }
+    .progress-dots button { width: 7px; height: 7px; padding: 0; background: #506278; transition: width .2s, background .2s; }
+    .progress-dots button.active { width: 25px; border-radius: 99px; background: var(--green); }
+    .hint { position: fixed; z-index: 90; right: 18px; bottom: 22px; color: #7f91a6; font-size: 12px; letter-spacing: .04em; }
+
+    .sources-panel { position: fixed; z-index: 200; inset: 0; display: none; place-items: center; padding: 42px; background: rgba(0,4,10,.76); backdrop-filter: blur(18px); }
+    .sources-panel.open { display: grid; }
+    .sources-card { width: min(940px, 92vw); max-height: 82vh; overflow: auto; padding: 38px 42px; color: #dfe7f1; background: #071321; border: 1px solid rgba(133,173,255,.25); border-radius: 20px; box-shadow: var(--shadow); }
+    .sources-card h2 { font-size: 34px; }
+    .sources-card p { margin-top: 10px; color: var(--muted); line-height: 1.5; }
+    .sources-card ol { padding-left: 21px; }
+    .sources-card li { margin: 16px 0; line-height: 1.45; }
+    .sources-card a { color: var(--blue-soft); overflow-wrap: anywhere; }
+    .sources-close { float: right; border: 1px solid var(--line); color: #fff; background: transparent; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+
+    @media (max-width: 760px) {
+      .hint { display: none; }
+      .controls { bottom: 10px; }
+    }
+
+    @media print {
+      @page { size: 16in 9in; margin: 0; }
+      html, body { width: auto; height: auto; overflow: visible; background: #fff; }
+      body { display: block; }
+      .deck-shell, .deck { position: static; width: 1600px; height: auto; transform: none; filter: none; }
+      .slide { position: relative; display: block !important; width: 1600px; height: 900px; page-break-after: always; animation: none !important; }
+      .controls, .hint, .sources-panel { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck-shell" aria-label="Themis LexiGuard Pitch Deck">
+    <div class="deck" id="deck">
+      <section class="slide hero active" data-title="Vision">
+        <div class="hero-content">
+          <div class="brand"><img class="brand-logo" src="assets/themis_logo.png" alt="Themis LexiGuard" /></div>
+          <div class="eyebrow">Pitch deck · 2026</div>
+          <h1>Turning regulatory barriers into <em>export advantages.</em></h1>
+          <p class="hero-lede">AI cross-checks Cadmium results, PUC/PHC codes, phytosanitary certificates and labeling before your durian shipment leaves the warehouse — with cited conclusions and remediation roadmaps.</p>
+          <div class="hero-scope"><strong>MVP</strong> Fresh Vietnamese Durian → China <span class="dot"></span> HS 0810.60.00</div>
+        </div>
+        <div class="hero-bottom">
+          <div class="tech-line">AI · Rule engine · Prisma ORM · Legal versioning · Audit trail</div>
+          <div class="page-no">01 / 10</div>
+        </div>
+      </section>
+
+      <section class="slide" data-title="Problem">
+        <header class="slide-head"><div class="chapter">02 · PROBLEM</div><div><h2 class="slide-title">Risks form at the orchard, but only surface at the border.</h2><p class="slide-subtitle">Cadmium contamination and code fraud are the visible symptoms; the root causes lie in broken procurement chains, fragmented data, and disconnected quality controls.</p></div></header>
+        <div class="content problem-layout">
+          <div class="risk-chain">
+            <div class="risk-step"><h3>Unscreened inputs</h3><p>Soil, water, fertilizers and pesticides can introduce Cadmium risks; premature harvest or chemical treatment degrades shipment quality.</p></div>
+            <div class="risk-step"><h3>Unreliable shipment identity</h3><p>Mixed-source collection, misuse or lending of PUC/PHC codes means documentation no longer reflects the actual growing area and packing house.</p></div>
+            <div class="risk-step"><h3>Controls stacked at the end of the chain</h3><p>When China inspects at the border, all accumulated errors surface simultaneously — too late to fix for fresh produce.</p></div>
+          </div>
+          <div class="consequence">
+            <div class="lead">Estimated financial exposure</div>
+            <span class="consequence-word amber">2–4 billion</span><span class="exposure-unit">VND / container</span>
+            <div class="outcome-list"><span>+ Demurrage and cold-chain fees</span><span>+ Fire sale or destruction of goods</span><span>+ PUC/PHC suspension and lost orders</span></div>
+            <p class="context-note">Team-provided scenario for a 15–20 ton shipment; excluding reputational damage and seasonal opportunity cost.</p>
+          </div>
+        </div>
+        <footer class="footer"><span class="source-link">Source: Repository · Plant Protection Dept. (30 Cadmium-flagged lots, 08/2022–03/2024) · Team financial scenario</span><span class="page-no">02 / 10</span></footer>
+      </section>
+
+      <section class="slide" data-title="Solution">
+        <header class="slide-head"><div class="chapter">03 · SOLUTION</div><div><h2 class="slide-title">An AI platform that centralizes all data, regulations and <span class="accent">compliance decisions.</span></h2></div></header>
+        <div class="content solution-stage">
+          <div class="pipeline">
+            <div class="pipe-step"><div class="pipe-icon">01</div><h3>Data Centralization</h3><p>Products, shipments and 4-Lock documents on a single platform</p></div>
+            <div class="pipe-step"><div class="pipe-icon">02</div><h3>Legal Library</h3><p>Scraping 9 government portals, AI summaries and continuous updates</p></div>
+            <div class="pipe-step"><div class="pipe-icon">03</div><h3>AI Compliance Advisory</h3><p>AI Chat + Rule Engine cross-referencing GB 2762, GACC, Phyto</p></div>
+            <div class="pipe-step"><div class="pipe-icon">04</div><h3>Evidence-Based Reports</h3><p>Findings with cited clauses and remediation roadmaps</p></div>
+            <div class="pipe-step"><div class="pipe-icon">05</div><h3>Continuous Monitoring</h3><p>Dashboard, risk alerts and compliance audit history</p></div>
+          </div>
+          <div class="before-after">
+            <div><div class="ba-label">Before Themis</div><div class="ba-copy">Excel/Zalo data · manual legal lookup · checks after goods are packed</div></div>
+            <div class="ba-arrow">→</div>
+            <div><div class="ba-label">After Themis</div><div class="ba-copy green">One platform · auto-updating regulations · AI advisory before shipment</div></div>
+          </div>
+        </div>
+        <footer class="footer"><span>Five core values: Centralize · Proactive · Verified · Tracked · Actionable</span><span class="page-no">03 / 10</span></footer>
+      </section>
+
+      <section class="slide" data-title="Product Demo">
+        <header class="slide-head"><div class="chapter">04 · PRODUCT</div><div><h2 class="slide-title">From shipment to evidence-based report in a single demo flow.</h2></div></header>
+        <div class="content demo-layout">
+          <div class="browser-mock" aria-label="Compliance report UI mockup">
+            <div class="browser-top"><i></i><i></i><i></i><span class="browser-url"></span></div>
+            <div class="app-shell">
+              <aside class="app-side"><div class="app-logo"><img src="assets/themis_logo.png" alt="Themis" /></div><div class="nav-item">Dashboard</div><div class="nav-item active">AI Compliance Advisory</div><div class="nav-item">GACC Legal Library</div><div class="nav-item">Products & Shipments</div><div class="nav-item">Compliance History</div><div class="nav-item">Integrity Monitor</div></aside>
+              <div class="app-main">
+                <div class="app-kicker">Shipment · DURIAN-2026-889</div><div class="app-title">China Market Compliance Report</div>
+                <div class="status-row"><div class="status-box"><small>Overall Result</small><strong style="color:#bf671f">Conditional</strong></div><div class="status-box"><small>Findings</small><strong>03</strong></div><div class="status-box"><small>Citations</small><strong style="color:#216bd2">06 sources</strong></div></div>
+                <div class="report-card"><div class="report-head"><strong>Findings & Actions</strong><span class="risk-label">ACTION REQUIRED</span></div><div class="finding"><span class="finding-dot"></span><span>Cadmium 0.06 mg/kg exceeds 0.05 mg/kg limit</span><span class="citation">GB 2762</span></div><div class="finding"><span class="finding-dot"></span><span>Missing GACC-approved packing house code (PHC)</span><span class="citation">GACC</span></div><div class="finding"><span class="finding-dot"></span><span>Phytosanitary certificate uploaded</span><span class="citation">PHYTO</span></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="demo-steps">
+            <div class="demo-step"><span>1</span><div><h3>Create Shipment</h3><p>Select durian variety, China market and HS 0810.60.00.</p></div></div>
+            <div class="demo-step"><span>2</span><div><h3>Upload Documents</h3><p>Lab results, PUC/PHC, Phytosanitary and labeling.</p></div></div>
+            <div class="demo-step"><span>3</span><div><h3>AI Compliance Chat</h3><p>Interactive Q&A with Themis AI, cross-referencing GB 2762 & GACC.</p></div></div>
+            <div class="demo-step"><span>4</span><div><h3>Resolve Findings</h3><p>Assign tasks, attach evidence, approve.</p></div></div>
+            <div class="demo-step"><span>5</span><div><h3>Re-check & Save History</h3><p>Create new report version, never overwrite.</p></div></div>
+          </div>
+        </div>
+        <footer class="footer"><span class="source-link">MVP web: Next.js 15 + Express + Supabase + Prisma + Gemini 2.4 · github.com/Longdev1701/Team-1---Module-2---ProductDesign</span><span class="page-no">04 / 10</span></footer>
+      </section>
+
+      <section class="slide" data-title="Market">
+        <header class="slide-head"><div class="chapter">05 · MARKET</div><div><h2 class="slide-title">A $4B beachhead large enough to prove the product.</h2><p class="slide-subtitle">These are commodity trade values exposed to compliance risk — not SaaS revenue; software revenue will be validated through pilots and pricing.</p></div></header>
+        <div class="content market-layout">
+          <div class="market-metrics">
+            <div class="market-metric"><span class="market-tag">TAM · VALUE POOL</span><span class="value blue big-number">$62.5B</span><span class="label">Vietnam's agri-forestry-fishery exports</span><span class="when">2024 · multi-product, multi-market</span></div>
+            <div class="market-metric"><span class="market-tag">SAM · BEACHHEAD</span><span class="value green big-number">~$4B</span><span class="label">Vietnamese durian exports (2025)</span><span class="when">1,396 PUCs + 188 PHCs GACC-approved · Q1/2026 up 128%</span></div>
+            <div class="market-metric"><span class="market-tag">SOM · 1–2 YEARS</span><span class="value amber big-number">200–500</span><span class="label">Enterprises / cooperatives directly reachable</span><span class="when">GTM hypothesis · prospects, not yet customers</span></div>
+          </div>
+          <div class="why-now-band"><div class="why-now-label">Why now?</div><div><strong>Regulation has become a "hot spot"</strong><span>Cadmium, Auramine O and PUC/PHC fraud have triggered tighter GACC inspections in 2024–2026.</span></div><div><strong>Risk is large enough to create willingness-to-pay</strong><span>A single container is worth 2–4 billion VND; avoiding one incident can offset years of platform fees.</span></div></div>
+        </div>
+        <footer class="footer"><span class="source-link">Source: MARD / Gov't Newspaper (2024) · NAFIQPM (2025) · Dept. of Crop Production & Plant Protection (2025) · SOM: team estimate</span><span class="page-no">05 / 10</span></footer>
+      </section>
+
+      <section class="slide" data-title="Business Model">
+        <header class="slide-head"><div class="chapter">06 · BUSINESS MODEL & PRICING</div><div><h2 class="slide-title">Two commercial tiers, priced by level of protection.</h2><p class="slide-subtitle">Standard sells inspection capacity; Enterprise ties platform fees to the value of protected shipments.</p></div></header>
+        <div class="content business-layout">
+          <div class="pricing-table">
+            <div class="pricing-row pricing-head"><div>Criteria</div><div><strong>Standard Assurance</strong><span>Mid-size export enterprises</span></div><div><strong>Enterprise Partnership</strong><span>Large enterprises / corporations</span></div></div>
+            <div class="pricing-row"><div>Platform fee</div><div><span class="price-emphasis">10,000,000 VND/month</span><br><span class="price-note">Or 100,000,000 VND/year</span></div><div><span class="price-emphasis">30,000,000 VND/month</span><br><span class="price-note">Or 300,000,000 VND/year</span></div></div>
+            <div class="pricing-row"><div>Performance incentive</div><div>Not applicable</div><div>Starting at <strong>0.02%</strong> on Protected Shipment Value<br><span class="price-note">Or contract-based KPI Bonus</span></div></div>
+            <div class="pricing-row"><div>License & quota</div><div>Unlimited internal Users · 500 AI Reviews/month · 200 Shipments/month</div><div>Unlimited ecosystem-wide Users · Volume-based Fair Use Policy</div></div>
+            <div class="pricing-row"><div>Platform features</div><div>AI Compliance Review · AI Legal Assistant 24/7 · Standard Dashboard · China/GACC Monitoring</div><div>All Standard features + ERP/API · Advanced Risk Analytics · Multi-site · Dedicated Workspace</div></div>
+            <div class="pricing-row"><div>SLA & add-on</div><div>Support ≤ 4 hours · Overage 300,000 VND/shipment · Premium Legal Review 2,000,000 VND/case</div><div>Incident ≤ 2 hours · Dedicated CSM · Bundled add-ons per Framework Agreement</div></div>
+          </div>
+          <div class="performance-strip"><div class="rate-title">Reference Performance Rate<br><span class="price-note">For Enterprise tier</span></div><div><small>Trade value ≤ 100B VND/year</small><strong>≈ 0.05%</strong></div><div><small>Trade value 100–500B VND/year</small><strong>≈ 0.03%</strong></div><div><small>Trade value &gt; 500B VND/year</small><strong>≈ 0.02%</strong></div></div>
+        </div>
+        <footer class="footer"><span>Source: Team-provided pricing · "China/GACC Monitoring" standardized by product scope</span><span class="page-no">06 / 10</span></footer>
+      </section>
+
+      <section class="slide" data-title="Traction">
+        <header class="slide-head"><div class="chapter">07 · TRACTION</div><div><h2 class="slide-title">Full-stack MVP complete; next step is proving value with real enterprises.</h2></div></header>
+        <div class="content traction-layout">
+          <div class="mvp-block"><div class="mvp-word">MVP</div><div class="proof-list"><div class="proof">100% MVP scope standardized for fresh durian → China (GACC)</div><div class="proof">Full CRUD: Products, Shipments, 4-Lock Documents, Compliance Checks, Reports</div><div class="proof">Full-text legal scraping from 9 government portals + Gemini 2.4 AI summaries</div><div class="proof">Admin Portal with 6 modules + CIFER directory of 4,375 export facilities</div><div class="proof">One-tap interactive Dashboard, real-time Notifications, immutable Audit log</div></div></div>
+          <div>
+            <div class="repo-metrics"><div class="repo-metric"><strong>09</strong><span>international legal portals scraped and auto-synced</span></div><div class="repo-metric"><strong>4,375</strong><span>CIFER GACC China facilities in the directory</span></div><div class="repo-metric"><strong>10+</strong><span>complete web modules FE + BE + API + DB</span></div></div>
+            <div class="validation-path"><div class="path-line"><div class="path-step"><strong>Build</strong><span>Architecture + UI ✓</span></div><div class="path-step"><strong>Integrate</strong><span>Real data + API ✓</span></div><div class="path-step"><strong>Pilot</strong><span>Seeking partners</span></div></div></div>
+            <div class="honesty-note"><strong>Still to prove:</strong> how much processing time is reduced, how useful findings are, and whether enterprises are willing to pay.</div>
+          </div>
+        </div>
+        <footer class="footer"><span class="source-link">Evidence: README, CHANGELOG.md and repository, accessed 20.08.2026</span><span class="page-no">07 / 10</span></footer>
+      </section>
+
+      <section class="slide" data-title="Competition">
+        <header class="slide-head"><div class="chapter">08 · COMPETITION</div><div><h2 class="slide-title">We win at the intersection: localization × verification × action.</h2></div></header>
+        <div class="content competition-layout">
+          <div class="matrix-wrap"><div class="axis-y">From lookup → end-to-end operations</div><div class="matrix"><div class="player p1">General-purpose AI</div><div class="player p2">Manual consulting & inspection</div><div class="player p3">International compliance suites</div><div class="player themis">THEMIS LEXIGUARD</div></div><div class="axis-x"><span>Industry-agnostic</span><span>Vietnamese Durian → China</span></div></div>
+          <div class="advantage"><div class="advantage-lead">Why us</div><h3>We don't just answer questions. Themis drives enterprises to evidence-based decisions.</h3><div class="advantage-list"><div class="advantage-item"><strong>Versioned legal basis</strong><span>Regulations, clauses, effective dates and citations.</span></div><div class="advantage-item"><strong>Real shipment context</strong><span>HS code, target market, growing area and specific document set.</span></div><div class="advantage-item"><strong>Closed-loop actions</strong><span>Finding → task → evidence → approval → re-check.</span></div></div></div>
+        </div>
+        <footer class="footer"><span>Positioned by solution category; competitor benchmarking to continue during pilot</span><span class="page-no">08 / 10</span></footer>
+      </section>
+
+      <section class="slide" data-title="Team">
+        <header class="slide-head"><div class="chapter">09 · TEAM</div><div><h2 class="slide-title">7 members covering the full product lifecycle.</h2></div></header>
+        <div class="content team-layout">
+          <div class="team-core"><div class="team-count">07</div><h3>From legal problem to a working system.</h3><p>The team combines product ownership, domain research, UI/UX, backend, data, AI and quality assurance.</p><div class="discipline-line">PRODUCT · QA · FRONTEND<br/>BACKEND · AI · DATA · SECURITY</div></div>
+          <div class="people">
+            <div><div class="person lead"><strong>Pham Thanh Long</strong><span>Tech Lead & AI Engineer</span></div><div class="person"><strong>Dam Cong Tu</strong><span>Product Owner / QA · Legal Data</span></div><div class="person"><strong>Cham Roch Thi</strong><span>Frontend · Core & Authentication</span></div><div class="person"><strong>Huynh Hoang Quan</strong><span>Frontend · Data UI & Dashboard</span></div></div>
+            <div><div class="person"><strong>Nguyen Tien Thanh</strong><span>Frontend · Forms & Operations</span></div><div class="person"><strong>Ha Anh Tuan</strong><span>Backend · API & Database</span></div><div class="person"><strong>Ta Le Anh Bao</strong><span>Backend · Services, OCR & Jobs</span></div></div>
+          </div>
+        </div>
+        <footer class="footer"><span>Source: Team assignments in the Themis LexiGuard repository</span><span class="page-no">09 / 10</span></footer>
+      </section>
+
+      <section class="slide" data-title="The Ask">
+        <header class="slide-head"><div class="chapter">10 · THE ASK</div><div><h2 class="slide-title">90 days to turn our MVP into business proof.</h2></div></header>
+        <div class="content ask-layout">
+          <div class="ask-hero"><div class="ask-kicker">We are looking for</div><div class="ask-number"><span>03</span> pilot</div><div class="ask-copy">durian exporters or packing houses ready to co-design the compliance workflow.</div><div class="ask-needs"><div>01 GACC / plant protection / lab expert</div><div>Anonymized documents: lab results, PUC/PHC, Phytosanitary and labeling</div><div>Weekly feedback from the people who handle shipments directly</div></div></div>
+          <div class="pilot-roadmap"><div class="road-step"><div class="road-day">DAY 01-30</div><div><h3>Understand process & establish baseline</h3><p>Standardize data, approval workflows and success criteria for each enterprise.</p></div></div><div class="road-step"><div class="road-day">DAY 31-60</div><div><h3>Run supervised checks</h3><p>Compare Themis results against domain experts and refine rules/citations.</p></div></div><div class="road-step"><div class="road-day">DAY 61-90</div><div><h3>Measure value & decide on expansion</h3><p>Evaluate processing time reduction, finding quality and willingness to pay.</p></div></div><div class="cta-line">Pilot with <span>Themis LexiGuard</span> — before the next shipment leaves port.</div></div>
+        </div>
+        <footer class="footer"><span class="source-link">Repository: github.com/Longdev1701/Team-1---Module-2---ProductDesign</span><span class="page-no">10 / 10</span></footer>
+      </section>
+    </div>
+  </main>
+
+  <nav class="controls" aria-label="Slide controls">
+    <button id="prevBtn" aria-label="Previous slide" title="Previous slide (←)">←</button>
+    <div class="progress-dots" id="progressDots" aria-label="Select slide"></div>
+    <button id="nextBtn" aria-label="Next slide" title="Next slide (→)">→</button>
+    <button id="sourceBtn" aria-label="View sources" title="Sources (S)">ⓘ</button>
+    <button id="fullBtn" aria-label="Fullscreen" title="Fullscreen (F)">⛶</button>
+  </nav>
+  <div class="hint">← → navigate · F fullscreen · S sources</div>
+
+  <aside class="sources-panel" id="sourcesPanel" aria-hidden="true">
+    <div class="sources-card">
+      <button class="sources-close" id="sourcesClose">Close</button>
+      <h2>Sources & Methodology</h2>
+      <p>This deck clearly distinguishes existing product evidence from business hypotheses that require validation.</p>
+      <ol>
+        <li><a href="https://github.com/Longdev1701/Team-1---Module-2---ProductDesign" target="_blank" rel="noreferrer">Themis LexiGuard repository</a> — README, product definition, roadmap, Definition of Done and CHANGELOG.</li>
+        <li><a href="https://github.com/Longdev1701/Team-1---Module-2---ProductDesign" target="_blank" rel="noreferrer">CHANGELOG.md</a> — full development history: 10+ modules, 9 legal portals, 4,375 CIFER entries, Admin Portal, Notifications, one-tap Dashboard.</li>
+        <li><strong>En - 2022 - Simplamo Pitchdesk V5.pdf</strong> — structural reference: problem → solution → customers → model → traction → competition → team → ask.</li>
+        <li><strong>[en] 2021 - tungtung pitch.pdf</strong> — presentation reference for product, user growth, business model, finance and roadmap.</li>
+        <li><a href="https://github.com/Longdev1701/Team-1---Module-2---ProductDesign/blob/main/fe/public/themis_logo.png" target="_blank" rel="noreferrer">Official Themis logo</a> — file <strong>fe/public/themis_logo.png</strong> in the repository.</li>
+        <li><a href="https://sansangxuatkhau.ppd.gov.vn/tin-tuc-noi-bat/tin-hieu-tich-cuc-tu-vu-canh-bao-30-lo-sau-rieng-viet-nam-xuat-sang-trung-quoc.html" target="_blank" rel="noreferrer">Plant Protection Dept.</a> — 30 Cadmium-flagged lots is the cumulative count from 08/2022 to 03/2024, each container approx. 15–18 tons.</li>
+        <li><a href="https://baochinhphu.vn/tien-giang-ap-dung-hieu-qua-nhieu-bien-phap-ky-thuat-phat-trien-sau-rieng-102250521084359274.htm" target="_blank" rel="noreferrer">Gov't Newspaper</a> — in early 2025, 100% of containers must be tested for Cadmium with 7–10 day turnaround.</li>
+        <li><a href="https://baochinhphu.vn/go-vuong-dang-ky-phong-thu-nghiem-phuc-vu-xuat-khau-sau-rieng-102251229173847793.htm" target="_blank" rel="noreferrer">Gov't Newspaper / MARD</a> — GACC mandates Cadmium testing for all shipments and Auramine O testing from 10/01/2025.</li>
+        <li><a href="https://baochinhphu.vn/lay-lai-thi-truong-sau-rieng-bang-chat-luong-102250814171205684.htm" target="_blank" rel="noreferrer">Gov't Newspaper / Crop Production & Plant Protection Dept.</a> — Cadmium can persist in soil, irrigation water and fertilizers; must be controlled at the growing area.</li>
+        <li><a href="https://baochinhphu.vn/buoi-viet-nam-truoc-cua-ty-do-tranh-vap-bai-hoc-sau-rieng-102260423104537031.htm" target="_blank" rel="noreferrer">Gov't Newspaper</a> — durian export value in 2025 approximately $4 billion USD.</li>
+        <li><a href="https://baochinhphu.vn/bai-2-go-nut-that-cadimi-tai-thiet-chuoi-sau-rieng-de-giu-thi-truong-xuat-khau-102260524220023812.htm" target="_blank" rel="noreferrer">Gov't Newspaper / MARD</a> — Q1/2026 reached approximately $1.3 billion USD, up nearly 128%.</li>
+        <li><a href="https://baochinhphu.vn/nong-nghiep-viet-nam-dam-bao-an-ninh-luong-thuc-mo-rong-thi-truong-xuat-khau-102241227093123151.htm" target="_blank" rel="noreferrer">MARD / Gov't Newspaper</a> — agri-forestry-fishery exports in 2024 reached $62.5 billion USD.</li>
+        <li><a href="https://nafiqpm.mae.gov.vn/portal/pages/2025-04-18/DIEM-BAO-12-18-4-2025-.aspx" target="_blank" rel="noreferrer">NAFIQPM (Quality, Processing & Market Development Dept.)</a> — durian exports in 2024 reached $3.3 billion USD.</li>
+        <li><a href="https://ppd.gov.vn/tin-moi-nhat/trung-quoc-phe-duyet-them-829-ma-so-vung-trong-va-131-ma-so-co-so-dong-goi-sau-rieng-cua-viet-nam.html" target="_blank" rel="noreferrer">Crop Production & Plant Protection Dept.</a> — 1,396 growing area codes and 188 packing house codes GACC-approved as of 22/05/2025.</li>
+        <li><strong>Team-provided data</strong> — 2–4 billion VND/container value scenario and Standard Assurance / Enterprise Partnership pricing.</li>
+        <li><strong>SOM estimate</strong> — 200–500 enterprises/cooperatives reachable in 1–2 years; this is a go-to-market hypothesis requiring validation, not current customer count.</li>
+      </ol>
+    </div>
+  </aside>
+
+  <script>
+    (() => {
+      const slides = [...document.querySelectorAll('.slide')];
+      const dotsWrap = document.getElementById('progressDots');
+      const panel = document.getElementById('sourcesPanel');
+      let current = Math.max(0, Math.min(slides.length - 1, (parseInt(location.hash.slice(1), 10) || 1) - 1));
+
+      slides.forEach((slide, index) => {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.setAttribute('aria-label', `Go to slide ${index + 1}: ${slide.dataset.title}`);
+        dot.addEventListener('click', () => show(index));
+        dotsWrap.appendChild(dot);
+      });
+
+      function fit() {
+        const marginX = 28;
+        const marginY = 28;
+        const scale = Math.min((innerWidth - marginX) / 1600, (innerHeight - marginY) / 900, 1);
+        document.documentElement.style.setProperty('--deck-scale', Math.max(.1, scale).toFixed(4));
+      }
+
+      function show(index, updateHash = true) {
+        current = (index + slides.length) % slides.length;
+        slides.forEach((slide, i) => slide.classList.toggle('active', i === current));
+        [...dotsWrap.children].forEach((dot, i) => dot.classList.toggle('active', i === current));
+        document.title = `${String(current + 1).padStart(2, '0')} · ${slides[current].dataset.title} - Themis LexiGuard`;
+        if (updateHash) history.replaceState(null, '', `#${current + 1}`);
+      }
+
+      function toggleSources(force) {
+        const open = typeof force === 'boolean' ? force : !panel.classList.contains('open');
+        panel.classList.toggle('open', open);
+        panel.setAttribute('aria-hidden', String(!open));
+      }
+
+      document.getElementById('prevBtn').addEventListener('click', () => show(current - 1));
+      document.getElementById('nextBtn').addEventListener('click', () => show(current + 1));
+      document.getElementById('sourceBtn').addEventListener('click', () => toggleSources());
+      document.getElementById('sourcesClose').addEventListener('click', () => toggleSources(false));
+      panel.addEventListener('click', event => { if (event.target === panel) toggleSources(false); });
+      document.getElementById('fullBtn').addEventListener('click', async () => {
+        if (!document.fullscreenElement) await document.documentElement.requestFullscreen?.();
+        else await document.exitFullscreen?.();
+      });
+
+      addEventListener('resize', fit);
+      addEventListener('hashchange', () => {
+        const requested = (parseInt(location.hash.slice(1), 10) || 1) - 1;
+        show(Math.max(0, Math.min(slides.length - 1, requested)), false);
+      });
+      addEventListener('keydown', event => {
+        if (panel.classList.contains('open') && event.key === 'Escape') return toggleSources(false);
+        if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(event.key)) { event.preventDefault(); show(current + 1); }
+        else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(event.key)) { event.preventDefault(); show(current - 1); }
+        else if (event.key === 'Home') show(0);
+        else if (event.key === 'End') show(slides.length - 1);
+        else if (event.key.toLowerCase() === 'f') document.getElementById('fullBtn').click();
+        else if (event.key.toLowerCase() === 's') toggleSources();
+      });
+
+      fit();
+      show(current, false);
+    })();
+  </script>
+</body>
+</html>
